@@ -17,17 +17,23 @@ public class Connexion {
  
     public void connect() {
         try {
-            Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:" + DBPath);
+            Class.forName("org.hsqldb.jdbcDriver").newInstance();
+            connection = DriverManager.getConnection("jdbc:hsqldb:file:tracker-boik-da" + DBPath, "sa", "");
             statement = connection.createStatement();
-            System.out.println("Connexion a " + DBPath + " avec succès");
+            System.out.println("Connexion avec succès");
         } catch (ClassNotFoundException notFoundException) {
             notFoundException.printStackTrace();
             System.out.println("Erreur de connecxion");
         } catch (SQLException sqlException) {
             sqlException.printStackTrace();
             System.out.println("Erreur de connecxion");
-        }
+        } catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
  
     public ResultSet query(String requet) {

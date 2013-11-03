@@ -11,8 +11,8 @@ public class TBException extends Exception {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public TBException(Level level, String msg) {
+	public TBException(String msg) {
 		super(msg);
-		TrackerBoikLog.getInstance().log(level, msg);
+		TrackerBoikLog.getInstance().log(Level.SEVERE, msg);
 	}
 }

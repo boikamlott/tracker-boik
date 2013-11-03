@@ -16,6 +16,7 @@ public class TBExceptionFrame extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private static int TEXT_ERROR = 1;
 	private JPanel contentPane;
 
 	/**
@@ -51,6 +52,10 @@ public class TBExceptionFrame extends JFrame {
 		
 		JTextPane textError = new JTextPane();
 		contentPane.add(textError, BorderLayout.CENTER);
+	}
+	
+	public void setErrorText(String errorTxt) {
+		((JTextPane) contentPane.getComponent(TEXT_ERROR)).setText(errorTxt);
 	}
 
 }

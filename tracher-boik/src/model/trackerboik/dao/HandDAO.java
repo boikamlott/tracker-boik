@@ -1,6 +1,6 @@
 package model.trackerboik.dao;
 
-public interface HandDAO {
+public interface HandDAO extends GeneralDBOperationsDAO {
 
 	
 }

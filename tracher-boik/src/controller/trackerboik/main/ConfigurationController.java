@@ -30,7 +30,7 @@ public class ConfigurationController {
 	}
 	
 	public String getProperty(String propertyName) throws TBException {
-		if(tbProp != null && tbProp.contains(propertyName)) {
+		if(tbProp != null && tbProp.getProperty(propertyName) != null) {
 			return tbProp.getProperty(propertyName);
 		} else {
 			throw new TBException("Impossible de récupérer la propriété '" + propertyName + "' !");

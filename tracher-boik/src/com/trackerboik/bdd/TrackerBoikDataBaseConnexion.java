@@ -1,6 +1,7 @@
 package com.trackerboik.bdd;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -110,6 +111,36 @@ public class TrackerBoikDataBaseConnexion {
 			throw new TBException(
 					"Erreur dans la fermeture de la connection : '"
 							+ e.getMessage() + "'");
+		}
+	}
+
+	/**
+	 * Get SQL Metadata
+	 * @return
+	 * @throws TBException
+	 */
+	public DatabaseMetaData getMetaData() throws TBException {
+		try {
+			refreshConnection();
+
+			return connection.getMetaData();
+		} catch (SQLException e) {
+			throw new TBException("SQLException: '" + e.getMessage() + "'");
+		}
+	}
+
+	/**
+	 * Get Database catalog
+	 * @return
+	 * @throws TBException
+	 */
+	public String getCatalog() throws TBException {
+		try {
+			refreshConnection();
+
+			return connection.getCatalog();
+		} catch (SQLException e) {
+			throw new TBException("SQLException: '" + e.getMessage() + "'");
 		}
 	}
 }

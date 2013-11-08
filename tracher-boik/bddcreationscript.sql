@@ -1,0 +1,63 @@
+--****************** Script permettant de créer la base de donénes nécessaire à l'utilisation de TrackerBoik ***********************************/
+drop table hand_board;
+drop table action;
+drop table hand_player;
+drop table hand;
+drop table board;
+drop table player;
+
+
+
+/* Represente le board, le flop ne peut être nul sinon on aurait pas d'entrée */
+CREATE TABLE board (
+	board_id varchar(10) PRIMARY KEY,
+	flop_1 varchar(2) NOT NULL,
+	flop_2 varchar(2) NOT NULL,
+	flop_3 varchar(2) NOT NULL,
+	turn varchar(2),
+	river varchar(2)
+);
+
+/* Represente une main disputée */
+CREATE TABLE hand (
+	hand_id VARCHAR(20) PRIMARY KEY,
+	pot double NOT NULL,
+	rake double NOT NULL,
+	bb_value double NOT NULL,
+	tableName VARCHAR(20),
+	moment TIMESTAMP
+);
+
+/* Represente le lien entre la main et le board */
+CREATE TABLE hand_board (
+	hand_id VARCHAR(20) PRIMARY KEY REFERENCES hand(hand_id),
+	board_id VARCHAR(10) REFERENCES board(board_id)
+);
+
+/* Represente les joueurs */
+CREATE TABLE player (
+	player_id VARCHAR(50) PRIMARY KEY
+);	
+
+/* Représente les mains auxquelles ont participés les joueurs */
+CREATE TABLE hand_player (
+	hand_id VARCHAR(20) REFERENCES hand(hand_id),
+	player_id VARCHAR(50) REFERENCES player(player_id),
+	card_1 VARCHAR(2),
+	card_2 VARCHAR(2),
+	CONSTRAINT pk_hand_player PRIMARY KEY (hand_id, player_id)
+);
+
+/* Représente une action durant une main */
+CREATE TABLE action (
+	hand_id VARCHAR(20),
+	player_id VARCHAR(50),
+	action_number int NOT NULL,
+	amout_bet double NOT NULL,
+	kind VARCHAR(10) NOT NULL,
+	moment VARCHAR(10) NOT NULL,
+	CONSTRAINT pk_action PRIMARY KEY (hand_id, player_id, action_number),
+	CONSTRAINT fk_hand_id_player_id_a FOREIGN KEY (hand_id, player_id) REFERENCES hand_player(hand_id, player_id),	
+	CONSTRAINT kind_enum CHECK (kind in ('paySB', 'payBB', 'fold', 'check', 'call', 'raise')),
+	CONSTRAINT moment_enum CHECK (moment in ('preflop', 'flop', 'turn', 'river'))
+);

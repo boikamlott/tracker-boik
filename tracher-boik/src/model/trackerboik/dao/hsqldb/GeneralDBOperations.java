@@ -24,7 +24,12 @@ public class GeneralDBOperations implements GeneralDBOperationsDAO {
 		}
 	}
 
-	private void executeSQLUpdate(String request) throws TBException {
+	protected ResultSet executeSQLQuery(String request) throws TBException {
+		dbCon = new TrackerBoikDataBaseConnexion();
+		return dbCon.executeQuery(request);
+	}
+	
+	protected void executeSQLUpdate(String request) throws TBException {
 		dbCon = new TrackerBoikDataBaseConnexion();
 		dbCon.executeInstruction(request);
 	}
@@ -40,7 +45,12 @@ public class GeneralDBOperations implements GeneralDBOperationsDAO {
 			ResultSet tables = dmd.getTables(dbCon.getCatalog(), null, "%", null);
 			//Affichage des informations
 			while(tables.next()){
-			   res.add(tables.getMetaData().getTableName(0));
+				   System.out.println("###################################");
+				   for(int i=0; i<tables.getMetaData().getColumnCount();i++){
+				      String nomColonne = tables.getMetaData().getColumnName(i+1);
+				      Object valeurColonne = tables.getObject(i+1);
+				      System.out.println(nomColonne+" = "+valeurColonne);
+				   }
 			}
 		} catch (TBException e) {
 			throw new TBException("Impossible to get table list in database: '" + e + "'");
@@ -49,6 +59,11 @@ public class GeneralDBOperations implements GeneralDBOperationsDAO {
 		}
 		
 		return res;
+	}
+
+	@Override
+	public void createTable() throws TBException {
+		throw new TBException("Method is not implemented here !");
 	}
 
 }

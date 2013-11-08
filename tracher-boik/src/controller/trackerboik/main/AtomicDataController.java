@@ -2,6 +2,7 @@ package controller.trackerboik.main;
 
 import java.util.List;
 
+import model.trackerboik.dao.BoardDAO;
 import model.trackerboik.dao.GeneralDBOperationsDAO;
 import model.trackerboik.dao.hsqldb.GeneralDBOperations;
 
@@ -43,6 +44,8 @@ public class AtomicDataController {
 
 	public void eraseAllAtomicData() throws TBException {
 		GeneralDBOperationsDAO db = new GeneralDBOperations();
+//		BoardDAO boardDB = new BoardHSQLDB();
+//		boardDB.createTable();
 		List<String> tableNames = db.getTableNames();
 	}
 }

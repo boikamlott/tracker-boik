@@ -9,5 +9,7 @@ public interface GeneralDBOperationsDAO {
 	public void eraseTableContent(String tableName) throws TBException;
 	
 	public List<String> getTableNames() throws TBException;
+	
+	public void createTable() throws TBException;
 
 }

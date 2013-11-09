@@ -4,7 +4,8 @@ import java.util.List;
 
 import model.trackerboik.dao.BoardDAO;
 import model.trackerboik.dao.GeneralDBOperationsDAO;
-import model.trackerboik.dao.hsqldb.GeneralDBOperations;
+import model.trackerboik.dao.hsqldb.GeneralHSQLDBOperations;
+import model.trackerboik.dao.hsqldb.SessionHSQL;
 
 import com.trackerboik.exception.TBException;
 
@@ -21,7 +22,7 @@ public class AtomicDataController {
 	 * If some tables are missing, we create it
 	 */
 	public void checkCurrentDataBase() {
-		GeneralDBOperationsDAO bdd = new GeneralDBOperations();
+		GeneralDBOperationsDAO bdd = new SessionHSQL();
 		
 	}
 	
@@ -43,7 +44,7 @@ public class AtomicDataController {
 	}
 
 	public void eraseAllAtomicData() throws TBException {
-		GeneralDBOperationsDAO db = new GeneralDBOperations();
+		GeneralDBOperationsDAO db = new SessionHSQL();
 //		BoardDAO boardDB = new BoardHSQLDB();
 //		boardDB.createTable();
 		List<String> tableNames = db.getTableNames();

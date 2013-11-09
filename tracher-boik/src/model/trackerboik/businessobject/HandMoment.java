@@ -1,7 +1,7 @@
 package model.trackerboik.businessobject;
 
 public enum HandMoment {
-	PREFLOP("pre flop"),
+	PREFLOP("preflop"),
 	FLOP("flop"),
 	TURN("turn"),
 	RIVER("river");
@@ -11,4 +11,8 @@ public enum HandMoment {
 	private HandMoment(String valTxt) {
 		this.valueText = valTxt;
 	}
-}
+	
+	public String toString() {
+		return valueText;
+	}
+ }

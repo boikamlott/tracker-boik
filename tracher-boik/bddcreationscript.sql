@@ -3,10 +3,16 @@ drop table hand_board;
 drop table action;
 drop table hand_player;
 drop table hand;
+drop table session;
 drop table board;
 drop table player;
 
-
+/* Représente une session a une table */
+CREATE TABLE session (
+	session_id VARCHAR(50) PRIMARY KEY,
+	file_associated_name VARCHAR(100) NOT NULL,
+	session_kind VARCHAR(50)
+);
 
 /* Represente le board, le flop ne peut être nul sinon on aurait pas d'entrée */
 CREATE TABLE board (
@@ -25,7 +31,8 @@ CREATE TABLE hand (
 	rake double NOT NULL,
 	bb_value double NOT NULL,
 	tableName VARCHAR(20),
-	moment TIMESTAMP
+	moment TIMESTAMP,
+	session_id VARCHAR(50) REFERENCES session(session_id)
 );
 
 /* Represente le lien entre la main et le board */
@@ -36,7 +43,8 @@ CREATE TABLE hand_board (
 
 /* Represente les joueurs */
 CREATE TABLE player (
-	player_id VARCHAR(50) PRIMARY KEY
+	player_id VARCHAR(50) PRIMARY KEY,
+	comment VARCHAR(256)
 );	
 
 /* Représente les mains auxquelles ont participés les joueurs */
@@ -58,6 +66,6 @@ CREATE TABLE action (
 	moment VARCHAR(10) NOT NULL,
 	CONSTRAINT pk_action PRIMARY KEY (hand_id, player_id, action_number),
 	CONSTRAINT fk_hand_id_player_id_a FOREIGN KEY (hand_id, player_id) REFERENCES hand_player(hand_id, player_id),	
-	CONSTRAINT kind_enum CHECK (kind in ('paySB', 'payBB', 'fold', 'check', 'call', 'raise')),
+	CONSTRAINT kind_enum CHECK (kind in ('postSB', 'postBB', 'fold', 'check', 'call', 'raise')),
 	CONSTRAINT moment_enum CHECK (moment in ('preflop', 'flop', 'turn', 'river'))
 );

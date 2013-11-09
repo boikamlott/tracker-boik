@@ -11,29 +11,34 @@ import model.trackerboik.dao.GeneralDBOperationsDAO;
 import com.trackerboik.bdd.TrackerBoikDataBaseConnexion;
 import com.trackerboik.exception.TBException;
 
-public class GeneralDBOperations implements GeneralDBOperationsDAO {
-
+public abstract class GeneralHSQLDBOperations implements GeneralDBOperationsDAO {
+	public static final String TABLE_NAME = "";
+	
+	protected static final String GEN_ATT_HAND_ID = "hand_id",
+								  GEN_ATT_PLAYER_ID = "player_id",
+								  GEN_ATT_BOARD_ID = "board_id",
+								  GEN_ATT_SESSION_ID = "session_id";
+	
 	private TrackerBoikDataBaseConnexion dbCon;
 	
 	@Override
 	public void eraseTableContent(String tableName) throws TBException {
 		try {
-			executeSQLUpdate("DELETE * FROM '" + tableName + "'");
+			executeSQLUpdate("DELETE * FROM " + tableName);
 		} catch (TBException e) {
 			throw new TBException("Impossible de supprimer le contenu de la table: '" + tableName + "': " + e.getMessage());
 		}
 	}
 
-	protected ResultSet executeSQLQuery(String request) throws TBException {
-		dbCon = new TrackerBoikDataBaseConnexion();
-		return dbCon.executeQuery(request);
+	
+	public void dropTable(String tableName) throws TBException {
+		try {
+			executeSQLUpdate("DROP TABLE " + tableName);
+		} catch (TBException e) {
+			throw new TBException("Impossible de supprimer la table: '" + tableName + "': " + e.getMessage());
+		}
 	}
 	
-	protected void executeSQLUpdate(String request) throws TBException {
-		dbCon = new TrackerBoikDataBaseConnexion();
-		dbCon.executeInstruction(request);
-	}
-
 	@Override
 	public List<String> getTableNames() throws TBException {
 		List<String> res = new ArrayList<>();
@@ -62,8 +67,29 @@ public class GeneralDBOperations implements GeneralDBOperationsDAO {
 	}
 
 	@Override
-	public void createTable() throws TBException {
-		throw new TBException("Method is not implemented here !");
+	public abstract void createTable() throws TBException; 
+	
+	/**
+	 * Execute SQL request
+	 * @param request
+	 * @return
+	 * @throws TBException
+	 */
+	protected ResultSet executeSQLQuery(String request) throws TBException {
+		dbCon = new TrackerBoikDataBaseConnexion();
+		return dbCon.executeQuery(request);
 	}
+	
+	/**
+	 * Execute SQL update
+	 * @param request
+	 * @throws TBException
+	 */
+	protected void executeSQLUpdate(String request) throws TBException {
+		dbCon = new TrackerBoikDataBaseConnexion();
+		dbCon.executeInstruction(request);
+	}
+
+
 
 }

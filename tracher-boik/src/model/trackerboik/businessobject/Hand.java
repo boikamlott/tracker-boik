@@ -29,8 +29,12 @@ public class Hand {
 	/* Hands of pokerPlayer during the hand */
 	private Map<PokerPlayer, PokerHand> handForPlayer;
 	
-	public Hand(String id) {
+	/* Session associated */
+	private PokerSession associatedSession;
+	
+	public Hand(String id, PokerSession s) {
 		setId(id);
+		setAssociatedSession(s);
 		board = new PokerBoard();
 		handPlayers = new LinkedList<PokerPlayer>();
 		handActions = new LinkedList<PokerAction>();
@@ -83,6 +87,14 @@ public class Hand {
 
 	public void setDateTime(Calendar dateTime) {
 		this.dateTime = dateTime;
+	}
+
+	public PokerSession getAssociatedSession() {
+		return associatedSession;
+	}
+
+	public void setAssociatedSession(PokerSession associatedSession) {
+		this.associatedSession = associatedSession;
 	}
 	
 	

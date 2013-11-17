@@ -33,4 +33,15 @@ public interface GeneralDBOperationsDAO {
 	 */
 	public void createTable() throws TBException;
 
+	/**
+	 * Return a list of string with the app needed table names in create order
+	 * @return
+	 */
+	public List<String> getNeededTableNamesInCorrectOrderForCreate();
+	
+	/**
+	 * Return a list of string with the app needed table names in drop order
+	 * @return
+	 */
+	public List<String> getNeededTableNamesInCorrectOrderForDrop();
 }

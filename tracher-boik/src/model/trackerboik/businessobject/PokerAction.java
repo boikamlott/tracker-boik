@@ -2,24 +2,14 @@ package model.trackerboik.businessobject;
 
 public class PokerAction {
 
-	private Hand associatedHand;
 	private PokerPlayer associatedPlayer;
 	private Integer posInHand;
 	private Double amountBet;
 	private ActionKind kind;
 	private HandMoment moment;
 	
-	public PokerAction(Hand h, PokerPlayer pp) {
-		setAssociatedHand(h);
+	public PokerAction(PokerPlayer pp) {
 		setAssociatedPlayer(pp);
-	}
-
-	public Hand getAssociatedHand() {
-		return associatedHand;
-	}
-
-	public void setAssociatedHand(Hand associatedHand) {
-		this.associatedHand = associatedHand;
 	}
 
 	public PokerPlayer getAssociatedPlayer() {

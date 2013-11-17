@@ -34,9 +34,9 @@ public class TrackerBoikDataBaseConnexion {
 	 */
 	public void connect() throws TBException {
 		try {
-			Class.forName("org.hsqldb.jdbcDriver").newInstance();
-			connection = DriverManager.getConnection("jdbc:hsqldb:" + DBPath,
-					"sa", "");
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			connection = DriverManager.getConnection("jdbc:mysql:" + DBPath,
+					"root", "");
 		} catch (ClassNotFoundException notFoundException) {
 			notFoundException.printStackTrace();
 			throw new TBException("Impossible to access database: '"

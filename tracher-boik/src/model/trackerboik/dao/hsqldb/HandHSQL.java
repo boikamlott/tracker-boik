@@ -6,7 +6,7 @@ import model.trackerboik.dao.HandDAO;
 
 public class HandHSQL extends GeneralHSQLDBOperations implements HandDAO {
 
-	public static String TABLE_NAME = "hand";
+	public static final String TABLE_NAME = "hand";
 
 	private static String ATT_POT = "pot", ATT_SITE_RAKE = "rake",
 			ATT_BB_VALUE = "bb_value", ATT_TABLE_NAME = "table_name",
@@ -21,7 +21,7 @@ public class HandHSQL extends GeneralHSQLDBOperations implements HandDAO {
 		rq += ATT_BB_VALUE += " double NOT NULL,";
 		rq += ATT_TABLE_NAME += " VARCHAR(20),";
 		rq += ATT_MOMENT + " TIMESTAMP,";
-		rq += GEN_ATT_SESSION_ID + "VARCHAR(50) REFERENCES "
+		rq += GEN_ATT_SESSION_ID + " VARCHAR(50) REFERENCES "
 				+ SessionHSQL.TABLE_NAME + "(" + GEN_ATT_SESSION_ID + "))";
 
 		executeSQLUpdate(rq);

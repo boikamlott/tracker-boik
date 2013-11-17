@@ -28,7 +28,7 @@ public class TrackerBoikLog {
 		try {
 			logger = Logger.getLogger("trackerboik-logger");
 			logger.setLevel(Level.ALL);
-			FileHandler fh = new FileHandler("logs.txt");
+			FileHandler fh = new FileHandler("trackerBoikLogs.txt");
 			fh.setFormatter(new SimpleFormatter());
 			
 			logger.addHandler(fh);

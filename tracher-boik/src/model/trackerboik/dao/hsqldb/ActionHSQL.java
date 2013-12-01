@@ -2,6 +2,7 @@ package model.trackerboik.dao.hsqldb;
 
 import model.trackerboik.businessobject.ActionKind;
 import model.trackerboik.businessobject.HandMoment;
+import model.trackerboik.businessobject.PokerAction;
 import model.trackerboik.dao.ActionDAO;
 
 import com.trackerboik.exception.TBException;
@@ -35,6 +36,19 @@ public class ActionHSQL extends GeneralHSQLDBOperations implements ActionDAO {
 		
 		executeSQLUpdate(rq);
 
+	}
+
+	@Override
+	public void insertAction(PokerAction a) throws TBException {
+		String rq = "INSERT INTO " + TABLE_NAME + "(";
+		rq += "'" + a.getHand().getId() + "',";
+		rq += "'" + a.getAssociatedPlayer().getPlayerID() + "',";
+		rq += a.getPosInHand() + ",";
+		rq += a.getAmountBet() + ",";
+		rq += "'" + a.getKind() + "',";
+		rq += "'" + a.getMoment() + "')";
+		
+		executeSQLUpdate(rq);
 	}
 
 }

@@ -2,6 +2,7 @@ package model.trackerboik.dao.hsqldb;
 
 import com.trackerboik.exception.TBException;
 
+import model.trackerboik.businessobject.PokerSession;
 import model.trackerboik.dao.SessionDAO;
 
 public class SessionHSQL extends GeneralHSQLDBOperations implements SessionDAO {
@@ -19,6 +20,17 @@ public class SessionHSQL extends GeneralHSQLDBOperations implements SessionDAO {
 		rq += ATT_SESSION_KIND + " VARCHAR(50))";
 		
 		executeSQLUpdate(rq);
+	}
+
+	@Override
+	public void insertSession(PokerSession ps) throws TBException {
+		String rq = "INSERT INTO " + TABLE_NAME + "(";
+		rq += "'" + ps.getId() + "',";
+		rq += "'" + ps.getAssociatedFileName() + "',";
+		rq += "'" + ps.getSessionKind() + "')";
+		
+		executeSQLUpdate(rq);
+		
 	}
 
 }

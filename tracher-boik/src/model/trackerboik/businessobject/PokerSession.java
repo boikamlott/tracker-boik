@@ -4,12 +4,22 @@ public class PokerSession {
 
 	private String id;
 	private String associatedFileName;
+	private String sessionKind;
 	
-	public PokerSession(String id, String fn) {
+	public PokerSession(String id, String fn, String kind) {
 		setId(id);
 		setAssociatedFileName(fn);
+		setSessionKind(kind);
 	}
 	
+	public String getSessionKind() {
+		return sessionKind;
+	}
+
+	public void setSessionKind(String sessionKind) {
+		this.sessionKind = sessionKind;
+	}
+
 	public String getId() {
 		return id;
 	}

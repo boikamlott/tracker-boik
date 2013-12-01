@@ -2,6 +2,7 @@ package model.trackerboik.dao.hsqldb;
 
 import com.trackerboik.exception.TBException;
 
+import model.trackerboik.businessobject.Hand;
 import model.trackerboik.dao.HandDAO;
 
 public class HandHSQL extends GeneralHSQLDBOperations implements HandDAO {
@@ -25,6 +26,21 @@ public class HandHSQL extends GeneralHSQLDBOperations implements HandDAO {
 				+ SessionHSQL.TABLE_NAME + "(" + GEN_ATT_SESSION_ID + "))";
 
 		executeSQLUpdate(rq);
+	}
+
+	@Override
+	public void insertHand(Hand h) throws TBException {
+		String rq = "INSERT INTO " + TABLE_NAME + "(";
+		rq += "'" + h.getId() + "',";
+		rq += h.getPot() + ",";
+		rq += h.getSiteRake() + ",";
+		rq += h.getLimitBB() + ",";
+		rq += "'" + h.getTableName() + "',";
+		rq += "'" + h.getSQLFormattedMoment() + "',";
+		rq += "'" + h.getAssociatedSession().getId() + "')";
+		
+		executeSQLUpdate(rq);
+		
 	}
 
 }

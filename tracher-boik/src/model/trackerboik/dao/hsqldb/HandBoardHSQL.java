@@ -2,6 +2,8 @@ package model.trackerboik.dao.hsqldb;
 
 import com.trackerboik.exception.TBException;
 
+import model.trackerboik.businessobject.Hand;
+import model.trackerboik.businessobject.PokerBoard;
 import model.trackerboik.dao.HandBoardDAO;
 
 public class HandBoardHSQL extends GeneralHSQLDBOperations implements
@@ -16,5 +18,17 @@ HandBoardDAO {
 
 		executeSQLUpdate(rq);
 	}
+
+	@Override
+	public void insertHandBoard(Hand h, PokerBoard pb) throws TBException {
+		String rq = "INSERT INTO " + TABLE_NAME + "(";
+		rq += "'" + h.getId() + "',";
+		rq += "'" + pb.getID() + "')";
+		
+		executeSQLUpdate(rq);
+		
+	}
+	
+	
 
 }

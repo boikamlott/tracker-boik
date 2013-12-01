@@ -2,6 +2,7 @@ package model.trackerboik.dao.hsqldb;
 
 import com.trackerboik.exception.TBException;
 
+import model.trackerboik.businessobject.PokerBoard;
 import model.trackerboik.dao.BoardDAO;
 
 public class BoardHSQL extends GeneralHSQLDBOperations implements BoardDAO {
@@ -25,6 +26,26 @@ public class BoardHSQL extends GeneralHSQLDBOperations implements BoardDAO {
 			   rq += ATT_RIVER + " varchar(2))";
 			   
 		executeSQLUpdate(rq);		
+	}
+
+	@Override
+	public void insertBoard(PokerBoard pb) throws TBException {
+		String rq = "INSERT INTO " + TABLE_NAME + "(";
+		rq += "'" + pb.getID() + "',";
+		
+		if(pb.getFlop() != null) { 
+			rq += "'','','',";
+		} else {
+			for(int i = 0; i < 3 ; i++) {
+				rq += "'" + pb.getFlop().get(i) + "',";
+			}
+		}	
+		
+		rq += (pb.getTurn() == null ? "''" : "'" + pb.getTurn() + "'") + ",";
+		rq += (pb.getRiver() == null ? "''" : "'" + pb.getRiver() + "'") + ")";
+		
+		executeSQLUpdate(rq);
+		
 	}
 
 }

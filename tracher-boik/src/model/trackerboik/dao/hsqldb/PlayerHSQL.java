@@ -2,6 +2,7 @@ package model.trackerboik.dao.hsqldb;
 
 import com.trackerboik.exception.TBException;
 
+import model.trackerboik.businessobject.PokerPlayer;
 import model.trackerboik.dao.PlayerDAO;
 
 public class PlayerHSQL extends GeneralHSQLDBOperations implements PlayerDAO {
@@ -17,6 +18,16 @@ public class PlayerHSQL extends GeneralHSQLDBOperations implements PlayerDAO {
 
 		executeSQLUpdate(rq);
 
+	}
+
+	@Override
+	public void insertPlayer(PokerPlayer pp) throws TBException {
+		String rq = "INSERT INTO " + TABLE_NAME + "(";
+		rq += "'" + pp.getPlayerID() + "',";
+		rq += "'" + pp.getComment() + "')";
+		
+		executeSQLUpdate(rq);
+		
 	}
 
 }

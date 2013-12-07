@@ -1,4 +1,4 @@
---****************** Script permettant de créer la base de donénes nécessaire à l'utilisation de TrackerBoik ***********************************/
+/****************** Script permettant de créer la base de donénes nécessaire à l'utilisation de TrackerBoik ***********************************/
 drop table hand_board;
 drop table action;
 drop table hand_player;
@@ -53,6 +53,10 @@ CREATE TABLE hand_player (
 	player_id VARCHAR(50) REFERENCES player(player_id),
 	card_1 VARCHAR(2),
 	card_2 VARCHAR(2),
+	position int NOT NULL,
+	stack_before double NOT NULL,
+	result VARCHAR(50) NOT NULL,
+	CONSTRAINT result_enum CHECK (result in ('no_bet', 'fold_preflop', 'fold_flop', 'fold_turn', 'fold_river', 'loose', 'win')),
 	CONSTRAINT pk_hand_player PRIMARY KEY (hand_id, player_id)
 );
 

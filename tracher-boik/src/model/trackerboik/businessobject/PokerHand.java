@@ -17,4 +17,12 @@ public class PokerHand {
 	public PokerCard[] getHand() {
 		return cards;
 	}
+
+	/**
+	 * Return true if hand could be read by others application structures
+	 * @return
+	 */
+	public boolean isCorrect() {
+		return cards != null && cards[0].isCorrect() && cards[1].isCorrect();
+	}
 }

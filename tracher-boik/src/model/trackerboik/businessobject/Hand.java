@@ -7,8 +7,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.trackerboik.exception.TBException;
 import com.trackerboik.util.AppUtil;
-import com.trackerboik.util.BDDUtil;
 
 public class Hand {
 
@@ -19,33 +19,225 @@ public class Hand {
 	private String tableName;
 	private Double limitBB;
 	private Calendar dateTime;
-	
+
 	/* Relation */
 	/* Board */
 	private PokerBoard board;
-	
+
 	/* Player: Min 2, Max 9 */
 	private List<PokerPlayer> handPlayers;
-	
+
 	/* Actions which compose hands, min 2 */
 	private List<PokerAction> handActions;
-	
-	/* Hands of pokerPlayer during the hand */
-	private Map<PokerPlayer, PokerHand> handForPlayer;
-	private Map<PokerPlayer, Integer> positionForPlayer;
-	
+
+	/* Player data for this hand */
+	private Map<PokerPlayer, PlayerHandData> handDataForPlayer;
+
 	/* Session associated */
 	private PokerSession associatedSession;
-	
+
 	public Hand(String id, PokerSession s) {
 		setId(id);
 		setAssociatedSession(s);
 		handPlayers = new LinkedList<PokerPlayer>();
 		handActions = new LinkedList<PokerAction>();
-		handForPlayer = new HashMap<PokerPlayer, PokerHand>();
-		positionForPlayer = new HashMap<PokerPlayer, Integer>();
+		handDataForPlayer = new HashMap<PokerPlayer, PlayerHandData>();
 	}
-	
+
+	/**
+	 * Entry point to add players to the hand create entry in player list and
+	 * entry to maps associated to players
+	 * 
+	 * @param players
+	 */
+	public void addPlayers(List<PokerPlayer> players) throws TBException {
+		if (players == null) {
+			throw new TBException(
+					"Internal error in Hand module: impossible to add players because given list is null !");
+		}
+
+		for (PokerPlayer pp : players) {
+			addPlayerToHand(pp);
+		}
+
+	}
+
+	/**
+	 * Entry point to add player to a hand create entry in payers list and
+	 * associated map
+	 * 
+	 * @param pp
+	 */
+	public void addPlayerToHand(PokerPlayer pp) throws TBException {
+		if (handPlayers == null || pp == null) {
+			throw new TBException(
+					"Internal error in Hand module: impossible to add player because some data structures are null !");
+		}
+
+		if (handPlayers.contains(pp)) {
+			throw new TBException("Player '" + pp.getPlayerID()
+					+ "' already registred for hand '" + this.id + "'");
+		}
+
+		handPlayers.add(pp);
+		handDataForPlayer.put(pp, new PlayerHandData());
+	}
+
+	/**
+	 * Set the position of player given in parameter Position one is the button,
+	 * max pos is 9
+	 * 
+	 * @param pp
+	 * @param position
+	 * @throws TBException
+	 */
+	public void setPositionForPlayer(PokerPlayer pp, Integer position)
+			throws TBException {
+		if (handPlayers == null || pp == null || position == null
+				|| !(0 < position && position < AppUtil.MAX_PLAYERS)) {
+			throw new TBException(
+					"Internal error in Hand Module: Invalid data structure or parameter(s) in set position player function");
+		} else if (!handPlayers.contains(pp)) {
+			throw new TBException("Impossible to find player '"
+					+ pp.getPlayerID() + "' for hand '" + this.id);
+		}
+
+		handDataForPlayer.get(pp).setPosition(position);
+	}
+
+	/**
+	 * Set the hand for player given in parameter Hands has to be not null
+	 * 
+	 * @param pp
+	 * @param ph
+	 * @throws TBException
+	 */
+	public void setHandForPlayer(PokerPlayer pp, PokerHand ph)
+			throws TBException {
+		if (handPlayers == null || pp == null || ph == null || !ph.isCorrect()) {
+			throw new TBException(
+					"Internal error in Hand Module: Invalid data structure "
+							+ "or parameter(s) in set hand for player function");
+		} else if (!handPlayers.contains(pp)) {
+			throw new TBException("Impossible to find player '"
+					+ pp.getPlayerID() + "' for hand '" + this.id + "'");
+		}
+
+		handDataForPlayer.get(pp).setCards(ph);
+	}
+
+	/**
+	 * Set the start stack of player given in parameter
+	 * 
+	 * @param pp
+	 * @param double1
+	 * @throws TBException
+	 */
+	public void setStartStackForPlayer(PokerPlayer pp, Double stack)
+			throws TBException {
+		if (handPlayers == null || pp == null || stack == null || stack <= 0.0) {
+			throw new TBException(
+					"Internal error in Hand Module: Invalid data structure or " +
+					"parameter(s) in set start stack for player function");
+		} else if (!handPlayers.contains(pp)) {
+			throw new TBException("Impossible to find player '"
+					+ pp.getPlayerID() + "' for hand '" + this.id + "'");
+		}
+
+		handDataForPlayer.get(pp).setStartStack(stack);
+
+	}
+
+	/**
+	 * Set Hand result for player
+	 * 
+	 * @param pp
+	 * @param hr
+	 * @throws TBException 
+	 */
+	public void setResultHandForPlayer(PokerPlayer pp, HandResult hr) throws TBException {
+		if (handPlayers == null || pp == null || hr == null) {
+			throw new TBException(
+					"Internal error in Hand Module: Invalid data structure or parameter(s) " +
+					"in set hand result for player function");
+		} else if (!handPlayers.contains(pp)) {
+			throw new TBException("Impossible to find player '"
+					+ pp.getPlayerID() + "' for hand '" + this.id + "'");
+		}
+
+		handDataForPlayer.get(pp).setResult(hr);
+
+	}
+
+	/**
+	 * Add actions to the hand Must be use after add all players hand
+	 * 
+	 * @param actions
+	 */
+	public void addActions(List<PokerAction> actions) throws TBException {
+		if (handActions == null || actions == null) {
+			throw new TBException(
+					"Internal error in Hand Module: Invalid data structure or parameter(s) in add actions function");
+		}
+
+		for (PokerAction pa : actions) {
+			addAction(pa);
+		}
+	}
+
+	/**
+	 * Entry point to add Action from a hand
+	 * 
+	 * @param pa
+	 * @throws TBException
+	 */
+	public void addAction(PokerAction pa) throws TBException {
+		try {
+			validateAction(pa);
+			handActions.add(pa);
+		} catch (TBException e) {
+			throw new TBException("Impossible to add action to hand '"
+					+ this.id + " because: " + e.getMessage());
+		}
+	}
+
+	/**
+	 * Validate action related to hand players and data structure
+	 * 
+	 * @param pa
+	 * @throws TBException
+	 */
+	private void validateAction(PokerAction pa) throws TBException {
+		if (pa == null || handActions == null || handPlayers == null) {
+			throw new TBException("action or local data structure are null !");
+		}
+
+		// Check action attributes
+		if (pa.getActNoForHand() == null || pa.getAssociatedPlayer() == null
+				|| pa.getHand() == null || pa.getKind() == null
+				|| pa.getMoment() == null) {
+			throw new TBException(
+					"Mandatory(ies) attribute(s) of action is(are) null !");
+		}
+
+		// Check business validity
+		if (!pa.getHand().getId().equals(this.id)) {
+			throw new TBException("Invalid hands reference in action");
+		} else if (!(pa.getAmountBet() == null
+				&& pa.getKind().equals(ActionKind.FOLD) || pa.getAmountBet() != null
+				&& !pa.getKind().equals(ActionKind.FOLD))) {
+			throw new TBException(
+					"Invalid relation beetween kind and amount for action");
+		} else if (!handPlayers.contains(pa.getAssociatedPlayer())) {
+			throw new TBException("Unknow player for action");
+		} else if (handPlayers.size() + 1 != pa.getActNoForHand()) {
+			throw new TBException(
+					"Invalid action number, missing actions or action already exists !");
+		}
+
+	}
+
+	/** Getters and setters **/
 
 	public String getId() {
 		return id;
@@ -102,26 +294,30 @@ public class Hand {
 	public void setAssociatedSession(PokerSession associatedSession) {
 		this.associatedSession = associatedSession;
 	}
-	
+
 	public void addPokerBoard(String id) {
 		this.board = new PokerBoard(id);
 	}
-	
+
 	public PokerBoard getBoard() {
 		return this.board;
 	}
 
 	public String getSQLFormattedMoment() {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	    return sdf.format(this.dateTime.getTime());
+		return sdf.format(this.dateTime.getTime());
 	}
-	
+
 	public PokerHand getHandForPlayer(PokerPlayer pp) {
-		return this.handForPlayer.get(pp);
+		return this.handDataForPlayer.get(pp).getCards();
 	}
-	
+
 	public Integer getPositionForPlayer(PokerPlayer pp) {
-		return this.positionForPlayer.get(pp);
+		return this.handDataForPlayer.get(pp).getPosition();
 	}
-	
+
+	public List<PokerPlayer> getPlayers() {
+		return handPlayers;
+	}
+
 }

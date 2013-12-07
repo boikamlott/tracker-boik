@@ -9,9 +9,14 @@ public class PokerAction {
 	private ActionKind kind;
 	private HandMoment moment;
 	
-	public PokerAction(PokerPlayer pp, Hand ph) {
+	public PokerAction(PokerPlayer pp, Hand ph, Integer actNoInHand, 
+			Double amount, ActionKind ak, HandMoment hm) {
 		setAssociatedPlayer(pp);
 		setHand(ph);
+		setActNoForHand(actNoInHand);
+		setAmountBet(amount);
+		setKind(ak);
+		setMoment(hm);
 	}
 
 	public PokerPlayer getAssociatedPlayer() {

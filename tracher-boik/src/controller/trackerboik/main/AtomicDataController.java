@@ -13,7 +13,7 @@ import com.trackerboik.exception.TBException;
 import com.trackerboik.util.AppUtil;
 import com.trackerboik.util.BDDUtil;
 
-import controller.trackerboik.readdata.DataParser;
+import controller.trackerboik.readdata.HandsDataParser;
 
 public class AtomicDataController {
 
@@ -87,7 +87,7 @@ public class AtomicDataController {
 		String[] filePathElems = filePath.split(File.pathSeparator);
 
 		if (applyFilter(filePathElems[filePathElems.length - 1])) {
-			DataParser dp = new DataParser(f);
+			HandsDataParser dp = new HandsDataParser(f);
 			dp.readHands();
 		}
 	}

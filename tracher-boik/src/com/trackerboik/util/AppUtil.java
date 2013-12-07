@@ -8,10 +8,12 @@ import java.util.Date;
 public class AppUtil {
 
 	public static final String ATOMIC_DATA_FOLDER = "data.folder";
+	public static final String CURRENCY = "€";
 	public static final String TOURNAMENT_FILE_ID = "T";
 	public static final CharSequence ARGENT_FICTIF = "Argent fictif";
 	public static final String POKERSTARS = "PokerStars";
-	
+	public static final Integer MAX_PLAYERS = 9;
+	public static final String SPACE_IN_PLAYER_ID_ENCODING = "@@TB_SPACE@@";
 	
 	/**
 	 * Return associated calendar

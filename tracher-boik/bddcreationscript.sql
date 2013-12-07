@@ -66,6 +66,6 @@ CREATE TABLE action (
 	moment VARCHAR(10) NOT NULL,
 	CONSTRAINT pk_action PRIMARY KEY (hand_id, player_id, action_number),
 	CONSTRAINT fk_hand_id_player_id_a FOREIGN KEY (hand_id, player_id) REFERENCES hand_player(hand_id, player_id),	
-	CONSTRAINT kind_enum CHECK (kind in ('postSB', 'postBB', 'fold', 'check', 'call', 'raise')),
+	CONSTRAINT kind_enum CHECK (kind in ('postSB', 'postBB', 'fold', 'check', 'call', 'raise', 'bet')),
 	CONSTRAINT moment_enum CHECK (moment in ('preflop', 'flop', 'turn', 'river'))
 );

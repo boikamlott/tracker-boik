@@ -4,7 +4,7 @@ public class PokerAction {
 
 	private Hand hand;
 	private PokerPlayer associatedPlayer;
-	private Integer posInHand;
+	private Integer actionNumberInHand;
 	private Double amountBet;
 	private ActionKind kind;
 	private HandMoment moment;
@@ -30,12 +30,12 @@ public class PokerAction {
 		this.hand = hand;
 	}
 
-	public Integer getPosInHand() {
-		return posInHand;
+	public Integer getActNoForHand() {
+		return actionNumberInHand;
 	}
 
-	public void setPosInHand(Integer posInHand) {
-		this.posInHand = posInHand;
+	public void setActNoForHand(Integer posInHand) {
+		this.actionNumberInHand = posInHand;
 	}
 
 	public Double getAmountBet() {

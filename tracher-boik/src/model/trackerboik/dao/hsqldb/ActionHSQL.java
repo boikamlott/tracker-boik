@@ -43,7 +43,7 @@ public class ActionHSQL extends GeneralHSQLDBOperations implements ActionDAO {
 		String rq = "INSERT INTO " + TABLE_NAME + "(";
 		rq += "'" + a.getHand().getId() + "',";
 		rq += "'" + a.getAssociatedPlayer().getPlayerID() + "',";
-		rq += a.getPosInHand() + ",";
+		rq += a.getActNoForHand() + ",";
 		rq += a.getAmountBet() + ",";
 		rq += "'" + a.getKind() + "',";
 		rq += "'" + a.getMoment() + "')";

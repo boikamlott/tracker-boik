@@ -35,7 +35,7 @@ public class HandPLayerHSQL extends GeneralHSQLDBOperations implements
 		rq += "'" + pp.getPlayerID() + ",";
 		rq += "'" + h.getHandForPlayer(pp).getHand()[0] + "',";
 		rq += "'" + h.getHandForPlayer(pp).getHand()[1] + "',";
-		rq += h.getPositionForPlayer(pp) + ")";
+		rq += h.getPositionForPlayer(pp).toString() + ")";
 		
 		executeSQLUpdate(rq);
 		

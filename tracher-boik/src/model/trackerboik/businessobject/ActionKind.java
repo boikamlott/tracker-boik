@@ -1,17 +1,24 @@
 package model.trackerboik.businessobject;
 
 public enum ActionKind {
-	CALL("call"),
-	CHECK("check"),
-	FOLD("fold"),
-	POSTBIGBLIND("postBB"),
-	POSTSBLIND("postSB"),
-	RAISE("raise");
+	BET("bet", "bets"),
+	CALL("call", "calls"),
+	CHECK("check", "checks"),
+	FOLD("fold", "folds"),
+	POSTBIGBLIND("postBB", "posts big blind"),
+	POSTSBLIND("postSB", "posts small blind"),
+	RAISE("raise", "raises");
 	
 	public String valueText;
+	public String valueFile;
 	
-	private ActionKind(String valTxt) {
+	private ActionKind(String valTxt, String valFile) {
 		this.valueText = valTxt;
+		this.valueFile = valFile;
+	}
+	
+	public String getFileValue() {
+		return this.valueFile;
 	}
 
 	/**

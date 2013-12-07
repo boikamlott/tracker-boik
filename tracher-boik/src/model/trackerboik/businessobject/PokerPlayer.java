@@ -34,7 +34,9 @@ public class PokerPlayer {
 		this.actionsHands.put(pa, h);
 	}
 	
-	
+	public boolean equals(Object o) {
+		return (o instanceof PokerPlayer) && ((PokerPlayer) o).getPlayerID().equals(this.playerID);
+	}
 	
 	
 }

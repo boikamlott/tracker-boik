@@ -373,5 +373,22 @@ public class Hand {
 		return (o instanceof Hand) && ((Hand) o).getId().equals(id);
 	}
 
+	/**
+	 * Return player hands data for player given in parameter
+	 * @param pp
+	 * @return
+	 */
+	public PlayerHandData getPlayerHandData(PokerPlayer pp) throws TBException {
+		if(handDataForPlayer == null) {
+			throw new TBException("Impossible to get player data because internal error");
+		} else if(!handPlayers.contains(pp)) {
+			throw new TBException("Impossible to get player data because unknow player for hand");
+		} else if(handDataForPlayer.get(pp) == null) {
+			throw new TBException("Impossible to get player data because no data for player for hand");
+		}
+		
+		return handDataForPlayer.get(pp);
+	}
+
 
 }

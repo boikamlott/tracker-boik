@@ -1,11 +1,11 @@
-package model.trackerboik.dao.hsqldb;
+package model.trackerboik.dao.sql;
 
 import com.trackerboik.exception.TBException;
 
 import model.trackerboik.businessobject.Hand;
 import model.trackerboik.dao.HandDAO;
 
-public class HandHSQL extends GeneralHSQLDBOperations implements HandDAO {
+public class HandSQL extends GeneralSQLDBOperations implements HandDAO {
 
 	public static final String TABLE_NAME = "hand";
 
@@ -23,7 +23,7 @@ public class HandHSQL extends GeneralHSQLDBOperations implements HandDAO {
 		rq += ATT_TABLE_NAME += " VARCHAR(20),";
 		rq += ATT_MOMENT + " TIMESTAMP,";
 		rq += GEN_ATT_SESSION_ID + " VARCHAR(50) REFERENCES "
-				+ SessionHSQL.TABLE_NAME + "(" + GEN_ATT_SESSION_ID + "))";
+				+ SessionSQL.TABLE_NAME + "(" + GEN_ATT_SESSION_ID + "))";
 
 		executeSQLUpdate(rq);
 	}

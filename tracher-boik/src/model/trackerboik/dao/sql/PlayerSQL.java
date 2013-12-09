@@ -1,11 +1,11 @@
-package model.trackerboik.dao.hsqldb;
+package model.trackerboik.dao.sql;
 
 import com.trackerboik.exception.TBException;
 
 import model.trackerboik.businessobject.PokerPlayer;
 import model.trackerboik.dao.PlayerDAO;
 
-public class PlayerHSQL extends GeneralHSQLDBOperations implements PlayerDAO {
+public class PlayerSQL extends GeneralSQLDBOperations implements PlayerDAO {
 	public static final String TABLE_NAME = "player";
 
 	private static final String ATT_COMMENT = "comment";

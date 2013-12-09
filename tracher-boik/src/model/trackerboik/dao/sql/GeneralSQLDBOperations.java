@@ -1,4 +1,4 @@
-package model.trackerboik.dao.hsqldb;
+package model.trackerboik.dao.sql;
 
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -13,7 +13,7 @@ import com.trackerboik.appmngt.TrackerBoikLog;
 import com.trackerboik.bdd.TrackerBoikDataBaseConnexion;
 import com.trackerboik.exception.TBException;
 
-public abstract class GeneralHSQLDBOperations implements GeneralDBOperationsDAO {
+public abstract class GeneralSQLDBOperations implements GeneralDBOperationsDAO {
 	public static String TABLE_NAME = "";
 
 	protected static final String GEN_ATT_HAND_ID = "hand_id",
@@ -95,13 +95,13 @@ public abstract class GeneralHSQLDBOperations implements GeneralDBOperationsDAO 
 
 	public List<String> getNeededTableNamesInCorrectOrderForCreate() {
 		List<String> res = new ArrayList<>();
-		res.add(SessionHSQL.TABLE_NAME.toUpperCase());
-		res.add(BoardHSQL.TABLE_NAME.toUpperCase());
-		res.add(HandHSQL.TABLE_NAME.toUpperCase());
-		res.add(HandBoardHSQL.TABLE_NAME.toUpperCase());
-		res.add(PlayerHSQL.TABLE_NAME.toUpperCase());
+		res.add(SessionSQL.TABLE_NAME.toUpperCase());
+		res.add(BoardSQL.TABLE_NAME.toUpperCase());
+		res.add(HandSQL.TABLE_NAME.toUpperCase());
+		res.add(HandBoardSQL.TABLE_NAME.toUpperCase());
+		res.add(PlayerSQL.TABLE_NAME.toUpperCase());
 		res.add(HandPLayerHSQL.TABLE_NAME.toUpperCase());
-		res.add(ActionHSQL.TABLE_NAME.toUpperCase());
+		res.add(ActionSQL.TABLE_NAME.toUpperCase());
 
 		return res;
 	}
@@ -111,13 +111,13 @@ public abstract class GeneralHSQLDBOperations implements GeneralDBOperationsDAO 
 		List<String> res = new ArrayList<>();
 
 		
-		res.add(ActionHSQL.TABLE_NAME.toUpperCase());
+		res.add(ActionSQL.TABLE_NAME.toUpperCase());
 		res.add(HandPLayerHSQL.TABLE_NAME.toUpperCase());
-		res.add(HandBoardHSQL.TABLE_NAME.toUpperCase());
-		res.add(HandHSQL.TABLE_NAME.toUpperCase());
-		res.add(SessionHSQL.TABLE_NAME.toUpperCase());
-		res.add(BoardHSQL.TABLE_NAME.toUpperCase());
-		res.add(PlayerHSQL.TABLE_NAME.toUpperCase());
+		res.add(HandBoardSQL.TABLE_NAME.toUpperCase());
+		res.add(HandSQL.TABLE_NAME.toUpperCase());
+		res.add(SessionSQL.TABLE_NAME.toUpperCase());
+		res.add(BoardSQL.TABLE_NAME.toUpperCase());
+		res.add(PlayerSQL.TABLE_NAME.toUpperCase());
 
 		return res;
 	}

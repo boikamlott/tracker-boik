@@ -1,11 +1,11 @@
-package model.trackerboik.dao.hsqldb;
+package model.trackerboik.dao.sql;
 
 import com.trackerboik.exception.TBException;
 
 import model.trackerboik.businessobject.PokerSession;
 import model.trackerboik.dao.SessionDAO;
 
-public class SessionHSQL extends GeneralHSQLDBOperations implements SessionDAO {
+public class SessionSQL extends GeneralSQLDBOperations implements SessionDAO {
 
 	public static final String TABLE_NAME = "session";
 	

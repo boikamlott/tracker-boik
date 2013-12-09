@@ -4,13 +4,13 @@ import java.util.List;
 
 import model.trackerboik.dao.ActionDAO;
 import model.trackerboik.dao.GeneralDBOperationsDAO;
-import model.trackerboik.dao.hsqldb.ActionHSQL;
-import model.trackerboik.dao.hsqldb.BoardHSQL;
-import model.trackerboik.dao.hsqldb.HandBoardHSQL;
-import model.trackerboik.dao.hsqldb.HandHSQL;
-import model.trackerboik.dao.hsqldb.HandPLayerHSQL;
-import model.trackerboik.dao.hsqldb.PlayerHSQL;
-import model.trackerboik.dao.hsqldb.SessionHSQL;
+import model.trackerboik.dao.sql.ActionSQL;
+import model.trackerboik.dao.sql.BoardSQL;
+import model.trackerboik.dao.sql.HandBoardSQL;
+import model.trackerboik.dao.sql.HandSQL;
+import model.trackerboik.dao.sql.HandPLayerHSQL;
+import model.trackerboik.dao.sql.PlayerSQL;
+import model.trackerboik.dao.sql.SessionSQL;
 
 import com.trackerboik.exception.TBException;
 
@@ -57,20 +57,20 @@ public class BDDUtil {
 		
 		tbName = tbName.toLowerCase();
 		switch (tbName) {
-		case ActionHSQL.TABLE_NAME:
-			return new ActionHSQL();	
-		case BoardHSQL.TABLE_NAME:
-			return new BoardHSQL();
-		case HandBoardHSQL.TABLE_NAME:
-			return new HandBoardHSQL();
-		case HandHSQL.TABLE_NAME:
-			return new HandHSQL();
+		case ActionSQL.TABLE_NAME:
+			return new ActionSQL();	
+		case BoardSQL.TABLE_NAME:
+			return new BoardSQL();
+		case HandBoardSQL.TABLE_NAME:
+			return new HandBoardSQL();
+		case HandSQL.TABLE_NAME:
+			return new HandSQL();
 		case HandPLayerHSQL.TABLE_NAME:
 			return new HandPLayerHSQL();
-		case PlayerHSQL.TABLE_NAME:
-			return new PlayerHSQL();
-		case SessionHSQL.TABLE_NAME:
-			return new SessionHSQL();
+		case PlayerSQL.TABLE_NAME:
+			return new PlayerSQL();
+		case SessionSQL.TABLE_NAME:
+			return new SessionSQL();
 		default :
 			return null;
 		}

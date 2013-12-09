@@ -1,11 +1,11 @@
-package model.trackerboik.dao.hsqldb;
+package model.trackerboik.dao.sql;
 
 import com.trackerboik.exception.TBException;
 
 import model.trackerboik.businessobject.PokerBoard;
 import model.trackerboik.dao.BoardDAO;
 
-public class BoardHSQL extends GeneralHSQLDBOperations implements BoardDAO {
+public class BoardSQL extends GeneralSQLDBOperations implements BoardDAO {
 	public static final String TABLE_NAME = "board";
 	
 	private static final String ATT_FLOP_1 = "flop_1",

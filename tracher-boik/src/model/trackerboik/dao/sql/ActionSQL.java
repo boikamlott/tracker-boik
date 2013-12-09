@@ -1,4 +1,4 @@
-package model.trackerboik.dao.hsqldb;
+package model.trackerboik.dao.sql;
 
 import model.trackerboik.businessobject.ActionKind;
 import model.trackerboik.businessobject.HandMoment;
@@ -8,7 +8,7 @@ import model.trackerboik.dao.ActionDAO;
 import com.trackerboik.exception.TBException;
 import com.trackerboik.util.BDDUtil;
 
-public class ActionHSQL extends GeneralHSQLDBOperations implements ActionDAO {
+public class ActionSQL extends GeneralSQLDBOperations implements ActionDAO {
 	
 	public static final String TABLE_NAME = "action";
 	

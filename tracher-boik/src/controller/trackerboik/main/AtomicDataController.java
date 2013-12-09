@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import model.trackerboik.dao.GeneralDBOperationsDAO;
-import model.trackerboik.dao.hsqldb.SessionHSQL;
+import model.trackerboik.dao.sql.SessionSQL;
 
 import com.trackerboik.appmngt.TrackerBoikLog;
 import com.trackerboik.exception.TBException;
@@ -107,7 +107,7 @@ public class AtomicDataController {
 	}
 
 	public void checkAtomicDataDBSchema() throws TBException {
-		GeneralDBOperationsDAO db = new SessionHSQL();
+		GeneralDBOperationsDAO db = new SessionSQL();
 		List<String> dbTableNames = db.getTableNames();
 		List<String> appTablesNeededNames = db
 				.getNeededTableNamesInCorrectOrderForDrop();
@@ -138,7 +138,7 @@ public class AtomicDataController {
 	 * already exists
 	 */
 	private void createAtomicDatabaseSchema() throws TBException {
-		GeneralDBOperationsDAO db = new SessionHSQL();
+		GeneralDBOperationsDAO db = new SessionSQL();
 		List<String> tbNames = db.getNeededTableNamesInCorrectOrderForCreate();
 
 		for (String table : tbNames) {
@@ -154,7 +154,7 @@ public class AtomicDataController {
 	 * Delete all data from atomic data DB PRE: Schema is correct
 	 */
 	private void eraseAllAtomicData() throws TBException {
-		GeneralDBOperationsDAO db = new SessionHSQL();
+		GeneralDBOperationsDAO db = new SessionSQL();
 		List<String> tbNames = db.getNeededTableNamesInCorrectOrderForDrop();
 
 		for (String table : tbNames) {

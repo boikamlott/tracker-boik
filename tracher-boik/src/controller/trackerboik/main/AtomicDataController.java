@@ -45,9 +45,9 @@ public class AtomicDataController {
 					.getProperty(AppUtil.ATOMIC_DATA_FOLDER));
 			String[] files = f.list();
 			for (String file : files) {
-				String fpath = f.getAbsolutePath().endsWith(File.pathSeparator) ? f
+				String fpath = f.getAbsolutePath().endsWith(File.separator) ? f
 						.getAbsolutePath() + file
-						: f.getAbsolutePath() + File.pathSeparator + file;
+						: f.getAbsolutePath() + File.separator + file;
 				try {
 					parseDataOfFile(fpath);
 					TrackerBoikLog.getInstance().log(

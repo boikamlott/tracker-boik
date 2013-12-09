@@ -39,6 +39,7 @@ public class Hand {
 	public Hand(String id, PokerSession s) {
 		setId(id);
 		setAssociatedSession(s);
+		board = new PokerBoard(id);
 		handPlayers = new LinkedList<PokerPlayer>();
 		handActions = new LinkedList<PokerAction>();
 		handDataForPlayer = new HashMap<PokerPlayer, PlayerHandData>();
@@ -168,7 +169,45 @@ public class Hand {
 		handDataForPlayer.get(pp).setResult(hr);
 
 	}
+	
+	/**
+	 * Set all-in flag for player in this hand
+	 * @param pp
+	 * @throws TBException
+	 */
+	public void upAllInFlagForPlayer(PokerPlayer pp) throws TBException {
+		if (handPlayers == null || pp == null) {
+			throw new TBException(
+					"Internal error in Hand Module: Invalid data structure or parameter(s) " +
+					"in up AllIn flag for player function");
+		} else if (!handPlayers.contains(pp)) {
+			throw new TBException("Impossible to find player '"
+					+ pp.getPlayerID() + "' for hand '" + this.id + "'");
+		}
 
+		handDataForPlayer.get(pp).upWasAllIn();
+		
+	}
+
+	/**
+	 * Set amount won by player on this hand
+	 * @param pp
+	 * @param amountWon
+	 * @throws TBException 
+	 */
+	public void setAmountWonForPlayer(PokerPlayer pp, Double amountWon) throws TBException {
+		if (handPlayers == null || pp == null || amountWon == null || amountWon <= 0.0) {
+			throw new TBException(
+					"Internal error in Hand Module: Invalid data structure or parameter(s) " +
+					"in set amount won for player function");
+		} else if (!handPlayers.contains(pp)) {
+			throw new TBException("Impossible to find player '"
+					+ pp.getPlayerID() + "' for hand '" + this.id + "'");
+		}
+
+		handDataForPlayer.get(pp).setAmountWin(amountWon);		
+	}
+	
 	/**
 	 * Add actions to the hand Must be use after add all players hand
 	 * 
@@ -225,12 +264,14 @@ public class Hand {
 			throw new TBException("Invalid hands reference in action");
 		} else if (!(pa.getAmountBet() == null
 				&& pa.getKind().equals(ActionKind.FOLD) || pa.getAmountBet() != null
-				&& !pa.getKind().equals(ActionKind.FOLD))) {
+				&& !pa.getKind().equals(ActionKind.FOLD)) && !(pa.getAmountBet() == null
+						&& pa.getKind().equals(ActionKind.CHECK) || pa.getAmountBet() != null
+						&& !pa.getKind().equals(ActionKind.CHECK))) {
 			throw new TBException(
 					"Invalid relation beetween kind and amount for action");
 		} else if (!handPlayers.contains(pa.getAssociatedPlayer())) {
 			throw new TBException("Unknow player for action");
-		} else if (handPlayers.size() + 1 != pa.getActNoForHand()) {
+		} else if (handActions.size() + 1 != pa.getActNoForHand()) {
 			throw new TBException(
 					"Invalid action number, missing actions or action already exists !");
 		}
@@ -319,5 +360,18 @@ public class Hand {
 	public List<PokerPlayer> getPlayers() {
 		return handPlayers;
 	}
+
+	/**
+	 * Constructor just used ofr test equals function
+	 * @param id
+	 */
+	public Hand(String id) {
+		this.id = id;
+	}
+	
+	public boolean equals(Object o) {
+		return (o instanceof Hand) && ((Hand) o).getId().equals(id);
+	}
+
 
 }

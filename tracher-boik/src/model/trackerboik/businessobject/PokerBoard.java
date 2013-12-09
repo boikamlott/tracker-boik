@@ -39,7 +39,7 @@ public class PokerBoard {
 			throw new TBException("Business error in PokerBoard module: Invalid set flop call for poker Board '" + id + "' !");
 		}
 		
-		for(int i = FLOP_1; i < FLOP_3; i++) {
+		for(int i = FLOP_1; i <= FLOP_3; i++) {
 			setCard(i, flopCards.get(i));
 		}
 	}

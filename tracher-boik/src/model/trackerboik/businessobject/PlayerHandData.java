@@ -6,9 +6,13 @@ public class PlayerHandData {
 	private PokerHand cards;
 	private Double stackBefore;
 	private HandResult result;
+	private Boolean wasAllIn;
+	private Double amountWin;
 	
 	public PlayerHandData() {
-		
+		//Default value in all-in case
+		this.wasAllIn = false;
+		this.amountWin = 0.0;
 	}
 
 	public Integer getPosition() {
@@ -42,6 +46,24 @@ public class PlayerHandData {
 	public void setResult(HandResult result) {
 		this.result = result;
 	}
+
+	public Boolean isAllIn() {
+		return wasAllIn;
+	}
+
+	public void upWasAllIn() {
+		this.wasAllIn = true;
+	}
+
+	public Double getAmountWin() {
+		return amountWin;
+	}
+
+	public void setAmountWin(Double amountWin) {
+		this.amountWin = amountWin;
+	}
+	
+	
 	
 	
 }

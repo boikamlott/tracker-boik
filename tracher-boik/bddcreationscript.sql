@@ -55,7 +55,9 @@ CREATE TABLE hand_player (
 	card_2 VARCHAR(2),
 	position int NOT NULL,
 	stack_before double NOT NULL,
+	is_all_in VARCHAR(2),
 	result VARCHAR(50) NOT NULL,
+	CONSTRAINT all_in_bool_enum CHECK (is_all_in in ('y', 'n')),
 	CONSTRAINT result_enum CHECK (result in ('no_bet', 'fold_preflop', 'fold_flop', 'fold_turn', 'fold_river', 'loose', 'win')),
 	CONSTRAINT pk_hand_player PRIMARY KEY (hand_id, player_id)
 );

@@ -73,4 +73,11 @@ public class TrackerBoikController {
 	public ConfigurationController getConfigurationController() {
 		return configurationController;
 	}
+
+	public void addSession(PokerSession s) throws TBException {
+		if(sessionsInMemory.contains(new PokerSession(s.getId()))) {
+			throw new TBException("Session with ID: " + s.getId() + " already load in memeory !");
+		}
+		sessionsInMemory.add(s);
+	}
 }

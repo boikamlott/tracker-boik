@@ -1,5 +1,7 @@
 package model.trackerboik.dao.sql;
 
+import java.sql.ResultSet;
+
 import com.trackerboik.exception.TBException;
 
 import model.trackerboik.businessobject.PokerPlayer;
@@ -28,6 +30,18 @@ public class PlayerSQL extends GeneralSQLDBOperations implements PlayerDAO {
 		
 		executeSQLUpdate(rq);
 		
+	}
+
+	@Override
+	public boolean isPlayerExists(String playerID) throws TBException {
+		try {
+			String rq = "SELECT * FROM " + TABLE_NAME + " WHERE " + GEN_ATT_PLAYER_ID + "='" + playerID + "'";
+			ResultSet rs = executeSQLQuery(rq);
+			
+			return rs.next();
+		} catch (Exception e) {
+			throw new TBException("Impossible to check Player existence in database: '" + e.getMessage() + "'");
+		}
 	}
 
 }

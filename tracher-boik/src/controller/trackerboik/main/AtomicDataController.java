@@ -5,7 +5,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import model.trackerboik.businessobject.Hand;
+import model.trackerboik.businessobject.PokerAction;
+import model.trackerboik.businessobject.PokerPlayer;
+import model.trackerboik.businessobject.PokerSession;
+import model.trackerboik.dao.ActionDAO;
+import model.trackerboik.dao.BoardDAO;
 import model.trackerboik.dao.GeneralDBOperationsDAO;
+import model.trackerboik.dao.HandBoardDAO;
+import model.trackerboik.dao.HandDAO;
+import model.trackerboik.dao.HandPlayerDAO;
+import model.trackerboik.dao.PlayerDAO;
+import model.trackerboik.dao.SessionDAO;
+import model.trackerboik.dao.sql.ActionSQL;
+import model.trackerboik.dao.sql.BoardSQL;
+import model.trackerboik.dao.sql.HandBoardSQL;
+import model.trackerboik.dao.sql.HandPLayerHSQL;
+import model.trackerboik.dao.sql.HandSQL;
+import model.trackerboik.dao.sql.PlayerSQL;
 import model.trackerboik.dao.sql.SessionSQL;
 
 import com.trackerboik.appmngt.TrackerBoikLog;
@@ -31,9 +48,96 @@ public class AtomicDataController {
 			checkAtomicDataDBSchema();
 			eraseAllAtomicData();
 			computeAllAtomicData();
+			loadAllSessionsInMemoryToDataBase();
 		} catch (TBException e) {
 			// TODO raise error window
 		}
+	}
+	
+	/**
+	 * Write all data contained in memory in database
+	 */
+	private void loadAllSessionsInMemoryToDataBase() throws TBException {
+		for(PokerSession ps : parentController.getSessions()) {
+			SessionDAO sessionDB = new SessionSQL();
+			sessionDB.insertSession(ps);
+			for(Hand h : ps.getHands()) {
+				try {
+					writeHandInDataBase(h);
+				} catch (TBException e) {
+					TrackerBoikLog.getInstance().log(Level.WARNING, "Impossible to write hand(" + h.getId() + " in Database: " + e.getMessage() + "'");
+				} catch (Exception e) {
+					TrackerBoikLog.getInstance().log(Level.WARNING, "Impossible to write hand(" + h.getId() + " in Database for unknow reason: " + e.getMessage() + "'");
+				}
+			}	
+		}
+		
+	}
+
+	/**
+	 * Writes hand in database
+	 * @param h
+	 */
+	private void writeHandInDataBase(Hand h) throws TBException{
+		HandDAO handDB = new HandSQL();
+		
+		if(handDB.isHandExists(h.getId())) {
+			throw new TBException("Hand already exists in database");
+		}
+		
+		//Insert Hand
+		handDB.insertHand(h);
+		//Insert Players and HandPlayer
+		writesAllPlayersHand(h);
+		//Insert Board and HandBoard(if any)
+		writeHandBoardIfExists(h);
+		//Insert Actions
+		writeActionsForHand(h);
+	}
+
+	/**
+	 * Write all actions related to hand in database
+	 * @param h
+	 */
+	private void writeActionsForHand(Hand h) throws TBException {
+		for(PokerAction pa : h.getActions()) {
+			ActionDAO actionDB = new ActionSQL();
+			actionDB.insertAction(pa);
+		}
+	}
+
+	/**
+	 * Write the board corresponding to hand in database if exists
+	 * @param h
+	 * @throws TBException 
+	 */
+	private void writeHandBoardIfExists(Hand h) throws TBException {
+		if(!h.getBoard().isEmpty()) {
+			BoardDAO boardDB = new BoardSQL();
+			HandBoardDAO handBoardDB = new HandBoardSQL();
+			
+			boardDB.insertBoard(h.getBoard());
+			handBoardDB.insertHandBoard(h, h.getBoard());
+		}
+	}
+
+	/**
+	 * Writes all player if not already exists in database for the player list
+	 * @param players
+	 * @throws TBException
+	 */
+	private void writesAllPlayersHand(Hand h) throws TBException {
+		PlayerDAO playerDB = new PlayerSQL();
+		
+		//Insert all players
+		for(PokerPlayer pp : h.getPlayers()) {
+			if(!playerDB.isPlayerExists(pp.getPlayerID())) {
+				playerDB.insertPlayer(pp);
+			}
+			HandPlayerDAO handPlayerDB = new HandPLayerHSQL();
+			handPlayerDB.insertHandPlayer(h, pp);
+		}
+		
 	}
 
 	/**

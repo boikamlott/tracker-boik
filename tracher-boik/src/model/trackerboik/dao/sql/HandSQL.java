@@ -1,9 +1,11 @@
 package model.trackerboik.dao.sql;
 
-import com.trackerboik.exception.TBException;
+import java.sql.ResultSet;
 
 import model.trackerboik.businessobject.Hand;
 import model.trackerboik.dao.HandDAO;
+
+import com.trackerboik.exception.TBException;
 
 public class HandSQL extends GeneralSQLDBOperations implements HandDAO {
 
@@ -41,6 +43,18 @@ public class HandSQL extends GeneralSQLDBOperations implements HandDAO {
 		
 		executeSQLUpdate(rq);
 		
+	}
+
+	@Override
+	public boolean isHandExists(String id) throws TBException {
+		try {
+			String rq = "SELECT * FROM " + TABLE_NAME + " WHERE " + GEN_ATT_HAND_ID + "='" + id + "'";
+			ResultSet rs = executeSQLQuery(rq);
+			
+			return rs.next();
+		} catch (Exception e) {
+			throw new TBException("Impossible to check Hand existence in database: '" + e.getMessage() + "'");
+		}
 	}
 
 }

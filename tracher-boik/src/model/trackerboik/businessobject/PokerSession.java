@@ -73,5 +73,13 @@ public class PokerSession {
 	public boolean equals(Object o) {
 		return (o instanceof PokerSession) && ((PokerSession) o).getId().equals(id);
 	}
+
+	/**
+	 * Return the list of hands for the session
+	 * @return
+	 */
+	public List<Hand> getHands() {
+		return hands;
+	}
 	
 }

@@ -14,7 +14,6 @@ public class AppUtil {
 	public static final String POKERSTARS = "PokerStars";
 	public static final String POKERSTARS_ZOOM = "PokerStars Zoom Hand";
 	public static final Integer MAX_PLAYERS = 9;
-	public static final String SPACE_IN_PLAYER_ID_ENCODING = "@@TB_SPACE@@";
 	
 	/**
 	 * Return associated calendar

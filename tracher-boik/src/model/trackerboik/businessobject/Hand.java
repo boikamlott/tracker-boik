@@ -390,5 +390,13 @@ public class Hand {
 		return handDataForPlayer.get(pp);
 	}
 
+	/**
+	 * Return hands actions
+	 * @return
+	 */
+	public List<PokerAction> getActions() {
+		return handActions;
+	}
+
 
 }

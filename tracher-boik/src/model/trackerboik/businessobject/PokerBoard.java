@@ -99,4 +99,17 @@ public class PokerBoard {
 		return cards[RIVER];
 	}
 	
+	/**
+	 * True if there is no cards in the board
+	 * @return
+	 */
+	public boolean isEmpty() {
+		for(PokerCard pc : cards) {
+			if(pc == null) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
 }

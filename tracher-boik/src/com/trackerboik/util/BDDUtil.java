@@ -8,7 +8,7 @@ import model.trackerboik.dao.sql.ActionSQL;
 import model.trackerboik.dao.sql.BoardSQL;
 import model.trackerboik.dao.sql.HandBoardSQL;
 import model.trackerboik.dao.sql.HandSQL;
-import model.trackerboik.dao.sql.HandPLayerHSQL;
+import model.trackerboik.dao.sql.HandPLayerSQL;
 import model.trackerboik.dao.sql.PlayerSQL;
 import model.trackerboik.dao.sql.SessionSQL;
 
@@ -65,8 +65,8 @@ public class BDDUtil {
 			return new HandBoardSQL();
 		case HandSQL.TABLE_NAME:
 			return new HandSQL();
-		case HandPLayerHSQL.TABLE_NAME:
-			return new HandPLayerHSQL();
+		case HandPLayerSQL.TABLE_NAME:
+			return new HandPLayerSQL();
 		case PlayerSQL.TABLE_NAME:
 			return new PlayerSQL();
 		case SessionSQL.TABLE_NAME:

@@ -1,5 +1,8 @@
 package model.trackerboik.dao.sql;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 import model.trackerboik.businessobject.ActionKind;
 import model.trackerboik.businessobject.HandMoment;
 import model.trackerboik.businessobject.PokerAction;
@@ -23,14 +26,14 @@ public class ActionSQL extends GeneralSQLDBOperations implements ActionDAO {
 		String momentValues = BDDUtil.getEnumValuesToStringForBDD(HandMoment.values());
 		
 		String rq = "CREATE TABLE " + TABLE_NAME + " (";
-		rq += GEN_ATT_HAND_ID + " VARCHAR(20),";
-		rq += GEN_ATT_PLAYER_ID + " VARCHAR(50),";
+		rq += GEN_ATT_HAND_ID + " VARCHAR(256),";
+		rq += GEN_ATT_PLAYER_ID + " VARCHAR(256),";
 		rq += ATT_ACTION_NUMBER + " int NOT NULL,";
 		rq += ATT_AMOUNT_BET + " double NOT NULL,";
 		rq += ATT_KIND + " VARCHAR(10) NOT NULL,";
 		rq += ATT_MOMENT + " VARCHAR(10) NOT NULL,";
 		rq += "CONSTRAINT pk_action PRIMARY KEY (" + GEN_ATT_HAND_ID + "," + GEN_ATT_PLAYER_ID + "," + ATT_ACTION_NUMBER + "),";
-		rq += "CONSTRAINT fk_hand_id_player_id_a FOREIGN KEY (" + GEN_ATT_HAND_ID + "," +GEN_ATT_PLAYER_ID + ") REFERENCES " + HandPLayerHSQL.TABLE_NAME + "(" + GEN_ATT_HAND_ID + "," +GEN_ATT_PLAYER_ID + "),";	
+		rq += "CONSTRAINT fk_hand_id_player_id_a FOREIGN KEY (" + GEN_ATT_HAND_ID + "," +GEN_ATT_PLAYER_ID + ") REFERENCES " + HandPLayerSQL.TABLE_NAME + "(" + GEN_ATT_HAND_ID + "," +GEN_ATT_PLAYER_ID + "),";	
 		rq += "CONSTRAINT kind_enum CHECK (" + ATT_KIND + " in (" + kindEnumValues + ")),";
 		rq += "CONSTRAINT moment_enum CHECK (" + ATT_MOMENT + " in (" + momentValues + ")))";
 		
@@ -40,15 +43,23 @@ public class ActionSQL extends GeneralSQLDBOperations implements ActionDAO {
 
 	@Override
 	public void insertAction(PokerAction a) throws TBException {
-		String rq = "INSERT INTO " + TABLE_NAME + "(";
-		rq += "'" + a.getHand().getId() + "',";
-		rq += "'" + a.getAssociatedPlayer().getPlayerID() + "',";
-		rq += a.getActNoForHand() + ",";
-		rq += a.getAmountBet() + ",";
-		rq += "'" + a.getKind() + "',";
-		rq += "'" + a.getMoment() + "')";
+		try {
+			String rq = "INSERT INTO " + TABLE_NAME + " VALUES (?, ?, ?, ?, ?, ?)";
+			PreparedStatement psbdd = createPreparedStatement(rq);
 		
-		executeSQLUpdate(rq);
+			psbdd.setString(1, a.getHand().getId());
+			psbdd.setString(2, a.getAssociatedPlayer().getPlayerID());
+			psbdd.setInt(3, a.getActNoForHand());
+			psbdd.setDouble(4, a.getAmountBet() == null ? 0.0 : a.getAmountBet());
+			psbdd.setString(5, a.getKind().toString());
+			psbdd.setString(6, a.getMoment().toString());
+		
+			if(psbdd.execute()) {
+				throw new TBException("Unexpected result while trying to insert action n°" + a.getActNoForHand() + " for hand " + a.getHand().getId());
+			}
+		} catch (SQLException e) {
+			throw new TBException("Impossible to add action n°" + a.getActNoForHand() + " for hand " + a.getHand().getId() + " because: " + e.getMessage());
+		}
 	}
 
 }

@@ -1,5 +1,8 @@
 package model.trackerboik.dao.sql;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 import com.trackerboik.exception.TBException;
 
 import model.trackerboik.businessobject.PokerSession;
@@ -15,21 +18,30 @@ public class SessionSQL extends GeneralSQLDBOperations implements SessionDAO {
 	@Override
 	public void createTable() throws TBException {
 		String rq = "CREATE TABLE " + TABLE_NAME + " (";
-		rq += GEN_ATT_SESSION_ID + " VARCHAR(50) PRIMARY KEY,";
-		rq += ATT_FILE_ASSOCIATED_NM + " VARCHAR(100) NOT NULL,";
-		rq += ATT_SESSION_KIND + " VARCHAR(50))";
+		rq += GEN_ATT_SESSION_ID + " VARCHAR(256) PRIMARY KEY,";
+		rq += ATT_FILE_ASSOCIATED_NM + " VARCHAR(256) NOT NULL,";
+		rq += ATT_SESSION_KIND + " VARCHAR(256))";
 		
 		executeSQLUpdate(rq);
 	}
 
 	@Override
 	public void insertSession(PokerSession ps) throws TBException {
-		String rq = "INSERT INTO " + TABLE_NAME + "(";
-		rq += "'" + ps.getId() + "',";
-		rq += "'" + ps.getAssociatedFileName() + "',";
-		rq += "'" + ps.getSessionKind() + "')";
+		try {
+			String rq = "INSERT INTO " + TABLE_NAME + " VALUES (?, ?, ?)";
+			PreparedStatement psbdd = createPreparedStatement(rq);
 		
-		executeSQLUpdate(rq);
+			psbdd.setString(1, ps.getId());
+			psbdd.setString(2, ps.getAssociatedFileName());
+			psbdd.setString(3, ps.getSessionKind());
+		
+			if(psbdd.execute()) {
+				throw new TBException("Unexpected result while trying to insert session " + ps.getId());
+			}
+			
+		} catch (SQLException e) {
+			throw new TBException("Error while preparing session " + ps.getId() + " insertion: " + e.getMessage());
+		}
 		
 	}
 

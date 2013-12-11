@@ -3,6 +3,7 @@ package com.trackerboik.bdd;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -141,6 +142,20 @@ public class TrackerBoikDataBaseConnexion {
 			return connection.getCatalog();
 		} catch (SQLException e) {
 			throw new TBException("SQLException: '" + e.getMessage() + "'");
+		}
+	}
+
+	/**
+	 * Return a prepared statement for the query given in parameter
+	 * @param rq
+	 * @return
+	 */
+	public PreparedStatement getPreparedStatement(String rq) throws TBException {
+		try {
+			refreshConnection();
+			return connection.prepareStatement(rq);
+		} catch (SQLException e) {
+			throw new TBException("Error with DB when preparing statement for query: " + rq);
 		}
 	}
 }

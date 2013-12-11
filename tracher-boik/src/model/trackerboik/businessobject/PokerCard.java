@@ -55,4 +55,8 @@ public class PokerCard {
 		return value != null && color != null;
 	}
 	
+	public String toString() {
+		return value.toString() + color.toString();
+	}
+	
 }

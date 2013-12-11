@@ -9,14 +9,14 @@ drop table player;
 
 /* Représente une session a une table */
 CREATE TABLE session (
-	session_id VARCHAR(50) PRIMARY KEY,
-	file_associated_name VARCHAR(100) NOT NULL,
-	session_kind VARCHAR(50)
+	session_id VARCHAR(256) PRIMARY KEY,
+	file_associated_name VARCHAR(256) NOT NULL,
+	session_kind VARCHAR(256)
 );
 
 /* Represente le board, le flop ne peut être nul sinon on aurait pas d'entrée */
 CREATE TABLE board (
-	board_id varchar(10) PRIMARY KEY,
+	board_id varchar(256) PRIMARY KEY,
 	flop_1 varchar(2) NOT NULL,
 	flop_2 varchar(2) NOT NULL,
 	flop_3 varchar(2) NOT NULL,
@@ -26,31 +26,31 @@ CREATE TABLE board (
 
 /* Represente une main disputée */
 CREATE TABLE hand (
-	hand_id VARCHAR(20) PRIMARY KEY,
+	hand_id VARCHAR(256) PRIMARY KEY,
 	pot double NOT NULL,
 	rake double NOT NULL,
 	bb_value double NOT NULL,
-	tableName VARCHAR(20),
+	tableName VARCHAR(256),
 	moment TIMESTAMP,
-	session_id VARCHAR(50) REFERENCES session(session_id)
+	session_id VARCHAR(256) REFERENCES session(session_id)
 );
 
 /* Represente le lien entre la main et le board */
 CREATE TABLE hand_board (
-	hand_id VARCHAR(20) PRIMARY KEY REFERENCES hand(hand_id),
-	board_id VARCHAR(10) REFERENCES board(board_id)
+	hand_id VARCHAR(256) PRIMARY KEY REFERENCES hand(hand_id),
+	board_id VARCHAR(256) REFERENCES board(board_id)
 );
 
 /* Represente les joueurs */
 CREATE TABLE player (
-	player_id VARCHAR(50) PRIMARY KEY,
+	player_id VARCHAR(256) PRIMARY KEY,
 	comment VARCHAR(256)
 );	
 
 /* Représente les mains auxquelles ont participés les joueurs */
 CREATE TABLE hand_player (
-	hand_id VARCHAR(20) REFERENCES hand(hand_id),
-	player_id VARCHAR(50) REFERENCES player(player_id),
+	hand_id VARCHAR(256) REFERENCES hand(hand_id),
+	player_id VARCHAR(256) REFERENCES player(player_id),
 	card_1 VARCHAR(2),
 	card_2 VARCHAR(2),
 	position int NOT NULL,
@@ -65,8 +65,8 @@ CREATE TABLE hand_player (
 
 /* Représente une action durant une main */
 CREATE TABLE action (
-	hand_id VARCHAR(20),
-	player_id VARCHAR(50),
+	hand_id VARCHAR(256),
+	player_id VARCHAR(256),
 	action_number int NOT NULL,
 	amout_bet double NOT NULL,
 	kind VARCHAR(10) NOT NULL,

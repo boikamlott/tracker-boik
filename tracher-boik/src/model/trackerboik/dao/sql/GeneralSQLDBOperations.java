@@ -1,6 +1,7 @@
 package model.trackerboik.dao.sql;
 
 import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -100,7 +101,7 @@ public abstract class GeneralSQLDBOperations implements GeneralDBOperationsDAO {
 		res.add(HandSQL.TABLE_NAME.toUpperCase());
 		res.add(HandBoardSQL.TABLE_NAME.toUpperCase());
 		res.add(PlayerSQL.TABLE_NAME.toUpperCase());
-		res.add(HandPLayerHSQL.TABLE_NAME.toUpperCase());
+		res.add(HandPLayerSQL.TABLE_NAME.toUpperCase());
 		res.add(ActionSQL.TABLE_NAME.toUpperCase());
 
 		return res;
@@ -112,7 +113,7 @@ public abstract class GeneralSQLDBOperations implements GeneralDBOperationsDAO {
 
 		
 		res.add(ActionSQL.TABLE_NAME.toUpperCase());
-		res.add(HandPLayerHSQL.TABLE_NAME.toUpperCase());
+		res.add(HandPLayerSQL.TABLE_NAME.toUpperCase());
 		res.add(HandBoardSQL.TABLE_NAME.toUpperCase());
 		res.add(HandSQL.TABLE_NAME.toUpperCase());
 		res.add(SessionSQL.TABLE_NAME.toUpperCase());
@@ -122,6 +123,11 @@ public abstract class GeneralSQLDBOperations implements GeneralDBOperationsDAO {
 		return res;
 	}
 
+	protected PreparedStatement createPreparedStatement(String rq) throws TBException {
+		dbCon = new TrackerBoikDataBaseConnexion();
+		return dbCon.getPreparedStatement(rq);
+	}
+	
 	/**
 	 * Execute SQL request
 	 * 

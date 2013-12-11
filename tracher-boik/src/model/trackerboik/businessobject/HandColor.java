@@ -32,4 +32,8 @@ public enum HandColor {
 				return null;
 		}
 	}
+	
+	public String toString() {
+		return valueText;
+	}
 }

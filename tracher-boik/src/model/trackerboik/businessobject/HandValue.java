@@ -60,4 +60,8 @@ public enum HandValue {
 		}
 		
 	}
+	
+	public String toString() {
+		return valueText;
+	}
 }

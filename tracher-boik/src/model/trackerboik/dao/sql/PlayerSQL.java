@@ -1,6 +1,8 @@
 package model.trackerboik.dao.sql;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import com.trackerboik.exception.TBException;
 
@@ -15,8 +17,8 @@ public class PlayerSQL extends GeneralSQLDBOperations implements PlayerDAO {
 	@Override
 	public void createTable() throws TBException {
 		String rq = "CREATE TABLE " + TABLE_NAME + " (";
-		rq += GEN_ATT_PLAYER_ID + " VARCHAR(50) PRIMARY KEY,";
-		rq += ATT_COMMENT + " VARCHAR(200))";
+		rq += GEN_ATT_PLAYER_ID + " VARCHAR(256) PRIMARY KEY,";
+		rq += ATT_COMMENT + " VARCHAR(256))";
 
 		executeSQLUpdate(rq);
 
@@ -24,11 +26,19 @@ public class PlayerSQL extends GeneralSQLDBOperations implements PlayerDAO {
 
 	@Override
 	public void insertPlayer(PokerPlayer pp) throws TBException {
-		String rq = "INSERT INTO " + TABLE_NAME + "(";
-		rq += "'" + pp.getPlayerID() + "',";
-		rq += "'" + pp.getComment() + "')";
+		try {
+			String rq = "INSERT INTO " + TABLE_NAME + " VALUES (?, ?)";
+			PreparedStatement psbdd = createPreparedStatement(rq);
 		
-		executeSQLUpdate(rq);
+			psbdd.setString(1, pp.getPlayerID());
+			psbdd.setString(2, pp.getComment());
+		
+			if(psbdd.execute()) {
+				throw new TBException("Unexpected result while trying to insert player " + pp.getPlayerID());
+			}
+		} catch (SQLException e) {
+			throw new TBException("Impossible to add player " + pp.getPlayerID() + " because: " + e.getMessage());
+		}
 		
 	}
 

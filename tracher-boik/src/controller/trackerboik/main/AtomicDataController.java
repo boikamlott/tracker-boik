@@ -20,7 +20,7 @@ import model.trackerboik.dao.SessionDAO;
 import model.trackerboik.dao.sql.ActionSQL;
 import model.trackerboik.dao.sql.BoardSQL;
 import model.trackerboik.dao.sql.HandBoardSQL;
-import model.trackerboik.dao.sql.HandPLayerHSQL;
+import model.trackerboik.dao.sql.HandPLayerSQL;
 import model.trackerboik.dao.sql.HandSQL;
 import model.trackerboik.dao.sql.PlayerSQL;
 import model.trackerboik.dao.sql.SessionSQL;
@@ -65,9 +65,9 @@ public class AtomicDataController {
 				try {
 					writeHandInDataBase(h);
 				} catch (TBException e) {
-					TrackerBoikLog.getInstance().log(Level.WARNING, "Impossible to write hand(" + h.getId() + " in Database: " + e.getMessage() + "'");
+					TrackerBoikLog.getInstance().log(Level.WARNING, "Impossible to write hand(" + h.getId() + ") in Database: " + e.getMessage() + "'");
 				} catch (Exception e) {
-					TrackerBoikLog.getInstance().log(Level.WARNING, "Impossible to write hand(" + h.getId() + " in Database for unknow reason: " + e.getMessage() + "'");
+					TrackerBoikLog.getInstance().log(Level.WARNING, "Impossible to write hand(" + h.getId() + ") in Database for unknow reason: " + e.getMessage() + "'");
 				}
 			}	
 		}
@@ -134,7 +134,7 @@ public class AtomicDataController {
 			if(!playerDB.isPlayerExists(pp.getPlayerID())) {
 				playerDB.insertPlayer(pp);
 			}
-			HandPlayerDAO handPlayerDB = new HandPLayerHSQL();
+			HandPlayerDAO handPlayerDB = new HandPLayerSQL();
 			handPlayerDB.insertHandPlayer(h, pp);
 		}
 		

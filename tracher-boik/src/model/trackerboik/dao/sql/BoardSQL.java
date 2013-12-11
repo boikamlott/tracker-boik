@@ -1,5 +1,8 @@
 package model.trackerboik.dao.sql;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 import com.trackerboik.exception.TBException;
 
 import model.trackerboik.businessobject.PokerBoard;
@@ -18,7 +21,7 @@ public class BoardSQL extends GeneralSQLDBOperations implements BoardDAO {
 	public void createTable() throws TBException {
 		
 		String rq = "CREATE TABLE " + TABLE_NAME + " (";
-			   rq += GEN_ATT_BOARD_ID + " varchar(10) PRIMARY KEY,"; 	
+			   rq += GEN_ATT_BOARD_ID + " varchar(256) PRIMARY KEY,"; 	
 			   rq += ATT_FLOP_1 + " varchar(2) NOT NULL,";	
 			   rq += ATT_FLOP_2 + " varchar(2) NOT NULL,";
 			   rq += ATT_FLOP_3 + " varchar(2) NOT NULL,";
@@ -30,22 +33,31 @@ public class BoardSQL extends GeneralSQLDBOperations implements BoardDAO {
 
 	@Override
 	public void insertBoard(PokerBoard pb) throws TBException {
-		String rq = "INSERT INTO " + TABLE_NAME + "(";
-		rq += "'" + pb.getID() + "',";
+		try {
+			String rq = "INSERT INTO " + TABLE_NAME + " VALUES (?, ?, ?, ?, ?, ?)";
+			PreparedStatement psbdd = createPreparedStatement(rq);
 		
-		if(pb.getFlop() != null) { 
-			rq += "'','','',";
-		} else {
-			for(int i = 0; i < 3 ; i++) {
-				rq += "'" + pb.getFlop().get(i) + "',";
+			psbdd.setString(1, pb.getID());			
+			if(pb.getFlop() == null) { 
+				for(int i = 2; i <= 4; i++) {
+					psbdd.setString(i, "");
+				}
+			} else {
+				for(int i = 0; i <= 2 ; i++) {
+					psbdd.setString(i + 2, pb.getFlop().get(i).toString());
+				}
 			}
+			
+			psbdd.setString(5, pb.getTurn() == null ? "" : pb.getTurn().toString());
+			psbdd.setString(6, pb.getRiver() == null ? "" : pb.getRiver().toString());
+			
+		
+			if(psbdd.execute()) {
+				throw new TBException("Unexpected result while trying to insert board " + pb.getID());
+			}
+		} catch (SQLException e) {
+			throw new TBException("Impossible to add board " + pb.getID() + " because: " + e.getMessage());
 		}	
-		
-		rq += (pb.getTurn() == null ? "''" : "'" + pb.getTurn() + "'") + ",";
-		rq += (pb.getRiver() == null ? "''" : "'" + pb.getRiver() + "'") + ")";
-		
-		executeSQLUpdate(rq);
-		
 	}
 
 }

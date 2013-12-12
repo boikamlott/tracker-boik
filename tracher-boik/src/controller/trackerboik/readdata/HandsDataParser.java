@@ -115,7 +115,8 @@ public class HandsDataParser {
 				String errorMsg = "Cette main ne sera pas chargee en base car non supportee: (ligne " + 
 											lineNo + "): '" + currentLine + "'";
 				gotToNextLine();
-				throw new TBException(errorMsg);
+				//throw new TBException(errorMsg);
+				return;
 			}
 			
 			String handID = currentLine.split("#")[1].split(":")[0].trim();
@@ -142,13 +143,15 @@ public class HandsDataParser {
 			
 			//Read real proflop actions
 			h.addActions(readActions(h, HandMoment.PREFLOP));
-
-			while(currentLine != null && !(currentLine.contains(UNCALLED_BET) || 
-					currentLine.contains(SHOWDOWN) || currentLine.contains(SUMMARY_COLLECTED))) {
-				HandMoment moment = readAndConsumeHandMomentBoard(h);
-				h.addActions(readActions(h, moment));
+			consumeUselessLines();
+			if(currentLine != null && !(currentLine.contains(UNCALLED_BET) || currentLine.contains(SUMMARY_COLLECTED))) {
+				while(currentLine != null && !(currentLine.contains(SHOWDOWN) || currentLine.contains(SUMMARY_COLLECTED))) {
+					HandMoment moment = readAndConsumeHandMomentBoard(h);
+					h.addActions(readActions(h, moment));
+					if(currentLine != null && currentLine.contains(UNCALLED_BET)) { gotToNextLine();}
+					consumeUselessLines();
+				}
 			}
-			
 			readHandSummary(h);
 			associatedSession.addHand(h);
 			
@@ -520,8 +523,9 @@ public class HandsDataParser {
 	 * @throws IOException 
 	 */
 	private void consumeUselessLines() throws IOException {
-		while(currentLine != null && currentLine.replace(" ", "").isEmpty() && currentLine.contains(CHAT_FLAG)
-				&& currentLine.startsWith(HANDS_DOWNLOAD_FILE)) {
+		while(currentLine != null && (currentLine.replace(" ", "").isEmpty() || 
+									  currentLine.contains(CHAT_FLAG) ||
+									  currentLine.startsWith(HANDS_DOWNLOAD_FILE))) {
 			gotToNextLine();
 		}
 	} 

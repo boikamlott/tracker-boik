@@ -1,16 +1,19 @@
 package model.trackerboik.dao.sql;
 
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-
-import com.trackerboik.exception.TBException;
 
 import model.trackerboik.businessobject.Hand;
 import model.trackerboik.businessobject.PokerPlayer;
 import model.trackerboik.dao.HandPlayerDAO;
 
+import com.trackerboik.exception.TBException;
+
 public class HandPLayerSQL extends GeneralSQLDBOperations implements
 		HandPlayerDAO {
+	public HandPLayerSQL() throws TBException {
+		super();
+	}
+
 	public static final String TABLE_NAME = "hand_player";
 
 	private static final String ATT_CARD_1 = "card_1", ATT_CARD_2 = "card_2", ATT_POSITION = "pos";
@@ -48,25 +51,28 @@ public class HandPLayerSQL extends GeneralSQLDBOperations implements
 	@Override
 	public void insertHandPlayer(Hand h, PokerPlayer pp) throws TBException {
 		try {
-			String rq = "INSERT INTO " + TABLE_NAME + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-			PreparedStatement psbdd = createPreparedStatement(rq);
 		
-			psbdd.setString(1, h.getId());
-			psbdd.setString(2, pp.getPlayerID());
-			psbdd.setString(3, h.getHandForPlayer(pp) == null ?  "" : h.getHandForPlayer(pp).getHand()[0].toString());
-			psbdd.setString(4, h.getHandForPlayer(pp) == null ?  "" : h.getHandForPlayer(pp).getHand()[1].toString());
-			psbdd.setInt(5, h.getPositionForPlayer(pp));
-			psbdd.setString(6, (h.getPlayerHandData(pp).isAllIn() ? "y" : "n"));
-			psbdd.setString(7, h.getPlayerHandData(pp).getResult().getTxtResult());
-			psbdd.setDouble(8, h.getPlayerHandData(pp).getStackBefore());
-			psbdd.setDouble(9, h.getPlayerHandData(pp).getAmountWin());
+			psInsert.setString(1, h.getId());
+			psInsert.setString(2, pp.getPlayerID());
+			psInsert.setString(3, h.getHandForPlayer(pp) == null ?  "" : h.getHandForPlayer(pp).getHand()[0].toString());
+			psInsert.setString(4, h.getHandForPlayer(pp) == null ?  "" : h.getHandForPlayer(pp).getHand()[1].toString());
+			psInsert.setInt(5, h.getPositionForPlayer(pp));
+			psInsert.setString(6, (h.getPlayerHandData(pp).isAllIn() ? "y" : "n"));
+			psInsert.setString(7, h.getPlayerHandData(pp).getResult().getTxtResult());
+			psInsert.setDouble(8, h.getPlayerHandData(pp).getStackBefore());
+			psInsert.setDouble(9, h.getPlayerHandData(pp).getAmountWin());
 		
-			if(psbdd.execute()) {
+			if(psInsert.execute()) {
 				throw new TBException("Unexpected result while trying to insert hand_player (" + h.getId() + "," + pp.getPlayerID() + ")");
 			}
 		} catch (SQLException e) {
 			throw new TBException("Impossible to add hand_player (" + h.getId() + "," + pp.getPlayerID() + ")" + " because: " + e.getMessage());
 		}
+	}
+
+	@Override
+	protected String getInsertPreCompiledRequest() {
+		return "INSERT INTO " + TABLE_NAME + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	}
 
 }

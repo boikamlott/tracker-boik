@@ -1,6 +1,5 @@
 package model.trackerboik.dao.sql;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -10,6 +9,10 @@ import model.trackerboik.dao.HandDAO;
 import com.trackerboik.exception.TBException;
 
 public class HandSQL extends GeneralSQLDBOperations implements HandDAO {
+
+	public HandSQL() throws TBException {
+		super();
+	}
 
 	public static final String TABLE_NAME = "hand";
 
@@ -35,18 +38,15 @@ public class HandSQL extends GeneralSQLDBOperations implements HandDAO {
 	@Override
 	public void insertHand(Hand h) throws TBException {
 		try {
-			String rq = "INSERT INTO " + TABLE_NAME + " VALUES (?, ?, ?, ?, ?, ?, ?)";
-			PreparedStatement psbdd = createPreparedStatement(rq);
+			psInsert.setString(1, h.getId());
+			psInsert.setDouble(2, h.getPot());
+			psInsert.setDouble(3, h.getSiteRake());
+			psInsert.setDouble(4, h.getLimitBB());
+			psInsert.setString(5, h.getTableName());
+			psInsert.setString(6, h.getSQLFormattedMoment());
+			psInsert.setString(7, h.getAssociatedSession().getId());
 		
-			psbdd.setString(1, h.getId());
-			psbdd.setDouble(2, h.getPot());
-			psbdd.setDouble(3, h.getSiteRake());
-			psbdd.setDouble(4, h.getLimitBB());
-			psbdd.setString(5, h.getTableName());
-			psbdd.setString(6, h.getSQLFormattedMoment());
-			psbdd.setString(7, h.getAssociatedSession().getId());
-		
-			if(psbdd.execute()) {
+			if(psInsert.execute()) {
 				throw new TBException("Unexpected result while trying to insert hand " + h.getId());
 			}
 		} catch (SQLException e) {
@@ -65,6 +65,11 @@ public class HandSQL extends GeneralSQLDBOperations implements HandDAO {
 		} catch (Exception e) {
 			throw new TBException("Impossible to check Hand existence in database: '" + e.getMessage() + "'");
 		}
+	}
+
+	@Override
+	protected String getInsertPreCompiledRequest() {
+		return "INSERT INTO " + TABLE_NAME + " VALUES (?, ?, ?, ?, ?, ?, ?)";
 	}
 
 }

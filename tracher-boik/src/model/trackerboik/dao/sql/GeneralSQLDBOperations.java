@@ -25,6 +25,15 @@ public abstract class GeneralSQLDBOperations implements GeneralDBOperationsDAO {
 			SQL_TYPE_TABLE_VALUE = "TABLE", SQL_TABLE_NAME = "TABLE_NAME";
 
 	private TrackerBoikDataBaseConnexion dbCon;
+	protected PreparedStatement psInsert;
+	
+	public GeneralSQLDBOperations() throws TBException {
+		psInsert = createPreparedStatement(getInsertPreCompiledRequest());
+	}
+	
+	
+	protected abstract String getInsertPreCompiledRequest();
+
 
 	@Override
 	public void eraseTableContent(String tableName) throws TBException {

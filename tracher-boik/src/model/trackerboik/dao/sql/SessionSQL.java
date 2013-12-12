@@ -1,14 +1,17 @@
 package model.trackerboik.dao.sql;
 
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-
-import com.trackerboik.exception.TBException;
 
 import model.trackerboik.businessobject.PokerSession;
 import model.trackerboik.dao.SessionDAO;
 
+import com.trackerboik.exception.TBException;
+
 public class SessionSQL extends GeneralSQLDBOperations implements SessionDAO {
+
+	public SessionSQL() throws TBException {
+		super();
+	}
 
 	public static final String TABLE_NAME = "session";
 	
@@ -27,15 +30,12 @@ public class SessionSQL extends GeneralSQLDBOperations implements SessionDAO {
 
 	@Override
 	public void insertSession(PokerSession ps) throws TBException {
-		try {
-			String rq = "INSERT INTO " + TABLE_NAME + " VALUES (?, ?, ?)";
-			PreparedStatement psbdd = createPreparedStatement(rq);
+		try {		
+			psInsert.setString(1, ps.getId());
+			psInsert.setString(2, ps.getAssociatedFileName());
+			psInsert.setString(3, ps.getSessionKind());
 		
-			psbdd.setString(1, ps.getId());
-			psbdd.setString(2, ps.getAssociatedFileName());
-			psbdd.setString(3, ps.getSessionKind());
-		
-			if(psbdd.execute()) {
+			if(psInsert.execute()) {
 				throw new TBException("Unexpected result while trying to insert session " + ps.getId());
 			}
 			
@@ -43,6 +43,11 @@ public class SessionSQL extends GeneralSQLDBOperations implements SessionDAO {
 			throw new TBException("Error while preparing session " + ps.getId() + " insertion: " + e.getMessage());
 		}
 		
+	}
+
+	@Override
+	protected String getInsertPreCompiledRequest() {
+		return "INSERT INTO " + TABLE_NAME + " VALUES (?, ?, ?)";
 	}
 
 }

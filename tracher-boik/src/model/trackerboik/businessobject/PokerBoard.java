@@ -105,7 +105,7 @@ public class PokerBoard {
 	 */
 	public boolean isEmpty() {
 		for(PokerCard pc : cards) {
-			if(pc == null) {
+			if(pc != null) {
 				return false;
 			}
 		}

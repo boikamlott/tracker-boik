@@ -1,15 +1,18 @@
 package model.trackerboik.dao.sql;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import com.trackerboik.exception.TBException;
 
 import model.trackerboik.businessobject.PokerPlayer;
 import model.trackerboik.dao.PlayerDAO;
 
+import com.trackerboik.exception.TBException;
+
 public class PlayerSQL extends GeneralSQLDBOperations implements PlayerDAO {
+	public PlayerSQL() throws TBException {
+		super();
+	}
+
 	public static final String TABLE_NAME = "player";
 
 	private static final String ATT_COMMENT = "comment";
@@ -27,13 +30,11 @@ public class PlayerSQL extends GeneralSQLDBOperations implements PlayerDAO {
 	@Override
 	public void insertPlayer(PokerPlayer pp) throws TBException {
 		try {
-			String rq = "INSERT INTO " + TABLE_NAME + " VALUES (?, ?)";
-			PreparedStatement psbdd = createPreparedStatement(rq);
 		
-			psbdd.setString(1, pp.getPlayerID());
-			psbdd.setString(2, pp.getComment());
+			psInsert.setString(1, pp.getPlayerID());
+			psInsert.setString(2, pp.getComment());
 		
-			if(psbdd.execute()) {
+			if(psInsert.execute()) {
 				throw new TBException("Unexpected result while trying to insert player " + pp.getPlayerID());
 			}
 		} catch (SQLException e) {
@@ -52,6 +53,11 @@ public class PlayerSQL extends GeneralSQLDBOperations implements PlayerDAO {
 		} catch (Exception e) {
 			throw new TBException("Impossible to check Player existence in database: '" + e.getMessage() + "'");
 		}
+	}
+
+	@Override
+	protected String getInsertPreCompiledRequest() {
+		return "INSERT INTO " + TABLE_NAME + " VALUES (?, ?)";
 	}
 
 }

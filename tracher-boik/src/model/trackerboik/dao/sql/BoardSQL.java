@@ -1,14 +1,17 @@
 package model.trackerboik.dao.sql;
 
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-
-import com.trackerboik.exception.TBException;
 
 import model.trackerboik.businessobject.PokerBoard;
 import model.trackerboik.dao.BoardDAO;
 
+import com.trackerboik.exception.TBException;
+
 public class BoardSQL extends GeneralSQLDBOperations implements BoardDAO {
+	public BoardSQL() throws TBException {
+		super();
+	}
+
 	public static final String TABLE_NAME = "board";
 	
 	private static final String ATT_FLOP_1 = "flop_1",
@@ -34,30 +37,33 @@ public class BoardSQL extends GeneralSQLDBOperations implements BoardDAO {
 	@Override
 	public void insertBoard(PokerBoard pb) throws TBException {
 		try {
-			String rq = "INSERT INTO " + TABLE_NAME + " VALUES (?, ?, ?, ?, ?, ?)";
-			PreparedStatement psbdd = createPreparedStatement(rq);
 		
-			psbdd.setString(1, pb.getID());			
+			psInsert.setString(1, pb.getID());			
 			if(pb.getFlop() == null) { 
 				for(int i = 2; i <= 4; i++) {
-					psbdd.setString(i, "");
+					psInsert.setString(i, "");
 				}
 			} else {
 				for(int i = 0; i <= 2 ; i++) {
-					psbdd.setString(i + 2, pb.getFlop().get(i).toString());
+					psInsert.setString(i + 2, pb.getFlop().get(i).toString());
 				}
 			}
 			
-			psbdd.setString(5, pb.getTurn() == null ? "" : pb.getTurn().toString());
-			psbdd.setString(6, pb.getRiver() == null ? "" : pb.getRiver().toString());
+			psInsert.setString(5, pb.getTurn() == null ? "" : pb.getTurn().toString());
+			psInsert.setString(6, pb.getRiver() == null ? "" : pb.getRiver().toString());
 			
 		
-			if(psbdd.execute()) {
+			if(psInsert.execute()) {
 				throw new TBException("Unexpected result while trying to insert board " + pb.getID());
 			}
 		} catch (SQLException e) {
 			throw new TBException("Impossible to add board " + pb.getID() + " because: " + e.getMessage());
 		}	
+	}
+
+	@Override
+	protected String getInsertPreCompiledRequest() {
+		return "INSERT INTO " + TABLE_NAME + " VALUES (?, ?, ?, ?, ?, ?)";
 	}
 
 }

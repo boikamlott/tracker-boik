@@ -1,14 +1,11 @@
 package com.trackerboik.util;
 
-import java.util.List;
-
-import model.trackerboik.dao.ActionDAO;
 import model.trackerboik.dao.GeneralDBOperationsDAO;
 import model.trackerboik.dao.sql.ActionSQL;
 import model.trackerboik.dao.sql.BoardSQL;
 import model.trackerboik.dao.sql.HandBoardSQL;
-import model.trackerboik.dao.sql.HandSQL;
 import model.trackerboik.dao.sql.HandPLayerSQL;
+import model.trackerboik.dao.sql.HandSQL;
 import model.trackerboik.dao.sql.PlayerSQL;
 import model.trackerboik.dao.sql.SessionSQL;
 
@@ -51,8 +48,9 @@ public class BDDUtil {
 	 * Return null if table name unknow
 	 * @param tbName
 	 * @return
+	 * @throws TBException 
 	 */
-	public static GeneralDBOperationsDAO getDBObjectSwitchName(String tbName) {
+	public static GeneralDBOperationsDAO getDBObjectSwitchName(String tbName) throws TBException {
 		if(tbName == null) return null;
 		
 		tbName = tbName.toLowerCase();

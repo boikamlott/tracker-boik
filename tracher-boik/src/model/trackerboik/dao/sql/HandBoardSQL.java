@@ -1,16 +1,19 @@
 package model.trackerboik.dao.sql;
 
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-
-import com.trackerboik.exception.TBException;
 
 import model.trackerboik.businessobject.Hand;
 import model.trackerboik.businessobject.PokerBoard;
 import model.trackerboik.dao.HandBoardDAO;
 
+import com.trackerboik.exception.TBException;
+
 public class HandBoardSQL extends GeneralSQLDBOperations implements
 HandBoardDAO {
+	public HandBoardSQL() throws TBException {
+		super();
+	}
+
 	public static final String TABLE_NAME = "hand_board";
 	
 	@Override
@@ -25,19 +28,21 @@ HandBoardDAO {
 	@Override
 	public void insertHandBoard(Hand h, PokerBoard pb) throws TBException {
 		try {
-			String rq = "INSERT INTO " + TABLE_NAME + " VALUES (?, ?)";
-			PreparedStatement psbdd = createPreparedStatement(rq);
+			psInsert.setString(1, h.getId());
+			psInsert.setString(2, pb.getID());
 		
-			psbdd.setString(1, h.getId());
-			psbdd.setString(2, pb.getID());
-		
-			if(psbdd.execute()) {
+			if(psInsert.execute()) {
 				throw new TBException("Unexpected result while trying to insert hand_boardr (" + h.getId() + "," + pb.getID() + ")");
 			}
 		} catch (SQLException e) {
 			throw new TBException("Impossible to add hand_board (" + h.getId() + "," + pb.getID() + ")" + " because: " + e.getMessage());
 		}
 		
+	}
+
+	@Override
+	protected String getInsertPreCompiledRequest() {
+		return "INSERT INTO " + TABLE_NAME + " VALUES (?, ?)";
 	}
 	
 	

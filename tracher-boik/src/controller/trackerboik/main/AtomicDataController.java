@@ -30,7 +30,8 @@ import com.trackerboik.exception.TBException;
 import com.trackerboik.util.AppUtil;
 import com.trackerboik.util.BDDUtil;
 
-import controller.trackerboik.readdata.HandsDataParser;
+import controller.trackerboik.readdata.HandDataBDDReader;
+import controller.trackerboik.readdata.HandsDataFileReader;
 
 public class AtomicDataController {
 
@@ -52,6 +53,23 @@ public class AtomicDataController {
 					Level.INFO,
 					"Data of " + pss.size()
 							+ " session(s) have been added into database");
+		} catch (TBException e) {
+			//TODO raise error window
+		} catch (Exception e) {
+			//TODO
+			//raise unknow error window
+		}
+	}
+	
+	/**
+	 * Load all database in memory
+	 * Careful: Delete all hands in memory which is not saved
+	 */
+	public void loadAllAtomicDataFromDataBaseIntoMemory() {
+		try {
+			HandDataBDDReader reader = new HandDataBDDReader();
+			parentController.getSessions().clear();
+			List<PokerSession> sessions = reader.getAllSessions();
 		} catch (TBException e) {
 			//TODO raise error window
 		}
@@ -226,7 +244,7 @@ public class AtomicDataController {
 		String[] filePathElems = filePath.split(File.pathSeparator);
 
 		if (applyFilter(filePathElems[filePathElems.length - 1])) {
-			HandsDataParser dp = new HandsDataParser(f);
+			HandsDataFileReader dp = new HandsDataFileReader(f);
 			ps = dp.readHands();
 		}
 		

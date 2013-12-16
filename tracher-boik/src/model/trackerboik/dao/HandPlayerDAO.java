@@ -8,4 +8,6 @@ import com.trackerboik.exception.TBException;
 public interface HandPlayerDAO extends GeneralDBOperationsDAO {
 
 	public void insertHandPlayer(Hand h, PokerPlayer pp) throws TBException;
+
+	public void addPlayerDataForHand(Hand h) throws TBException;
 }

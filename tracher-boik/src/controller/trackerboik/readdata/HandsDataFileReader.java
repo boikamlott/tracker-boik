@@ -29,7 +29,7 @@ import com.trackerboik.util.AppUtil;
 
 import controller.trackerboik.main.TrackerBoikController;
 
-public class HandsDataParser {
+public class HandsDataFileReader {
 
 	private static final String HOLE_CARDS = "HOLE CARDS";
 	private static final CharSequence UNCALLED_BET = "Uncalled";
@@ -64,7 +64,7 @@ public class HandsDataParser {
 	private Integer lineNo;
 	private Integer actionNoInHand;
 	
-	public HandsDataParser(File f) {
+	public HandsDataFileReader(File f) {
 		this.f = f;
 		this.lineNo = 0;
 	}

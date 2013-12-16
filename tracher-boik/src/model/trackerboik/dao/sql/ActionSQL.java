@@ -68,4 +68,9 @@ public class ActionSQL extends GeneralSQLDBOperations implements ActionDAO {
 		return "INSERT INTO " + TABLE_NAME + " VALUES (?, ?, ?, ?, ?, ?)";
 	}
 
+	public List<PokerAction> getAllActionsForHand(Hand h) throws TBException {
+		
+	}
+
+	
 }

@@ -59,5 +59,15 @@ public class PlayerSQL extends GeneralSQLDBOperations implements PlayerDAO {
 	protected String getInsertPreCompiledRequest() {
 		return "INSERT INTO " + TABLE_NAME + " VALUES (?, ?)";
 	}
+	
+	@Override
+	protected String getExistenceTestPreCompiledRequest() {
+		return "SELECT * FROM " + TABLE_NAME + " WHERE " + GEN_ATT_PLAYER_ID + " = ?";
+	}
+
+	@Override
+	protected String getAllElementsRequest() {
+		return getExistenceTestPreCompiledRequest();
+	}
 
 }

@@ -66,4 +66,14 @@ public class BoardSQL extends GeneralSQLDBOperations implements BoardDAO {
 		return "INSERT INTO " + TABLE_NAME + " VALUES (?, ?, ?, ?, ?, ?)";
 	}
 
+	@Override
+	protected String getExistenceTestPreCompiledRequest() {
+		return "SELECT * FROM " + TABLE_NAME + " WHERE " + GEN_ATT_BOARD_ID + " = ?";
+	}
+
+	@Override
+	protected String getAllElementsRequest() {
+		return "SELECT * FROM " + TABLE_NAME + " WHERE " + GEN_ATT_BOARD_ID + " = ?";
+	}
+
 }

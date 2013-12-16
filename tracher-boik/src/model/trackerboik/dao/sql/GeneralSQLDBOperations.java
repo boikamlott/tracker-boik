@@ -26,6 +26,7 @@ public abstract class GeneralSQLDBOperations implements GeneralDBOperationsDAO {
 
 	private TrackerBoikDataBaseConnexion dbCon;
 	protected PreparedStatement psInsert;
+	protected PreparedStatement psQuery;
 	
 	public GeneralSQLDBOperations() throws TBException {
 		psInsert = createPreparedStatement(getInsertPreCompiledRequest());
@@ -33,7 +34,10 @@ public abstract class GeneralSQLDBOperations implements GeneralDBOperationsDAO {
 	
 	
 	protected abstract String getInsertPreCompiledRequest();
-
+	
+	protected abstract String getExistenceTestPreCompiledRequest();
+	
+	protected abstract String getAllElementsRequest();
 
 	@Override
 	public void eraseTableContent(String tableName) throws TBException {

@@ -58,8 +58,9 @@ public class HandSQL extends GeneralSQLDBOperations implements HandDAO {
 	@Override
 	public boolean isHandExists(String id) throws TBException {
 		try {
-			String rq = "SELECT * FROM " + TABLE_NAME + " WHERE " + GEN_ATT_HAND_ID + "='" + id + "'";
-			ResultSet rs = executeSQLQuery(rq);
+			psQuery = createPreparedStatement(getExistenceTestPreCompiledRequest());
+			psQuery.setString(1, id);
+			ResultSet rs = psQuery.executeQuery();
 			
 			return rs.next();
 		} catch (Exception e) {
@@ -70,6 +71,16 @@ public class HandSQL extends GeneralSQLDBOperations implements HandDAO {
 	@Override
 	protected String getInsertPreCompiledRequest() {
 		return "INSERT INTO " + TABLE_NAME + " VALUES (?, ?, ?, ?, ?, ?, ?)";
+	}
+
+	@Override
+	protected String getExistenceTestPreCompiledRequest() {
+		return "SELECT * FROM " + TABLE_NAME + " WHERE " + GEN_ATT_HAND_ID + " = ?";
+	}
+
+	@Override
+	protected String getAllElementsRequest() {
+		return "SELECT * FROM " + TABLE_NAME + " WHERE " + GEN_ATT_SESSION_ID + " = ?";
 	}
 
 }

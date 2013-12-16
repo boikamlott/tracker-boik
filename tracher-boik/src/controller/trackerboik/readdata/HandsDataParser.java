@@ -20,6 +20,8 @@ import model.trackerboik.businessobject.PokerCard;
 import model.trackerboik.businessobject.PokerHand;
 import model.trackerboik.businessobject.PokerPlayer;
 import model.trackerboik.businessobject.PokerSession;
+import model.trackerboik.dao.SessionDAO;
+import model.trackerboik.dao.sql.SessionSQL;
 
 import com.trackerboik.appmngt.TrackerBoikLog;
 import com.trackerboik.exception.TBException;
@@ -77,6 +79,13 @@ public class HandsDataParser {
 		}
 		
 		PokerSession associatedSession = new PokerSession(f.getName().split("-")[0], f.getName(), "Hold'em poker");
+		SessionDAO sdbb = new SessionSQL();
+		
+		if(sdbb.sessionExists(associatedSession)) { 
+			//If session already in Database
+			return null;
+		}
+		
 		TrackerBoikController.getInstance().addSession(associatedSession);
 		
 		try {

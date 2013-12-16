@@ -44,6 +44,16 @@ HandBoardDAO {
 	protected String getInsertPreCompiledRequest() {
 		return "INSERT INTO " + TABLE_NAME + " VALUES (?, ?)";
 	}
+
+	@Override
+	protected String getExistenceTestPreCompiledRequest() {
+		return "SELECT * FROM " + TABLE_NAME + " WHERE " + GEN_ATT_BOARD_ID + " = ? AND " + GEN_ATT_HAND_ID + " = ?";
+	}
+
+	@Override
+	protected String getAllElementsRequest() {
+		return getExistenceTestPreCompiledRequest();
+	}
 	
 	
 

@@ -1,5 +1,6 @@
 package model.trackerboik.dao.sql;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import model.trackerboik.businessobject.PokerSession;
@@ -17,6 +18,21 @@ public class SessionSQL extends GeneralSQLDBOperations implements SessionDAO {
 	
 	private static final String ATT_FILE_ASSOCIATED_NM = "file_associated_name", 
 						  ATT_SESSION_KIND = "session_kind";
+	
+	@Override
+	protected String getInsertPreCompiledRequest() {
+		return "INSERT INTO " + TABLE_NAME + " VALUES (?, ?, ?)";
+	}
+	
+	@Override
+	protected String getExistenceTestPreCompiledRequest() {
+		return "SELECT * FROM " + TABLE_NAME + " WHERE " + GEN_ATT_SESSION_ID + "= ?";
+	}
+
+	@Override
+	protected String getAllElementsRequest() {
+		return "SELECT * FROM " + TABLE_NAME;
+	}
 	
 	@Override
 	public void createTable() throws TBException {
@@ -46,8 +62,17 @@ public class SessionSQL extends GeneralSQLDBOperations implements SessionDAO {
 	}
 
 	@Override
-	protected String getInsertPreCompiledRequest() {
-		return "INSERT INTO " + TABLE_NAME + " VALUES (?, ?, ?)";
+	public boolean sessionExists(PokerSession associatedSession)
+			throws TBException {
+		try {
+			psQuery = createPreparedStatement(getExistenceTestPreCompiledRequest());
+			psQuery.setString(1, associatedSession.getId());
+			ResultSet rs = psQuery.executeQuery();
+			
+			return rs.next();
+		} catch (Exception e) {
+			throw new TBException("Impossible to check Hand existence in database: '" + e.getMessage() + "'");
+		}
 	}
 
 }

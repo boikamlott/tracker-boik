@@ -75,4 +75,14 @@ public class HandPLayerSQL extends GeneralSQLDBOperations implements
 		return "INSERT INTO " + TABLE_NAME + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	}
 
+	@Override
+	protected String getExistenceTestPreCompiledRequest() {
+		return "SELECT * FROM " + TABLE_NAME + " WHERE " + GEN_ATT_PLAYER_ID + " = ? AND " + GEN_ATT_HAND_ID + " = ?";
+	}
+
+	@Override
+	protected String getAllElementsRequest() {
+		return "SELECT * FROM " + TABLE_NAME + " WHERE " + GEN_ATT_HAND_ID + " = ?";
+	}
+
 }

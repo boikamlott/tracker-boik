@@ -36,29 +36,22 @@ public class AtomicDataController {
 
 	private TrackerBoikController parentController;
 
-	public AtomicDataController(TrackerBoikController parent) {
+	public AtomicDataController(TrackerBoikController parent) throws TBException {
 		this.parentController = parent;
 		checkAtomicDataDBSchema();
 	}
 
 //************************************************** Public Features *********************************************//
-	/**
-	 * Refresh the whole database atomic content
-	 */
-	private void refreshAllData() {
-		try {
-			checkAtomicDataDBSchema();
-			eraseAllAtomicData();
-			computeAllAtomicData();
-			loadAllSessionsInMemoryToDataBase();
-		} catch (TBException e) {
-			// TODO raise error window
-		}
-	}
 	
 	public void refreshCurrentFolder() {
 		try {
-			
+			List<PokerSession> pss = refreshAllAtomicData();
+			loadSessionsInMemoryToDataBase(pss);
+			parentController.getSessions().addAll(pss);
+			TrackerBoikLog.getInstance().log(
+					Level.INFO,
+					"Data of " + pss.size()
+							+ " session(s) have been added into database");
 		} catch (TBException e) {
 			//TODO raise error window
 		}
@@ -80,8 +73,8 @@ public class AtomicDataController {
 	/**
 	 * Write all data contained in memory in database
 	 */
-	private void loadAllSessionsInMemoryToDataBase() throws TBException {
-		for(PokerSession ps : parentController.getSessions()) {
+	private void loadSessionsInMemoryToDataBase(List<PokerSession> pokSessions) throws TBException {
+		for(PokerSession ps : pokSessions) {
 			SessionDAO sessionDB = new SessionSQL();
 			HandDAO handDB = new HandSQL();
 			PlayerDAO playerDB = new PlayerSQL();
@@ -180,7 +173,7 @@ public class AtomicDataController {
 			List<PokerSession> res = new ArrayList<PokerSession>();
 			File f = new File(parentController.getConfigurationController()
 					.getProperty(AppUtil.ATOMIC_DATA_FOLDER));
-			SessionDAO sdbb = new SessionSQL();
+			int nbSessionLoaded = 0;
 			
 			String[] files = f.list();
 			for (String file : files) {
@@ -188,11 +181,15 @@ public class AtomicDataController {
 						.getAbsolutePath() + file
 						: f.getAbsolutePath() + File.separator + file;
 				try {
-					res.add(parseDataOfFile(fpath));
-					TrackerBoikLog.getInstance().log(
-							Level.INFO,
-							"Data of file '" + fpath
-									+ "' was successfully load");
+					PokerSession toAdd = parseDataOfFile(fpath);
+					if(toAdd != null) {
+						res.add(null);
+						TrackerBoikLog.getInstance().log(
+								Level.INFO,
+								"Data of file '" + fpath
+										+ "' was successfully read");
+						nbSessionLoaded++;
+					}	
 				} catch (TBException e) {
 					TrackerBoikLog.getInstance().log(Level.SEVERE,
 							"Error while reading file '" + fpath + "'");
@@ -200,8 +197,10 @@ public class AtomicDataController {
 			}
 			TrackerBoikLog.getInstance().log(
 					Level.INFO,
-					"Data of " + files.length
-							+ " file(s) have been added into database");
+					"Data of " + nbSessionLoaded
+							+ " file(s) have been readed successfully");
+			
+			return res;
 		} catch (Exception e) {
 			throw new TBException(
 					"Impossible de lire le contenu du repertoire contenant les données des mains jouées + '"
@@ -216,6 +215,7 @@ public class AtomicDataController {
 	 */
 	private PokerSession parseDataOfFile(String filePath) throws TBException {
 		File f = null;
+		PokerSession ps = null;
 		try {
 			f = new File(filePath);
 		} catch (Exception e) {
@@ -227,8 +227,10 @@ public class AtomicDataController {
 
 		if (applyFilter(filePathElems[filePathElems.length - 1])) {
 			HandsDataParser dp = new HandsDataParser(f);
-			return dp.readHands();
+			ps = dp.readHands();
 		}
+		
+		return ps;
 	}
 
 	/**
@@ -245,6 +247,10 @@ public class AtomicDataController {
 		return !fileName.contains(AppUtil.ARGENT_FICTIF) && !isTournament;
 	}
 
+	/**
+	 * Check the Current DB schema and throw expression if problems
+	 * @throws TBException
+	 */
 	public void checkAtomicDataDBSchema() throws TBException {
 		GeneralDBOperationsDAO db = new SessionSQL();
 		List<String> dbTableNames = db.getTableNames();

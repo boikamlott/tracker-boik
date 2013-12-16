@@ -1,8 +1,14 @@
 package model.trackerboik.dao.sql;
 
 import java.sql.SQLException;
+import java.util.List;
+
+import javax.xml.bind.NotIdentifiableEvent;
+
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import model.trackerboik.businessobject.ActionKind;
+import model.trackerboik.businessobject.Hand;
 import model.trackerboik.businessobject.HandMoment;
 import model.trackerboik.businessobject.PokerAction;
 import model.trackerboik.dao.ActionDAO;
@@ -22,6 +28,21 @@ public class ActionSQL extends GeneralSQLDBOperations implements ActionDAO {
 								ATT_AMOUNT_BET = "amount_bet",
 								ATT_KIND = "kind",
 								ATT_MOMENT = "moment";
+	
+	@Override
+	protected String getExistenceTestPreCompiledRequest() {
+		return "SELECT * FROM " + TABLE_NAME + " WHERE " + GEN_ATT_HAND_ID + " = ? AND " + GEN_ATT_PLAYER_ID + " = ?";
+	}
+
+	@Override
+	protected String getAllElementsRequest() {
+		return "SELECT * FROM " + TABLE_NAME + " WHERE " + GEN_ATT_HAND_ID + " = ?";
+	}
+	
+	@Override
+	protected String getInsertPreCompiledRequest() {
+		return "INSERT INTO " + TABLE_NAME + " VALUES (?, ?, ?, ?, ?, ?)";
+	}
 	
 	@Override
 	public void createTable() throws TBException {
@@ -63,14 +84,11 @@ public class ActionSQL extends GeneralSQLDBOperations implements ActionDAO {
 		}
 	}
 
-	@Override
-	protected String getInsertPreCompiledRequest() {
-		return "INSERT INTO " + TABLE_NAME + " VALUES (?, ?, ?, ?, ?, ?)";
-	}
+
 
 	public List<PokerAction> getAllActionsForHand(Hand h) throws TBException {
-		
+		//TODO
+		return null;
 	}
-
 	
 }

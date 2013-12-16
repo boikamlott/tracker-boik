@@ -71,7 +71,7 @@ public class HandsDataParser {
 	 * Main function read all hands contained in the file
 	 * @throws TBException
 	 */
-	public void readHands() throws TBException {
+	public PokerSession readHands() throws TBException {
 		if(f == null || !f.exists()) {
 			throw new TBException("File '" + (f != null ? f.getAbsolutePath() : "Unknow file") + "' is unreadable or doesn't exists !");
 		}
@@ -95,6 +95,8 @@ public class HandsDataParser {
 					}
 				}
 			}
+			
+			return associatedSession;
 		} catch (Exception e) {
 			throw new TBException("(line:" + lineNo + ")" + "Error while reading data in file '" + f.getAbsolutePath() + "': '" + e.getMessage() + "'");
 		}

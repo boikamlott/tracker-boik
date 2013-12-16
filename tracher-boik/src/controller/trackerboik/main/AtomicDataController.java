@@ -38,12 +38,14 @@ public class AtomicDataController {
 
 	public AtomicDataController(TrackerBoikController parent) {
 		this.parentController = parent;
+		checkAtomicDataDBSchema();
 	}
 
+//************************************************** Public Features *********************************************//
 	/**
 	 * Refresh the whole database atomic content
 	 */
-	public void refreshAllData() {
+	private void refreshAllData() {
 		try {
 			checkAtomicDataDBSchema();
 			eraseAllAtomicData();
@@ -54,6 +56,27 @@ public class AtomicDataController {
 		}
 	}
 	
+	public void refreshCurrentFolder() {
+		try {
+			
+		} catch (TBException e) {
+			//TODO raise error window
+		}
+	}
+	
+	/**
+	 * Delete all data from atomic data DB PRE: Schema is correct
+	 */
+	public void eraseAllAtomicData() throws TBException {
+		GeneralDBOperationsDAO db = new SessionSQL();
+		List<String> tbNames = db.getNeededTableNamesInCorrectOrderForDrop();
+
+		for (String table : tbNames) {
+			db.eraseTableContent(table);
+		}
+	}
+
+//************************************************** Private Routines **********************************************//
 	/**
 	 * Write all data contained in memory in database
 	 */
@@ -152,17 +175,20 @@ public class AtomicDataController {
 	/**
 	 * Refresh the current data folder and parse files
 	 */
-	private void computeAllAtomicData() throws TBException {
+	private List<PokerSession> refreshAllAtomicData() throws TBException {
 		try {
+			List<PokerSession> res = new ArrayList<PokerSession>();
 			File f = new File(parentController.getConfigurationController()
 					.getProperty(AppUtil.ATOMIC_DATA_FOLDER));
+			SessionDAO sdbb = new SessionSQL();
+			
 			String[] files = f.list();
 			for (String file : files) {
 				String fpath = f.getAbsolutePath().endsWith(File.separator) ? f
 						.getAbsolutePath() + file
 						: f.getAbsolutePath() + File.separator + file;
 				try {
-					parseDataOfFile(fpath);
+					res.add(parseDataOfFile(fpath));
 					TrackerBoikLog.getInstance().log(
 							Level.INFO,
 							"Data of file '" + fpath
@@ -188,7 +214,7 @@ public class AtomicDataController {
 	 * 
 	 * @param string
 	 */
-	private void parseDataOfFile(String filePath) throws TBException {
+	private PokerSession parseDataOfFile(String filePath) throws TBException {
 		File f = null;
 		try {
 			f = new File(filePath);
@@ -201,7 +227,7 @@ public class AtomicDataController {
 
 		if (applyFilter(filePathElems[filePathElems.length - 1])) {
 			HandsDataParser dp = new HandsDataParser(f);
-			dp.readHands();
+			return dp.readHands();
 		}
 	}
 
@@ -263,15 +289,4 @@ public class AtomicDataController {
 
 	}
 
-	/**
-	 * Delete all data from atomic data DB PRE: Schema is correct
-	 */
-	private void eraseAllAtomicData() throws TBException {
-		GeneralDBOperationsDAO db = new SessionSQL();
-		List<String> tbNames = db.getNeededTableNamesInCorrectOrderForDrop();
-
-		for (String table : tbNames) {
-			db.eraseTableContent(table);
-		}
-	}
 }

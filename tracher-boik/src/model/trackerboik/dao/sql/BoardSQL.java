@@ -1,8 +1,13 @@
 package model.trackerboik.dao.sql;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
+import model.trackerboik.businessobject.Hand;
 import model.trackerboik.businessobject.PokerBoard;
+import model.trackerboik.businessobject.PokerCard;
 import model.trackerboik.dao.BoardDAO;
 
 import com.trackerboik.exception.TBException;
@@ -74,6 +79,37 @@ public class BoardSQL extends GeneralSQLDBOperations implements BoardDAO {
 	@Override
 	protected String getAllElementsRequest() {
 		return "SELECT * FROM " + TABLE_NAME + " WHERE " + GEN_ATT_BOARD_ID + " = ?";
+	}
+
+	@Override
+	public void addBoardToHand(String boardID, Hand h) throws TBException {
+		try {
+			psQuery = createPreparedStatement(getAllElementsRequest());
+			psQuery.setString(1, boardID);
+			ResultSet rs = psQuery.executeQuery();
+			if(!rs.next()) {
+				throw new TBException("Impossible to find board '" + boardID + "' for hand '" + h.getId() + "'");
+			}
+			
+			PokerBoard pb = new PokerBoard(boardID);
+			List<PokerCard> flop = new ArrayList<PokerCard>();
+			flop.add(PokerCard.readCard(rs.getString(ATT_FLOP_1)));
+			flop.add(PokerCard.readCard(rs.getString(ATT_FLOP_2)));
+			flop.add(PokerCard.readCard(rs.getString(ATT_FLOP_3)));
+			pb.setFlop(flop);
+			
+			PokerCard turn = PokerCard.readCard(rs.getString(ATT_TURN));
+			if(turn != null) {
+				pb.setTurn(turn);
+				PokerCard river = PokerCard.readCard(rs.getString(ATT_RIVER));
+				if(river != null) { pb.setRiver(river); }
+			}
+			
+			h.setBoard(pb);
+		} catch (SQLException e) {
+			throw new TBException("Error while performing add board to hand operation '" + e.getMessage() + "'" );
+		}
+		
 	}
 
 }

@@ -70,4 +70,21 @@ public class PlayerSQL extends GeneralSQLDBOperations implements PlayerDAO {
 		return getExistenceTestPreCompiledRequest();
 	}
 
+	@Override
+	public void addPlayerDetails(PokerPlayer p) throws TBException {
+		try {
+			psQuery = createPreparedStatement(getAllElementsRequest());
+			psQuery.setString(1, p.getPlayerID());
+			ResultSet rs = psQuery.executeQuery();
+			if(rs.next()) {
+				p.setComment(rs.getString(ATT_COMMENT));
+			} else {
+				throw new TBException("Impossible to add player details for player " + p.getPlayerID() + ": unknow player");
+			}
+		} catch (SQLException e) {
+			throw new TBException("Impossible to add player details for player " + p.getPlayerID() + ": " + e.getMessage());
+		}
+		
+	}
+
 }

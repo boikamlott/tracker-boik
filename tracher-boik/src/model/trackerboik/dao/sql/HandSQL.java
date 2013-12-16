@@ -2,11 +2,17 @@ package model.trackerboik.dao.sql;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
 
 import model.trackerboik.businessobject.Hand;
+import model.trackerboik.businessobject.PokerSession;
 import model.trackerboik.dao.HandDAO;
 
+import com.trackerboik.appmngt.TrackerBoikLog;
 import com.trackerboik.exception.TBException;
+import com.trackerboik.util.AppUtil;
 
 public class HandSQL extends GeneralSQLDBOperations implements HandDAO {
 
@@ -81,6 +87,36 @@ public class HandSQL extends GeneralSQLDBOperations implements HandDAO {
 	@Override
 	protected String getAllElementsRequest() {
 		return "SELECT * FROM " + TABLE_NAME + " WHERE " + GEN_ATT_SESSION_ID + " = ?";
+	}
+
+	@Override
+	public List<Hand> getAllHandsForSession(PokerSession ps) throws TBException {
+		try {
+			psQuery = createPreparedStatement(getAllElementsRequest());
+			psQuery.setString(1, ps.getId());
+			ResultSet rs = psQuery.executeQuery();
+			List<Hand> res = new ArrayList<Hand>();
+			
+			while(rs.next()) {
+				try {
+					Hand h = new Hand(rs.getString(GEN_ATT_HAND_ID));
+					h.setDateTime(AppUtil.parseCalendar(rs.getString(ATT_MOMENT), "yyyy-MM-dd hh:mm:ss"));
+					h.setPot(rs.getDouble(ATT_POT));
+					h.setSiteRake(rs.getDouble(ATT_SITE_RAKE));
+					h.setLimitBB(rs.getDouble(ATT_BB_VALUE));
+					h.setTableName(rs.getString(ATT_TABLE_NAME));
+					res.add(h);
+				} catch (SQLException e) {
+					TrackerBoikLog.getInstance().log(
+							Level.WARNING,
+							"Impossible to retrieve hand basic details in DB: " + e.getMessage());
+				}
+			}
+		
+			return res;
+		} catch (SQLException e) {
+			throw new TBException("Impossible to reads hands for session '" + ps.getId() + "' !");
+		}
 	}
 
 }

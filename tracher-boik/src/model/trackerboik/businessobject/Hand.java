@@ -398,5 +398,13 @@ public class Hand {
 		return handActions;
 	}
 
+	/**
+	 * Set the poker board only use for BDD import
+	 * @param pb
+	 */
+	public void setBoard(PokerBoard pb) {
+		this.board = pb;
+	}
+
 
 }

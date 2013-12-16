@@ -1,12 +1,18 @@
 package model.trackerboik.dao.sql;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import model.trackerboik.businessobject.Hand;
+import model.trackerboik.businessobject.HandResult;
+import model.trackerboik.businessobject.PokerCard;
+import model.trackerboik.businessobject.PokerHand;
 import model.trackerboik.businessobject.PokerPlayer;
 import model.trackerboik.dao.HandPlayerDAO;
 
 import com.trackerboik.exception.TBException;
+
+import controller.trackerboik.main.TrackerBoikController;
 
 public class HandPLayerSQL extends GeneralSQLDBOperations implements
 		HandPlayerDAO {
@@ -83,6 +89,36 @@ public class HandPLayerSQL extends GeneralSQLDBOperations implements
 	@Override
 	protected String getAllElementsRequest() {
 		return "SELECT * FROM " + TABLE_NAME + " WHERE " + GEN_ATT_HAND_ID + " = ?";
+	}
+
+	@Override
+	public void addPlayerDataForHand(Hand h) throws TBException {
+		try {
+			psQuery = createPreparedStatement(getAllElementsRequest());
+			psQuery.setString(1, h.getId());
+			ResultSet rs = psQuery.executeQuery();
+			
+			while(rs.next()) {
+				PokerPlayer pp = new PokerPlayer(rs.getString(GEN_ATT_PLAYER_ID));
+				if(TrackerBoikController.getInstance().getPlayers().contains(pp)) {
+					pp = TrackerBoikController.getInstance().getPlayers().get(TrackerBoikController.getInstance().getPlayers().indexOf(pp));
+				}
+				h.addPlayerToHand(pp);
+				h.setAmountWonForPlayer(pp, rs.getDouble(ATT_AMOUNT_WIN));
+				h.setPositionForPlayer(pp, rs.getInt(ATT_POSITION));
+				h.setResultHandForPlayer(pp, HandResult.readHandResult(rs.getString(ATT_RESULT)));
+				h.setStartStackForPlayer(pp, rs.getDouble(ATT_STACK_BEFORE));
+				if(rs.getString(ATT_IS_ALL_IN).equals("y")) {
+					h.upAllInFlagForPlayer(pp);
+				}
+				PokerHand ph = new PokerHand();
+				ph.setHand(PokerCard.readCard(rs.getString(ATT_CARD_1)), PokerCard.readCard(rs.getString(ATT_CARD_2)));
+				h.setHandForPlayer(pp, ph);
+			}
+		} catch (SQLException e) {
+			throw new TBException("Impossible to retrieve players for hand " + h.getId());
+		}
+		
 	}
 
 }

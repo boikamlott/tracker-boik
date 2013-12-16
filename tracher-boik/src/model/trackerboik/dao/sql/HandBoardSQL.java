@@ -1,5 +1,6 @@
 package model.trackerboik.dao.sql;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import model.trackerboik.businessobject.Hand;
@@ -53,6 +54,24 @@ HandBoardDAO {
 	@Override
 	protected String getAllElementsRequest() {
 		return getExistenceTestPreCompiledRequest();
+	}
+
+	@Override
+	public String getBoardIDForHand(Hand h) throws TBException {
+		try {
+			psQuery = createPreparedStatement(getAllElementsRequest());
+			psQuery.setString(1, h.getId());
+			ResultSet rs = psQuery.executeQuery();
+			String res = null;
+			
+			if(rs.next()) {
+				res = rs.getString(GEN_ATT_BOARD_ID);
+			}
+			
+			return res;
+		} catch (SQLException e) {
+			throw new TBException("Impossible to read the association beetween hand " + h.getId() + " and board !");
+		}
 	}
 	
 	

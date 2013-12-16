@@ -18,4 +18,14 @@ public enum HandResult {
 	public String getTxtResult() {
 		return this.txtResult;
 	}
+
+	public static HandResult readHandResult(String result) {
+		for(HandResult hr : HandResult.values()) {
+			if(hr.getTxtResult().equals(result)) {
+				return hr;
+			}
+		}
+		
+		return null;
+	}
 }

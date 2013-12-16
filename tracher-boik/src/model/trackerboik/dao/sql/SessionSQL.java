@@ -2,6 +2,8 @@ package model.trackerboik.dao.sql;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import model.trackerboik.businessobject.PokerSession;
 import model.trackerboik.dao.SessionDAO;
@@ -72,6 +74,24 @@ public class SessionSQL extends GeneralSQLDBOperations implements SessionDAO {
 			return rs.next();
 		} catch (Exception e) {
 			throw new TBException("Impossible to check Hand existence in database: '" + e.getMessage() + "'");
+		}
+	}
+
+	@Override
+	public List<PokerSession> getAllSesssions() throws TBException {
+		try {
+			psQuery = createPreparedStatement(getAllElementsRequest());
+			ResultSet rs = psQuery.executeQuery();
+			List<PokerSession> res = new ArrayList<PokerSession>();
+			
+			while(rs.next()) {
+				res.add(new PokerSession(rs.getString(GEN_ATT_SESSION_ID), 
+						ATT_FILE_ASSOCIATED_NM, ATT_SESSION_KIND));
+			}
+			
+			return res;
+		} catch (SQLException e) {
+			throw new TBException("Impossible to read sessions in BDD: " + e.getMessage());
 		}
 	}
 

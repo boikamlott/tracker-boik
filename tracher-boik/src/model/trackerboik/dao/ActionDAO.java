@@ -16,4 +16,6 @@ public interface ActionDAO extends GeneralDBOperationsDAO {
 	
 	public Integer getNbHandsVPIPPlayedForNewSessions(PokerPlayer pp) throws TBException;
 
+	public Integer getNbHandsPFRPlayedForNewSessions(PokerPlayer pp) throws TBException;
+
 }

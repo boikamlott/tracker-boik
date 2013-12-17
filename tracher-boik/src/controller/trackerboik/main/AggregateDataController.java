@@ -61,6 +61,7 @@ public class AggregateDataController {
 		
 		pp.nbHand += hpbdd.getNbHandsPlayedForNewSessions(pp);
 		pp.nbHandVPIP += abdd.getNbHandsVPIPPlayedForNewSessions(pp);
+		pp.nbHandPFR += abdd.getNbHandsPFRPlayedForNewSessions(pp);
 		
 	}
 	

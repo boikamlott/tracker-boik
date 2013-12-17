@@ -77,14 +77,14 @@ public class BoardSQL extends GeneralSQLDBOperations implements BoardDAO {
 	}
 
 	@Override
-	protected String getAllElementsRequest() {
+	protected String getAllElementsForLoadSessionInMemoryRequest() {
 		return "SELECT * FROM " + TABLE_NAME + " WHERE " + GEN_ATT_BOARD_ID + " = ?";
 	}
 
 	@Override
 	public void addBoardToHand(String boardID, Hand h) throws TBException {
 		try {
-			psQuery = createPreparedStatement(getAllElementsRequest());
+			psQuery = createPreparedStatement(getAllElementsForLoadSessionInMemoryRequest());
 			psQuery.setString(1, boardID);
 			ResultSet rs = psQuery.executeQuery();
 			if(!rs.next()) {

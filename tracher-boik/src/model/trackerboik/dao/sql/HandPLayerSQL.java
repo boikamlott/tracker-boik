@@ -87,14 +87,14 @@ public class HandPLayerSQL extends GeneralSQLDBOperations implements
 	}
 
 	@Override
-	protected String getAllElementsRequest() {
+	protected String getAllElementsForLoadSessionInMemoryRequest() {
 		return "SELECT * FROM " + TABLE_NAME + " WHERE " + GEN_ATT_HAND_ID + " = ?";
 	}
 
 	@Override
 	public void addPlayerDataForHand(Hand h) throws TBException {
 		try {
-			psQuery = createPreparedStatement(getAllElementsRequest());
+			psQuery = createPreparedStatement(getAllElementsForLoadSessionInMemoryRequest());
 			psQuery.setString(1, h.getId());
 			ResultSet rs = psQuery.executeQuery();
 			
@@ -121,6 +121,35 @@ public class HandPLayerSQL extends GeneralSQLDBOperations implements
 			throw new TBException("Impossible to retrieve players for hand " + h.getId() + ": " + e.getMessage());
 		}
 		
+	}
+
+	@Override
+	public Integer getNbHandsPlayedForNewSessions(PokerPlayer pp)
+			throws TBException {
+		String errorMsg = "";
+		try {
+			String rq = "SELECT COUNT(DISTINCT(h." + GEN_ATT_HAND_ID + "))";
+			rq += "FROM " + SessionSQL.TABLE_NAME + " s, " + HandSQL.TABLE_NAME + " h," + TABLE_NAME + " hp ";
+			rq += "WHERE s." + GEN_ATT_SESSION_CALCULATED + "=?";
+			rq += " AND s." + GEN_ATT_SESSION_ID + "=" + "h." + GEN_ATT_SESSION_ID;
+			rq += " AND h." + GEN_ATT_HAND_ID + "=" + "hp." + GEN_ATT_HAND_ID;
+			rq += " AND hp." + GEN_ATT_PLAYER_ID + "=?";
+			
+			psQuery = createPreparedStatement(rq);
+			psQuery.setString(1, "n");
+			psQuery.setString(2, pp.getPlayerID());
+			ResultSet rs = psQuery.executeQuery();
+			
+			if(rs.next()) {
+				return rs.getInt(1);
+			}
+			
+		} catch (Exception e) {
+			errorMsg = e.getMessage();
+		}
+		
+		throw new TBException("Error while getting Nb Hands played by player '" + pp.getPlayerID() + "': " + errorMsg);
+
 	}
 
 }

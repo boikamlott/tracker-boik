@@ -19,7 +19,7 @@ public abstract class GeneralSQLDBOperations implements GeneralDBOperationsDAO {
 
 	protected static final String GEN_ATT_HAND_ID = "hand_id",
 			GEN_ATT_PLAYER_ID = "player_id", GEN_ATT_BOARD_ID = "board_id",
-			GEN_ATT_SESSION_ID = "session_id";
+			GEN_ATT_SESSION_ID = "session_id", GEN_ATT_SESSION_CALCULATED = "aggregated_data_calculated";
 
 	private static final String SQL_TYPE_TABLE = "TABLE_TYPE",
 			SQL_TYPE_TABLE_VALUE = "TABLE", SQL_TABLE_NAME = "TABLE_NAME";
@@ -37,7 +37,7 @@ public abstract class GeneralSQLDBOperations implements GeneralDBOperationsDAO {
 	
 	protected abstract String getExistenceTestPreCompiledRequest();
 	
-	protected abstract String getAllElementsRequest();
+	protected abstract String getAllElementsForLoadSessionInMemoryRequest();
 
 	@Override
 	public void eraseTableContent(String tableName) throws TBException {

@@ -10,4 +10,6 @@ public interface HandPlayerDAO extends GeneralDBOperationsDAO {
 	public void insertHandPlayer(Hand h, PokerPlayer pp) throws TBException;
 
 	public void addPlayerDataForHand(Hand h) throws TBException;
+
+	public Integer getNbHandsPlayedForNewSessions(PokerPlayer pp) throws TBException;
 }

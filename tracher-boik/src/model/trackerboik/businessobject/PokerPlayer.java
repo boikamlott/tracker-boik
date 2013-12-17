@@ -8,6 +8,8 @@ public class PokerPlayer {
 	private Map<PokerAction, Hand> actionsHands;
 	private String playerID;
 	private String comment;
+	public Double benefitGeneral, winrate;
+	public Integer nbHand, nbHandVPIP, nbHandPFR, nbCbet, nbFoldToCbet, nbSecondBarrel, nbFoldToSecondBarrel;
 	
 	public PokerPlayer(String playerID) {
 		this.playerID = playerID;

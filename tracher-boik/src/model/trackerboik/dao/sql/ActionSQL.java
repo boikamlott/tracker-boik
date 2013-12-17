@@ -36,7 +36,7 @@ public class ActionSQL extends GeneralSQLDBOperations implements ActionDAO {
 	}
 
 	@Override
-	protected String getAllElementsRequest() {
+	protected String getAllElementsForLoadSessionInMemoryRequest() {
 		return "SELECT * FROM " + TABLE_NAME + " WHERE " + GEN_ATT_HAND_ID + " = ?";
 	}
 	
@@ -91,7 +91,7 @@ public class ActionSQL extends GeneralSQLDBOperations implements ActionDAO {
 		List<PokerAction> res = new ArrayList<PokerAction>();
 		
 		try {
-			psQuery = createPreparedStatement(getAllElementsRequest());
+			psQuery = createPreparedStatement(getAllElementsForLoadSessionInMemoryRequest());
 			psQuery.setString(1, h.getId());
 			ResultSet rs = psQuery.executeQuery();
 			
@@ -108,4 +108,69 @@ public class ActionSQL extends GeneralSQLDBOperations implements ActionDAO {
 		return res;
 	}
 	
+	@Override
+	public Integer getNbHandsVPIPPlayedForNewSessions(PokerPlayer pp)
+			throws TBException {
+		String errorMsg = "";
+		try {
+			String rq = "SELECT COUNT(DISTINCT(h." + GEN_ATT_HAND_ID + "))";
+			rq += " FROM " + SessionSQL.TABLE_NAME + " s, " + HandSQL.TABLE_NAME + " h," + ActionSQL.TABLE_NAME + " a";
+			rq += " WHERE s." + GEN_ATT_SESSION_CALCULATED + "=?";
+			rq += " AND s." + GEN_ATT_SESSION_ID + "=" + "h." + GEN_ATT_SESSION_ID;
+			rq += " AND h." + GEN_ATT_HAND_ID + "=" + "a." + GEN_ATT_HAND_ID;
+			rq += " AND a." + GEN_ATT_PLAYER_ID + "=?";
+			rq += " AND a." + ATT_MOMENT + "=?";
+			rq += " AND a." + ATT_KIND + " in (?,?,?)";
+			
+			psQuery = createPreparedStatement(rq);
+			psQuery.setString(1, "n");
+			psQuery.setString(2, pp.getPlayerID());
+			psQuery.setString(3, HandMoment.PREFLOP.toString());
+			psQuery.setString(4, ActionKind.BET.toString());
+			psQuery.setString(5, ActionKind.CALL.toString());
+			psQuery.setString(6, ActionKind.RAISE.toString());
+			ResultSet rs = psQuery.executeQuery();
+			
+			if(rs.next()) {
+				return rs.getInt(1);
+			}
+			
+		} catch (Exception e) {
+			errorMsg = e.getMessage();
+		}
+		
+		throw new TBException("Error while getting Nb Hands VPIP played by player '" + pp.getPlayerID() + "': " + errorMsg);
+	}
+
+	@Override
+	public Integer getNbHandsPFRPlayedForNewSessions(PokerPlayer pp)
+			throws TBException {
+		String errorMsg = "";
+		try {
+			String rq = "SELECT COUNT(DISTINCT(h." + GEN_ATT_HAND_ID + "))";
+			rq += " FROM " + SessionSQL.TABLE_NAME + " s, " + HandSQL.TABLE_NAME + " h," + ActionSQL.TABLE_NAME + " a";
+			rq += " WHERE s." + GEN_ATT_SESSION_CALCULATED + "=?";
+			rq += " AND s." + GEN_ATT_SESSION_ID + "=" + "h." + GEN_ATT_SESSION_ID;
+			rq += " AND h." + GEN_ATT_HAND_ID + "=" + "a." + GEN_ATT_HAND_ID;
+			rq += " AND a." + GEN_ATT_PLAYER_ID + "=?";
+			rq += " AND a." + ATT_MOMENT + "=?";
+			rq += " AND a." + ATT_KIND + "=?";
+			
+			psQuery = createPreparedStatement(rq);
+			psQuery.setString(1, "n");
+			psQuery.setString(2, pp.getPlayerID());
+			psQuery.setString(3, HandMoment.PREFLOP.toString());
+			psQuery.setString(4, ActionKind.RAISE.toString());
+			ResultSet rs = psQuery.executeQuery();
+			
+			if(rs.next()) {
+				return rs.getInt(1);
+			}
+			
+		} catch (Exception e) {
+			errorMsg = e.getMessage();
+		}
+		
+		throw new TBException("Error while getting Nb Hands PFR played by player '" + pp.getPlayerID() + "': " + errorMsg);
+	}
 }

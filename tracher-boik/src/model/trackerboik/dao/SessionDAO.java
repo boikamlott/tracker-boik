@@ -12,5 +12,7 @@ public interface SessionDAO extends GeneralDBOperationsDAO {
 
 	public boolean sessionExists(PokerSession associatedSession) throws TBException;
 
-	public List<PokerSession> getAllSesssions() throws TBException;
+	public List<PokerSession> getAllSesssionsUncalculated() throws TBException;
+
+	public void markAllSessionsAsCalculated() throws TBException;
 }

@@ -87,14 +87,14 @@ public class HandSQL extends GeneralSQLDBOperations implements HandDAO {
 	}
 
 	@Override
-	protected String getAllElementsRequest() {
+	protected String getAllElementsForLoadSessionInMemoryRequest() {
 		return "SELECT * FROM " + TABLE_NAME + " WHERE " + GEN_ATT_SESSION_ID + " = ?";
 	}
 
 	@Override
 	public List<Hand> getAllHandsForSession(PokerSession ps) throws TBException {
 		try {
-			psQuery = createPreparedStatement(getAllElementsRequest());
+			psQuery = createPreparedStatement(getAllElementsForLoadSessionInMemoryRequest());
 			psQuery.setString(1, ps.getId());
 			ResultSet rs = psQuery.executeQuery();
 			List<Hand> res = new ArrayList<Hand>();

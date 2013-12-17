@@ -52,14 +52,14 @@ HandBoardDAO {
 	}
 
 	@Override
-	protected String getAllElementsRequest() {
+	protected String getAllElementsForLoadSessionInMemoryRequest() {
 		return "SELECT * FROM " + TABLE_NAME + " WHERE " + GEN_ATT_HAND_ID + " = ?";
 	}
 
 	@Override
 	public String getBoardIDForHand(Hand h) throws TBException {
 		try {
-			psQuery = createPreparedStatement(getAllElementsRequest());
+			psQuery = createPreparedStatement(getAllElementsForLoadSessionInMemoryRequest());
 			psQuery.setString(1, h.getId());
 			ResultSet rs = psQuery.executeQuery();
 			String res = null;

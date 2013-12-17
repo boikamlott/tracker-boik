@@ -14,6 +14,7 @@ import view.trackerboik.main.TrackerBoikApplicationWindows;
 public class TrackerBoikController {
 
 	private AtomicDataController atomicDataController;
+	private AggregateDataController aggregateDataController;
 	private ConfigurationController configurationController;
 	private List<PokerSession> sessionsInMemory;
 	private List<PokerPlayer> playersInMemory;
@@ -25,12 +26,26 @@ public class TrackerBoikController {
 		try {
 			configurationController = new ConfigurationController();
 			atomicDataController = new AtomicDataController(this);
+			aggregateDataController = new AggregateDataController(this);
 			sessionsInMemory = new ArrayList<>();
 			playersInMemory = new ArrayList<PokerPlayer>();
 		} catch (TBException e) {
 			printException("Erreur au démarrage: '" + e.getMessage() + "' Vérifier votre environnement et consultez les logs pour plus de détails");
 		} catch (Exception e) {
 			printException("Erreur inconnue. Redemarrez l'application.");
+		}
+	}
+	
+	public void refreshAggregatedData() {
+		try {
+			//Refresh Hand Data
+			atomicDataController.refreshCurrentFolder();
+			atomicDataController.loadNewAtomicData();
+			aggregateDataController.refreshIndicatorsData();
+		} catch (TBException e) {
+			//TODO
+		} catch (Exception e) {
+			
 		}
 	}
 	

@@ -39,7 +39,7 @@ public class HandDataBDDReader {
 	 */
 	public List<PokerSession> getAllSessions() throws TBException {
 		SessionDAO sbdd = new SessionSQL();
-		List<PokerSession> pss = sbdd.getAllSesssions();
+		List<PokerSession> pss = sbdd.getAllSesssionsUncalculated();
 		for(PokerSession ps : pss) {
 			addSessionsHands(ps);
 		}

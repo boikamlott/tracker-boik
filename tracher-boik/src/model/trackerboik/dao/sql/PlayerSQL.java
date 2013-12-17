@@ -2,6 +2,8 @@ package model.trackerboik.dao.sql;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import model.trackerboik.businessobject.PokerPlayer;
 import model.trackerboik.dao.PlayerDAO;
@@ -14,14 +16,31 @@ public class PlayerSQL extends GeneralSQLDBOperations implements PlayerDAO {
 	}
 
 	public static final String TABLE_NAME = "player";
-
 	private static final String ATT_COMMENT = "comment";
-
+	private static final String ATT_WINRATE = "winrate";
+	private static final String ATT_BENEFIT = "benefit";
+	private static final String ATT_NB_HANDS = "nb_hands";
+	private static final String ATT_NB_HANDS_VPIP = "nb_hands_vpip";
+	private static final String ATT_NB_RAISE_PREFLOP = "nb_hands_preflop_raise";
+	private static final String ATT_NB_CBET = "nb_cbet";
+	private static final String ATT_NB_FOLD_TO_CBET = "nb_fold_to_cbet";
+	private static final String ATT_NB_SECOND_BARREL = "nb_second_barrel";
+	private static final String ATT_NB_FOLD_TO_SECOND_BARREL = "nb_fold_to_second_barrel";
+	
 	@Override
 	public void createTable() throws TBException {
 		String rq = "CREATE TABLE " + TABLE_NAME + " (";
 		rq += GEN_ATT_PLAYER_ID + " VARCHAR(256) PRIMARY KEY,";
-		rq += ATT_COMMENT + " VARCHAR(256))";
+		rq += ATT_COMMENT + " VARCHAR(256),";
+		rq += ATT_WINRATE + " DOUBLE,";
+		rq += ATT_BENEFIT + " DOUBLE,";
+		rq += ATT_NB_HANDS + " INTEGER,";
+		rq += ATT_NB_HANDS_VPIP + " INTEGER,";
+		rq += ATT_NB_RAISE_PREFLOP + " INTEGER,";
+		rq += ATT_NB_CBET + " INTEGER,";
+		rq += ATT_NB_FOLD_TO_CBET + " INTEGER,";
+		rq += ATT_NB_SECOND_BARREL + " INTEGER,";
+		rq += ATT_NB_FOLD_TO_SECOND_BARREL + " INTEGER)";
 
 		executeSQLUpdate(rq);
 
@@ -30,10 +49,18 @@ public class PlayerSQL extends GeneralSQLDBOperations implements PlayerDAO {
 	@Override
 	public void insertPlayer(PokerPlayer pp) throws TBException {
 		try {
-		
 			psInsert.setString(1, pp.getPlayerID());
 			psInsert.setString(2, pp.getComment());
-		
+			psInsert.setDouble(3, 0.0);
+			psInsert.setDouble(4, 0.0);
+			psInsert.setInt(5, 0);
+			psInsert.setInt(6, 0);
+			psInsert.setInt(7, 0);
+			psInsert.setInt(8, 0);
+			psInsert.setInt(9, 0);
+			psInsert.setInt(10, 0);
+			psInsert.setInt(11, 0);
+			
 			if(psInsert.execute()) {
 				throw new TBException("Unexpected result while trying to insert player " + pp.getPlayerID());
 			}
@@ -57,7 +84,7 @@ public class PlayerSQL extends GeneralSQLDBOperations implements PlayerDAO {
 
 	@Override
 	protected String getInsertPreCompiledRequest() {
-		return "INSERT INTO " + TABLE_NAME + " VALUES (?, ?)";
+		return "INSERT INTO " + TABLE_NAME + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	}
 	
 	@Override
@@ -66,25 +93,102 @@ public class PlayerSQL extends GeneralSQLDBOperations implements PlayerDAO {
 	}
 
 	@Override
-	protected String getAllElementsRequest() {
+	protected String getAllElementsForLoadSessionInMemoryRequest() {
 		return getExistenceTestPreCompiledRequest();
 	}
 
 	@Override
 	public void addPlayerDetails(PokerPlayer p) throws TBException {
 		try {
-			psQuery = createPreparedStatement(getAllElementsRequest());
+			psQuery = createPreparedStatement(getAllElementsForLoadSessionInMemoryRequest());
 			psQuery.setString(1, p.getPlayerID());
 			ResultSet rs = psQuery.executeQuery();
-			if(rs.next()) {
-				p.setComment(rs.getString(ATT_COMMENT));
-			} else {
-				throw new TBException("Impossible to add player details for player " + p.getPlayerID() + ": unknow player");
-			}
+			addPlayerDetailsFromResultSet(rs, p);
 		} catch (SQLException e) {
 			throw new TBException("Impossible to add player details for player " + p.getPlayerID() + ": " + e.getMessage());
 		}
 		
 	}
+	
+	@Override
+	public List<PokerPlayer> getPlayersWithIndicatorsToUpdate()
+			throws TBException {
+		try {
+			List<PokerPlayer> res = new ArrayList<PokerPlayer>();
+			psQuery = createPreparedStatement("SELECT * FROM " + TABLE_NAME);
+			ResultSet rs = psQuery.executeQuery();
+			
+			while(rs.next()) {
+				PokerPlayer p = new PokerPlayer(rs.getString(GEN_ATT_PLAYER_ID));
+				addPlayerDetailsFromResultSet(rs, p);
+				res.add(p);
+			}
+			
+			return res;
+		} catch (SQLException e) {
+			throw new TBException("Impossible to load all players data from database: " + e.getMessage());
+		}
+	}
 
+	/**
+	 * Routine which add all available data from DB to the player object
+	 * @param rs
+	 * @param p
+	 * @throws TBException
+	 * @throws SQLException
+	 */
+	private void addPlayerDetailsFromResultSet(ResultSet rs, PokerPlayer p) throws TBException, SQLException {
+		if(rs.next()) {
+			p.setComment(rs.getString(ATT_COMMENT));
+			p.winrate = rs.getDouble(ATT_WINRATE);
+			p.benefitGeneral = rs.getDouble(ATT_BENEFIT);
+			p.nbHand = rs.getInt(ATT_NB_HANDS);
+			p.nbHandVPIP = rs.getInt(ATT_NB_HANDS_VPIP);
+			p.nbHandPFR = rs.getInt(ATT_NB_RAISE_PREFLOP);
+			p.nbCbet = rs.getInt(ATT_NB_CBET);
+			p.nbFoldToCbet = rs.getInt(ATT_NB_FOLD_TO_CBET);
+			p.nbSecondBarrel = rs.getInt(ATT_NB_SECOND_BARREL);
+			p.nbFoldToSecondBarrel = rs.getInt(ATT_NB_FOLD_TO_SECOND_BARREL);
+		} else {
+			throw new TBException("Impossible to add player details for player " + p.getPlayerID() + ": unknow player");
+		}
+		
+	}
+
+	@Override
+	public void updatePlayerData(PokerPlayer pp) throws TBException {
+		try {
+			String rq = "UPDATE " + TABLE_NAME + " SET ";
+			rq += ATT_COMMENT + "=?,";
+			rq += ATT_WINRATE + "=?,";
+			rq += ATT_BENEFIT + "=?,";
+			rq += ATT_NB_HANDS + "=?,";
+			rq += ATT_NB_HANDS_VPIP + "=?,";
+			rq += ATT_NB_RAISE_PREFLOP + "=?,";
+			rq += ATT_NB_CBET + "=?,";
+			rq += ATT_NB_FOLD_TO_CBET + "=?,";
+			rq += ATT_NB_SECOND_BARREL + "=?,";
+			rq += ATT_NB_FOLD_TO_SECOND_BARREL + "=? ";
+			rq += " WHERE " + GEN_ATT_PLAYER_ID + "=?";
+			
+			psQuery = createPreparedStatement(rq);
+			psQuery.setString(1, pp.getComment());
+			psQuery.setDouble(2, pp.winrate);
+			psQuery.setDouble(3, pp.benefitGeneral);
+			psQuery.setInt(4, pp.nbHand);
+			psQuery.setInt(5, pp.nbHandVPIP);
+			psQuery.setInt(6, pp.nbHandPFR);
+			psQuery.setInt(7, pp.nbCbet);
+			psQuery.setInt(8, pp.nbFoldToCbet);
+			psQuery.setInt(9, pp.nbSecondBarrel);
+			psQuery.setInt(10, pp.nbFoldToSecondBarrel);
+			
+			psQuery.execute();
+		} catch (SQLException e) {
+			throw new TBException("Impossible to store player '" + pp.getPlayerID() + "' data in DB: " + e.getMessage());
+		}
+		
+	}
+
+	
 }

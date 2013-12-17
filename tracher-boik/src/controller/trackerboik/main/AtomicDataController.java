@@ -65,11 +65,12 @@ public class AtomicDataController {
 	 * Load all database in memory
 	 * Careful: Delete all hands in memory which is not saved
 	 */
-	public void loadAllAtomicDataFromDataBaseIntoMemory() {
+	public void loadNewAtomicData() {
 		try {
 			HandDataBDDReader reader = new HandDataBDDReader();
 			parentController.getSessions().clear();
 			List<PokerSession> sessions = reader.getAllSessions();
+			parentController.getSessions().addAll(sessions);
 		} catch (TBException e) {
 			//TODO raise error window
 		}

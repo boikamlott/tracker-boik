@@ -11,7 +11,9 @@ drop table player;
 CREATE TABLE session (
 	session_id VARCHAR(256) PRIMARY KEY,
 	file_associated_name VARCHAR(256) NOT NULL,
-	session_kind VARCHAR(256)
+	session_kind VARCHAR(256),
+	aggregated_data_calculated VARCHAR(10),
+	CONSTRAINT agg_calculate_bool_enum CHECK (aggregated_data_calculated in ('y', 'n'))
 );
 
 /* Represente le board, le flop ne peut être nul sinon on aurait pas d'entrée */
@@ -45,7 +47,16 @@ CREATE TABLE hand_board (
 /* Represente les joueurs */
 CREATE TABLE player (
 	player_id VARCHAR(256) PRIMARY KEY,
-	comment VARCHAR(256)
+	comment VARCHAR(256),
+	winrate DOUBLE,
+	benefit DOUBLE,
+	nb_hands INTEGER,
+	nb_hands_vpip INTEGER,
+	nb_hands_preflop_raise INTEGER,
+	nb_cbet INTEGER,
+	nb_fold_to_cbet INTEGER,
+	nb_second_barrel INTEGER,
+	nb_fold_to_second_barrel INTEGER
 );	
 
 /* Représente les mains auxquelles ont participés les joueurs */

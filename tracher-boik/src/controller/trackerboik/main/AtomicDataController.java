@@ -201,7 +201,7 @@ public class AtomicDataController {
 				try {
 					PokerSession toAdd = parseDataOfFile(fpath);
 					if(toAdd != null) {
-						res.add(null);
+						res.add(toAdd);
 						TrackerBoikLog.getInstance().log(
 								Level.INFO,
 								"Data of file '" + fpath

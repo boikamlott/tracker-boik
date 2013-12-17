@@ -23,6 +23,7 @@ public class PokerHand {
 	 * @return
 	 */
 	public boolean isCorrect() {
-		return cards != null && cards[0].isCorrect() && cards[1].isCorrect();
+		return cards != null && cards.length == 2 && cards[0] != null && 
+				cards[0].isCorrect() && cards[1] != null && cards[1].isCorrect();
 	}
 }

@@ -24,7 +24,7 @@ public class HandSQL extends GeneralSQLDBOperations implements HandDAO {
 
 	private static String ATT_POT = "pot", ATT_SITE_RAKE = "rake",
 			ATT_BB_VALUE = "bb_value", ATT_TABLE_NAME = "table_name",
-			ATT_MOMENT = "moment";
+			ATT_MOMENT = "moment", ATT_BUTTON_SEAT_NO = "bouton_seat_no";
 
 	@Override
 	public void createTable() throws TBException {
@@ -35,6 +35,7 @@ public class HandSQL extends GeneralSQLDBOperations implements HandDAO {
 		rq += ATT_BB_VALUE += " double NOT NULL,";
 		rq += ATT_TABLE_NAME += " VARCHAR(256),";
 		rq += ATT_MOMENT + " TIMESTAMP,";
+		rq += ATT_BUTTON_SEAT_NO + " INTEGER NOT NULL,";
 		rq += GEN_ATT_SESSION_ID + " VARCHAR(256) REFERENCES "
 				+ SessionSQL.TABLE_NAME + "(" + GEN_ATT_SESSION_ID + "))";
 
@@ -50,7 +51,8 @@ public class HandSQL extends GeneralSQLDBOperations implements HandDAO {
 			psInsert.setDouble(4, h.getLimitBB());
 			psInsert.setString(5, h.getTableName());
 			psInsert.setString(6, h.getSQLFormattedMoment());
-			psInsert.setString(7, h.getAssociatedSession().getId());
+			psInsert.setInt(7, h.getButtonSeatNumber());
+			psInsert.setString(8, h.getAssociatedSession().getId());
 		
 			if(psInsert.execute()) {
 				throw new TBException("Unexpected result while trying to insert hand " + h.getId());
@@ -76,7 +78,7 @@ public class HandSQL extends GeneralSQLDBOperations implements HandDAO {
 
 	@Override
 	protected String getInsertPreCompiledRequest() {
-		return "INSERT INTO " + TABLE_NAME + " VALUES (?, ?, ?, ?, ?, ?, ?)";
+		return "INSERT INTO " + TABLE_NAME + " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 	}
 
 	@Override
@@ -99,12 +101,13 @@ public class HandSQL extends GeneralSQLDBOperations implements HandDAO {
 			
 			while(rs.next()) {
 				try {
-					Hand h = new Hand(rs.getString(GEN_ATT_HAND_ID));
+					Hand h = new Hand(rs.getString(GEN_ATT_HAND_ID), ps);
 					h.setDateTime(AppUtil.parseCalendar(rs.getString(ATT_MOMENT), "yyyy-MM-dd hh:mm:ss"));
 					h.setPot(rs.getDouble(ATT_POT));
 					h.setSiteRake(rs.getDouble(ATT_SITE_RAKE));
 					h.setLimitBB(rs.getDouble(ATT_BB_VALUE));
 					h.setTableName(rs.getString(ATT_TABLE_NAME));
+					h.setButtonSeatNumber(rs.getInt(ATT_BUTTON_SEAT_NO));
 					res.add(h);
 				} catch (SQLException e) {
 					TrackerBoikLog.getInstance().log(

@@ -1,20 +1,21 @@
 package model.trackerboik.dao.sql;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.bind.NotIdentifiableEvent;
-
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import model.trackerboik.businessobject.ActionKind;
 import model.trackerboik.businessobject.Hand;
 import model.trackerboik.businessobject.HandMoment;
 import model.trackerboik.businessobject.PokerAction;
+import model.trackerboik.businessobject.PokerPlayer;
 import model.trackerboik.dao.ActionDAO;
 
 import com.trackerboik.exception.TBException;
 import com.trackerboik.util.BDDUtil;
+
+import controller.trackerboik.main.TrackerBoikController;
 
 public class ActionSQL extends GeneralSQLDBOperations implements ActionDAO {
 	
@@ -87,8 +88,24 @@ public class ActionSQL extends GeneralSQLDBOperations implements ActionDAO {
 
 
 	public List<PokerAction> getAllActionsForHand(Hand h) throws TBException {
-		//TODO
-		return null;
+		List<PokerAction> res = new ArrayList<PokerAction>();
+		
+		try {
+			psQuery = createPreparedStatement(getAllElementsRequest());
+			psQuery.setString(1, h.getId());
+			ResultSet rs = psQuery.executeQuery();
+			
+			while(rs.next()) {
+				PokerPlayer pp = TrackerBoikController.getInstance().getPlayerOrCreateIt(rs.getString(GEN_ATT_PLAYER_ID));
+				res.add(new PokerAction(pp, h, rs.getInt(ATT_ACTION_NUMBER), rs.getDouble(ATT_AMOUNT_BET), 
+						ActionKind.readActionKind(ATT_KIND), HandMoment.readHandMoment(ATT_MOMENT)));
+				
+			}
+		} catch (SQLException e) {
+			throw new TBException("Impossible to retrieve actions for hand " + h.getId() + ": " + e.getMessage());
+		}
+		
+		return res;
 	}
 	
 }

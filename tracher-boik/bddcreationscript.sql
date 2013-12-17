@@ -30,8 +30,9 @@ CREATE TABLE hand (
 	pot double NOT NULL,
 	rake double NOT NULL,
 	bb_value double NOT NULL,
-	tableName VARCHAR(256),
+	table_name VARCHAR(256),
 	moment TIMESTAMP,
+	bouton_seat_no INTEGER NOT NULL,
 	session_id VARCHAR(256) REFERENCES session(session_id)
 );
 
@@ -54,10 +55,10 @@ CREATE TABLE hand_player (
 	card_1 VARCHAR(2),
 	card_2 VARCHAR(2),
 	position int NOT NULL,
-	stack_before double NOT NULL,
 	is_all_in VARCHAR(2) NOT NULL,
-	amount_win DOUBLE NOT NULL,
 	result VARCHAR(50) NOT NULL,
+	stack_before double NOT NULL,
+	amount_win DOUBLE NOT NULL,
 	CONSTRAINT all_in_bool_enum CHECK (is_all_in in ('y', 'n')),
 	CONSTRAINT result_enum CHECK (result in ('no_bet', 'fold_preflop', 'fold_flop', 'fold_turn', 'fold_river', 'loose', 'win')),
 	CONSTRAINT pk_hand_player PRIMARY KEY (hand_id, player_id)
@@ -68,7 +69,7 @@ CREATE TABLE action (
 	hand_id VARCHAR(256),
 	player_id VARCHAR(256),
 	action_number int NOT NULL,
-	amout_bet double NOT NULL,
+	amount_bet double NOT NULL,
 	kind VARCHAR(10) NOT NULL,
 	moment VARCHAR(10) NOT NULL,
 	CONSTRAINT pk_action PRIMARY KEY (hand_id, player_id, action_number),

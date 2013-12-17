@@ -63,6 +63,7 @@ public class HandDataBDDReader {
 				addBoardToHandIfExists(h);
 				addPlayersDataToHand(h);
 				addActionsToHand(h);
+				ps.addHand(h);
 			} catch (TBException e) {
 				TrackerBoikLog.getInstance().log(
 						Level.WARNING, "Data of hand " + h.getId() + " could not be loaded from database because: " + e.getMessage());
@@ -108,7 +109,7 @@ public class HandDataBDDReader {
 	 */
 	private void addActionsToHand(Hand h) throws TBException {
 		ActionDAO abdd = new ActionSQL();
-		abdd.getAllActionsForHand(h);
+		h.getActions().addAll(abdd.getAllActionsForHand(h));
 	}
 	
 }

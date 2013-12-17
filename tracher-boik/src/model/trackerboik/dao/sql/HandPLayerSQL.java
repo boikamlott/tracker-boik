@@ -22,7 +22,7 @@ public class HandPLayerSQL extends GeneralSQLDBOperations implements
 
 	public static final String TABLE_NAME = "hand_player";
 
-	private static final String ATT_CARD_1 = "card_1", ATT_CARD_2 = "card_2", ATT_POSITION = "pos";
+	private static final String ATT_CARD_1 = "card_1", ATT_CARD_2 = "card_2", ATT_POSITION = "position";
 
 	private static final String ATT_IS_ALL_IN = "is_all_in";
 
@@ -30,7 +30,7 @@ public class HandPLayerSQL extends GeneralSQLDBOperations implements
 
 	private static final String ATT_STACK_BEFORE = "stack_before";
 
-	private static final String ATT_AMOUNT_WIN = "amount_won";
+	private static final String ATT_AMOUNT_WIN = "amount_win";
 
 	@Override
 	public void createTable() throws TBException {
@@ -99,10 +99,7 @@ public class HandPLayerSQL extends GeneralSQLDBOperations implements
 			ResultSet rs = psQuery.executeQuery();
 			
 			while(rs.next()) {
-				PokerPlayer pp = new PokerPlayer(rs.getString(GEN_ATT_PLAYER_ID));
-				if(TrackerBoikController.getInstance().getPlayers().contains(pp)) {
-					pp = TrackerBoikController.getInstance().getPlayers().get(TrackerBoikController.getInstance().getPlayers().indexOf(pp));
-				}
+				PokerPlayer pp = TrackerBoikController.getInstance().getPlayerOrCreateIt(rs.getString(GEN_ATT_PLAYER_ID));
 				h.addPlayerToHand(pp);
 				h.setAmountWonForPlayer(pp, rs.getDouble(ATT_AMOUNT_WIN));
 				h.setPositionForPlayer(pp, rs.getInt(ATT_POSITION));
@@ -111,12 +108,17 @@ public class HandPLayerSQL extends GeneralSQLDBOperations implements
 				if(rs.getString(ATT_IS_ALL_IN).equals("y")) {
 					h.upAllInFlagForPlayer(pp);
 				}
-				PokerHand ph = new PokerHand();
-				ph.setHand(PokerCard.readCard(rs.getString(ATT_CARD_1)), PokerCard.readCard(rs.getString(ATT_CARD_2)));
-				h.setHandForPlayer(pp, ph);
+				PokerCard firstCard = PokerCard.readCard(rs.getString(ATT_CARD_1));
+				PokerCard secondCard = PokerCard.readCard(rs.getString(ATT_CARD_2));
+				
+				if(firstCard != null && secondCard != null) {
+					PokerHand ph = new PokerHand();
+					ph.setHand(firstCard, secondCard);
+					h.setHandForPlayer(pp, ph);
+				}
 			}
 		} catch (SQLException e) {
-			throw new TBException("Impossible to retrieve players for hand " + h.getId());
+			throw new TBException("Impossible to retrieve players for hand " + h.getId() + ": " + e.getMessage());
 		}
 		
 	}

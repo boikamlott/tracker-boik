@@ -91,4 +91,19 @@ public class TrackerBoikController {
 		}
 		sessionsInMemory.add(s);
 	}
+
+	/**
+	 * If player is registred in the list return it else create it and
+	 * add it in the central list
+	 * @param string
+	 * @return
+	 */
+	public PokerPlayer getPlayerOrCreateIt(String id) {
+		PokerPlayer pp = new PokerPlayer(id);
+		if(!playersInMemory.contains(pp)) {
+			playersInMemory.add(pp);
+		}
+		
+		return pp;
+	}
 }

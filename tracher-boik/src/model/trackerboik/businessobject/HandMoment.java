@@ -15,4 +15,14 @@ public enum HandMoment {
 	public String toString() {
 		return valueText;
 	}
+
+	public static HandMoment readHandMoment(String attMoment) {
+		for(HandMoment hm : HandMoment.values()) {
+			if(hm.toString().equals(attMoment)) {
+				return hm;
+			}
+		}
+		
+		return null;
+	}
  }

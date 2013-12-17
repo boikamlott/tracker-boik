@@ -29,4 +29,14 @@ public enum ActionKind {
 	public String toString() {
 		return valueText;
 	}
+
+	public static ActionKind readActionKind(String attKind) {
+		for(ActionKind ak : ActionKind.values()) {
+			if(ak.toString().equals(attKind)) {
+				return ak;
+			}
+		}
+		
+		return null;
+	}
 }

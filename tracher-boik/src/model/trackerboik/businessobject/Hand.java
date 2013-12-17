@@ -19,6 +19,7 @@ public class Hand {
 	private String tableName;
 	private Double limitBB;
 	private Calendar dateTime;
+	private Integer buttonSeatNumber;
 
 	/* Relation */
 	/* Board */
@@ -43,6 +44,14 @@ public class Hand {
 		handPlayers = new LinkedList<PokerPlayer>();
 		handActions = new LinkedList<PokerAction>();
 		handDataForPlayer = new HashMap<PokerPlayer, PlayerHandData>();
+	}
+	
+	/**
+	 * Constructor just used for test equals function
+	 * @param id
+	 */
+	public Hand(String id) {
+		this.id = id;
 	}
 
 	/**
@@ -196,7 +205,7 @@ public class Hand {
 	 * @throws TBException 
 	 */
 	public void setAmountWonForPlayer(PokerPlayer pp, Double amountWon) throws TBException {
-		if (handPlayers == null || pp == null || amountWon == null || amountWon <= 0.0) {
+		if (handPlayers == null || pp == null || amountWon == null || amountWon < 0.0) {
 			throw new TBException(
 					"Internal error in Hand Module: Invalid data structure or parameter(s) " +
 					"in set amount won for player function");
@@ -343,6 +352,14 @@ public class Hand {
 	public PokerBoard getBoard() {
 		return this.board;
 	}
+	
+	public Integer getButtonSeatNumber() {
+		return buttonSeatNumber;
+	}
+
+	public void setButtonSeatNumber(Integer buttonSeatNumber) {
+		this.buttonSeatNumber = buttonSeatNumber;
+	}
 
 	public String getSQLFormattedMoment() {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -359,14 +376,6 @@ public class Hand {
 
 	public List<PokerPlayer> getPlayers() {
 		return handPlayers;
-	}
-
-	/**
-	 * Constructor just used ofr test equals function
-	 * @param id
-	 */
-	public Hand(String id) {
-		this.id = id;
 	}
 	
 	public boolean equals(Object o) {

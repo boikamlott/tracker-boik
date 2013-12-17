@@ -53,7 +53,7 @@ HandBoardDAO {
 
 	@Override
 	protected String getAllElementsRequest() {
-		return getExistenceTestPreCompiledRequest();
+		return "SELECT * FROM " + TABLE_NAME + " WHERE " + GEN_ATT_HAND_ID + " = ?";
 	}
 
 	@Override

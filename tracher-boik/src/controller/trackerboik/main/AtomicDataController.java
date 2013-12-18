@@ -30,8 +30,8 @@ import com.trackerboik.exception.TBException;
 import com.trackerboik.util.AppUtil;
 import com.trackerboik.util.BDDUtil;
 
-import controller.trackerboik.readdata.HandDataBDDReader;
-import controller.trackerboik.readdata.HandsDataFileReader;
+import controller.trackerboik.data.HandDataBDDReader;
+import controller.trackerboik.data.HandsDataFileReader;
 
 public class AtomicDataController {
 

@@ -399,7 +399,7 @@ public class Hand {
 		
 		return handDataForPlayer.get(pp);
 	}
-
+	
 	/**
 	 * Return hands actions
 	 * @return

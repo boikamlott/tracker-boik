@@ -20,14 +20,9 @@ import model.trackerboik.dao.sql.SessionSQL;
 import com.trackerboik.appmngt.TrackerBoikLog;
 import com.trackerboik.exception.TBException;
 
+import controller.trackerboik.data.HandDataCalculator;
+
 public class AggregateDataController {
-	private static final Integer NB_CALCULATED_INDICATORS = 8;
-	private static final Integer NB_CBET_POSSIBLE = 1, NB_CBET = 2, NB_FOLD_TO_CBET_POSSIBLE = 3,
-									NB_FOLD_TO_CBET = 4, NB_SECOND_BARREL_POSSIBLE = 5, NB_SECOND_BARREL = 6,
-									NB_FOLD_TO_SECOND_BARREL_POSSIBLE = 7, NB_FOLD_TO_SECOND_BARREL = 8;
-	
-	
-	
 	private TrackerBoikController parentController;
 	
 	public AggregateDataController(TrackerBoikController controller) {
@@ -91,65 +86,20 @@ public class AggregateDataController {
 	 * @throws TBException 
 	 */
 	private void computeIndicatorForNewSessions(PokerPlayer pp) throws TBException {
+		HandDataCalculator hdc;
+		
 		for(PokerSession ps : parentController.getSessions()) {
 			for(Hand h : ps.getHands()) {
 				if(h.getPlayers().contains(pp)) {
-					computeIndicatorForHandAndPlayer(h, pp);
+					try {
+						hdc = new HandDataCalculator(pp, h);
+						hdc.computeIndicatorForHandAndPlayer();
+					} catch (Exception e) {
+						TrackerBoikLog.getInstance().log(Level.SEVERE, "Impossible to analyse hand " + 
+										h.getId() + " for player " + pp.getPlayerID() + " moves because: " + e.getMessage());
+					}
 				}
 			}
-		}
-	}
-
-	/**
-	 * Compute all indicator for the player and the hand given in parameter
-	 * PRE: Player has play the hand
-	 * @param h
-	 * @param pp
-	 * @throws TBException 
-	 */
-	private void computeIndicatorForHandAndPlayer(Hand h, PokerPlayer pp) throws TBException {
-		Double localBenefit = 0.0;
-		Double amountToCall = h.getLimitBB();
-		Integer nbPlayers = h.getPlayers().size();
-		List<PokerAction> actions = h.getActions();
-		boolean cbetPossible = false, continueRead = true;
-		int actCurNo = 0;
-		
-		while(actCurNo < actions.size() && continueRead) {
-			PokerAction a = actions.get(actCurNo);
-			if(a.getKind() == ActionKind.BET) {
-				amountToCall = a.getAmountBet();
-			}
-			
-			if(a.getAssociatedPlayer().equals(pp)) {
-				switch(a.getMoment()) {
-					case PREFLOP:
-						switch (a.getKind()) {
-							case POSTSBLIND:
-							case POSTBIGBLIND:
-							case CALL:		
-								localBenefit -= a.getAmountBet();
-								break;
-							case RAISE:
-								cbetPossible = true;
-								localBenefit -= amountToCall + a.getAmountBet();
-							case FOLD:
-								continueRead = false;
-								break;
-							case CHECK:
-								break;
-							case BET:
-								throw new TBException("Hand " + h.getId() + " was not correctly formatted in BDD, " +
-										"impossible to bet on flop !");
-								
-						}
-				 
-				}
-			} else {
-				
-			}
-			
-			actCurNo++;
 		}
 	}
 	

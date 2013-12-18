@@ -1,4 +1,4 @@
-package controller.trackerboik.readdata;
+package controller.trackerboik.data;
 
 import java.util.List;
 import java.util.logging.Level;

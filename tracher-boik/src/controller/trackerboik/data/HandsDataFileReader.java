@@ -1,4 +1,4 @@
-package controller.trackerboik.readdata;
+package controller.trackerboik.data;
 
 import java.io.BufferedReader;
 import java.io.File;

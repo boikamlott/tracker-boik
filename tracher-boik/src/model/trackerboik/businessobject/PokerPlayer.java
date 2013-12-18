@@ -9,7 +9,11 @@ public class PokerPlayer {
 	private String playerID;
 	private String comment;
 	public Double benefitGeneral, winrate;
-	public Integer nbHand, nbHandVPIP, nbHandPFR, nbCbet, nbFoldToCbet, nbSecondBarrel, nbFoldToSecondBarrel;
+	public Integer nbHand, nbHandVPIP, nbHandPFR;
+	public Integer nbCbetPossible, nbCbet;
+	public Integer nbFoldToCbetPossible, nbFoldToCbet;
+	public Integer nbSecondBarrelPossible, nbSecondBarrel;
+	public Integer nbFoldToSecondBarrelPossible, nbFoldToSecondBarrel;
 	
 	public PokerPlayer(String playerID) {
 		this.playerID = playerID;

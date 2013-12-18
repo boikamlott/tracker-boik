@@ -2,6 +2,7 @@ package model.trackerboik.businessobject;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -404,6 +405,7 @@ public class Hand {
 	 * @return
 	 */
 	public List<PokerAction> getActions() {
+		Collections.sort(handActions);
 		return handActions;
 	}
 

@@ -1,6 +1,6 @@
 package model.trackerboik.businessobject;
 
-public class PokerAction {
+public class PokerAction implements Comparable<PokerAction> {
 
 	private Hand hand;
 	private PokerPlayer associatedPlayer;
@@ -65,6 +65,14 @@ public class PokerAction {
 
 	public void setMoment(HandMoment moment) {
 		this.moment = moment;
+	}
+
+	/**
+	 * Define Order as the litte action number
+	 */
+	@Override
+	public int compareTo(PokerAction a2) {		
+		return a2.getActNoForHand() - this.getActNoForHand();
 	}
 	
 	

@@ -10,6 +10,11 @@ public class PokerPlayer {
 	private String comment;
 	public Double benefitGeneral, winrate;
 	public Integer nbHand, nbHandVPIP, nbHandPFR;
+	public Integer nbATSPossible, nbATS;
+	public Integer nbFoldToATSSBPossible, nbFoldToATSBBPossible, nbFoldToATSSB, nbFoldToATSBB;
+	public Integer nbAFHandBetAndRaise, nbAFHandCalled;
+	public Integer nb3betPossible, nb3bet;
+	public Integer nbFoldTo3betPossible, nbFoldTo3bet;
 	public Integer nbCbetPossible, nbCbet;
 	public Integer nbFoldToCbetPossible, nbFoldToCbet;
 	public Integer nbSecondBarrelPossible, nbSecondBarrel;

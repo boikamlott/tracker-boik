@@ -55,6 +55,7 @@ public class HandsDataFileReader {
 	private static final CharSequence ALL_IN_FLAG = "is all-in";
 	private static final CharSequence CHAT_FLAG = " said,";
 	private static final String HANDS_DOWNLOAD_FILE = "Hand #";
+	private static final String SIX_MAX_FLAG = "6-max";
 
 	private File f;
 	private BufferedReader br;
@@ -157,6 +158,7 @@ public class HandsDataFileReader {
 			h.setTableName(readAndConsumeTableName());
 			h.setButtonSeatNumber(Integer.parseInt(currentLine.split("#")[1]
 					.split(" ")[0].trim()));
+			h.setNbPlayers(currentLine.contains(SIX_MAX_FLAG) ? AppUtil.NB_PLAYER_6_MAX : AppUtil.NB_PLAYER_FULL_RING);
 			gotToNextLine();
 			addPlayerAndStackToHand(h);
 

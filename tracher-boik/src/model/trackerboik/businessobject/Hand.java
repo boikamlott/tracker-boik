@@ -21,6 +21,7 @@ public class Hand {
 	private Double limitBB;
 	private Calendar dateTime;
 	private Integer buttonSeatNumber;
+	private Integer nbPlayersOnTable;
 
 	/* Relation */
 	/* Board */
@@ -361,6 +362,15 @@ public class Hand {
 	public void setButtonSeatNumber(Integer buttonSeatNumber) {
 		this.buttonSeatNumber = buttonSeatNumber;
 	}
+	
+	public int getNbPlayers() {
+		return nbPlayersOnTable;
+	}
+
+	public void setNbPlayers(int nbPlayer) {
+		this.nbPlayersOnTable = nbPlayer;
+		
+	}
 
 	public String getSQLFormattedMoment() {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -371,10 +381,14 @@ public class Hand {
 		return this.handDataForPlayer.get(pp).getCards();
 	}
 
-	public Integer getPositionForPlayer(PokerPlayer pp) {
+	public Integer getIntPositionForPlayer(PokerPlayer pp) {
 		return this.handDataForPlayer.get(pp).getPosition();
 	}
 
+	public PokerPosition getPositionForPlayer(PokerPlayer pp) {
+		return PokerPosition.getPositionOfPlayer(this.handDataForPlayer.get(pp).getPosition(), getButtonSeatNumber(), getNbPlayers());
+	}
+	
 	public List<PokerPlayer> getPlayers() {
 		return handPlayers;
 	}

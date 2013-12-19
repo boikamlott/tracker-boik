@@ -19,9 +19,28 @@ public class PlayerSQL extends GeneralSQLDBOperations implements PlayerDAO {
 	private static final String ATT_COMMENT = "comment";
 	private static final String ATT_WINRATE = "winrate";
 	private static final String ATT_BENEFIT = "benefit";
+	private static final String ATT_NB_AGRESSION_FACTOR_BET_RAISE = "nb_hand_af_bet_raise";
+	private static final String ATT_NB_AGRESSION_FACTOR_CALL = "nb_hand_af_call";
+
+	private static final Integer NB_INTEGER_HAND_QUANTITY_INDICATORS = 23;
+	
 	private static final String ATT_NB_HANDS = "nb_hands";
 	private static final String ATT_NB_HANDS_VPIP = "nb_hands_vpip";
 	private static final String ATT_NB_RAISE_PREFLOP = "nb_hands_preflop_raise";
+	
+	private static final String ATT_NB_ATS_POSSIBLE = "nb_hands_ats_possible";
+	private static final String ATT_NB_ATS = "nb_hands_ats";
+
+	private static final String ATT_NB_FOLD_TO_ATS_SB_POSSIBLE = "nb_hands_fold_to_ats_sb_possible";
+	private static final String ATT_NB_FOLD_TO_ATS_BB_POSSIBLE = "nb_hands_fold_to_ats_bb_possible";
+	private static final String ATT_NB_FOLD_TO_ATS_SB = "nb_hands_fold_to_ats_sb";
+	private static final String ATT_NB_FOLD_TO_ATS_BB = "nb_hands_fold_to_ats_bb";
+
+	private static final String ATT_NB_3BET_POSSIBLE = "nb_hands_3bet_possible";
+	private static final String ATT_NB_3BET = "nb_3bet";
+	
+	private static final String ATT_NB_FOLD_TO_3BET_POSSIBLE = "nb_hands_fold_to_3bet_possible";
+	private static final String ATT_NB_FOLD_TO_3BET = "nb_hands_fold_to_3bet";
 	
 	private static final String ATT_NB_CBET_POSSIBLE = "nb_cbet_possible";
 	private static final String ATT_NB_CBET = "nb_cbet";
@@ -42,9 +61,21 @@ public class PlayerSQL extends GeneralSQLDBOperations implements PlayerDAO {
 		rq += ATT_COMMENT + " VARCHAR(256),";
 		rq += ATT_WINRATE + " DOUBLE,";
 		rq += ATT_BENEFIT + " DOUBLE,";
+		rq += ATT_NB_AGRESSION_FACTOR_BET_RAISE + " INTEGER,";
+		rq += ATT_NB_AGRESSION_FACTOR_CALL + " INTEGER,";
 		rq += ATT_NB_HANDS + " INTEGER,";
 		rq += ATT_NB_HANDS_VPIP + " INTEGER,";
 		rq += ATT_NB_RAISE_PREFLOP + " INTEGER,";
+		rq += ATT_NB_ATS_POSSIBLE + " INTEGER,";
+		rq += ATT_NB_ATS + " INTEGER,";
+		rq += ATT_NB_FOLD_TO_ATS_SB_POSSIBLE + " INTEGER,";
+		rq += ATT_NB_FOLD_TO_ATS_BB_POSSIBLE + " INTEGER,";
+		rq += ATT_NB_FOLD_TO_ATS_SB + " INTEGER,";
+		rq += ATT_NB_FOLD_TO_ATS_BB + " INTEGER,";
+		rq += ATT_NB_3BET_POSSIBLE + " INTEGER,";
+		rq += ATT_NB_3BET + " INTEGER,";
+		rq += ATT_NB_FOLD_TO_3BET_POSSIBLE + " INTEGER,";
+		rq += ATT_NB_FOLD_TO_3BET + " INTEGER,";
 		rq += ATT_NB_CBET_POSSIBLE + " INTEGER,";
 		rq += ATT_NB_CBET + " INTEGER,";
 		rq += ATT_NB_FOLD_TO_CBET_POSSIBLE + " INTEGER,";
@@ -65,7 +96,7 @@ public class PlayerSQL extends GeneralSQLDBOperations implements PlayerDAO {
 			psInsert.setString(2, pp.getComment());
 			psInsert.setDouble(3, 0.0);
 			psInsert.setDouble(4, 0.0);
-			for(int i = 5; i <= 15; i++) {
+			for(int i = 5; i < 5 + NB_INTEGER_HAND_QUANTITY_INDICATORS; i++) {
 				psInsert.setInt(i, 0);
 			}
 			
@@ -92,7 +123,7 @@ public class PlayerSQL extends GeneralSQLDBOperations implements PlayerDAO {
 
 	@Override
 	protected String getInsertPreCompiledRequest() {
-		return "INSERT INTO " + TABLE_NAME + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		return "INSERT INTO " + TABLE_NAME + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	}
 	
 	@Override
@@ -150,9 +181,22 @@ public class PlayerSQL extends GeneralSQLDBOperations implements PlayerDAO {
 			p.setComment(rs.getString(ATT_COMMENT));
 			p.winrate = rs.getDouble(ATT_WINRATE);
 			p.benefitGeneral = rs.getDouble(ATT_BENEFIT);
+			p.nbAFHandBetAndRaise = rs.getInt(ATT_NB_AGRESSION_FACTOR_BET_RAISE);
+			p.nbAFHandCalled = rs.getInt(ATT_NB_AGRESSION_FACTOR_CALL);
+			
 			p.nbHand = rs.getInt(ATT_NB_HANDS);
 			p.nbHandVPIP = rs.getInt(ATT_NB_HANDS_VPIP);
 			p.nbHandPFR = rs.getInt(ATT_NB_RAISE_PREFLOP);
+			p.nbATSPossible = rs.getInt(ATT_NB_ATS_POSSIBLE);
+			p.nbATS = rs.getInt(ATT_NB_ATS);
+			p.nbFoldToATSSBPossible = rs.getInt(ATT_NB_FOLD_TO_ATS_SB_POSSIBLE);
+			p.nbFoldToATSBBPossible = rs.getInt(ATT_NB_FOLD_TO_ATS_BB_POSSIBLE);
+			p.nbFoldToATSSB = rs.getInt(ATT_NB_FOLD_TO_ATS_SB);
+			p.nbFoldToATSBB = rs.getInt(ATT_NB_FOLD_TO_ATS_BB);
+			p.nb3betPossible = rs.getInt(ATT_NB_3BET_POSSIBLE);
+			p.nb3bet = rs.getInt(ATT_NB_3BET);
+			p.nbFoldTo3betPossible = rs.getInt(ATT_NB_FOLD_TO_3BET_POSSIBLE);
+			p.nbFoldTo3bet = rs.getInt(ATT_NB_FOLD_TO_3BET);
 			p.nbCbetPossible = rs.getInt(ATT_NB_CBET_POSSIBLE);
 			p.nbCbet = rs.getInt(ATT_NB_CBET);
 			p.nbFoldToCbetPossible = rs.getInt(ATT_NB_FOLD_TO_CBET_POSSIBLE);
@@ -174,9 +218,21 @@ public class PlayerSQL extends GeneralSQLDBOperations implements PlayerDAO {
 			rq += ATT_COMMENT + "=?,";
 			rq += ATT_WINRATE + "=?,";
 			rq += ATT_BENEFIT + "=?,";
+			rq += ATT_NB_AGRESSION_FACTOR_BET_RAISE + "=?,";
+			rq += ATT_NB_AGRESSION_FACTOR_CALL + "=?,";
 			rq += ATT_NB_HANDS + "=?,";
 			rq += ATT_NB_HANDS_VPIP + "=?,";
 			rq += ATT_NB_RAISE_PREFLOP + "=?,";
+			rq += ATT_NB_ATS_POSSIBLE + "=?";
+			rq += ATT_NB_ATS + "=?";
+			rq += ATT_NB_FOLD_TO_ATS_SB_POSSIBLE + "=?";
+			rq += ATT_NB_FOLD_TO_ATS_BB_POSSIBLE + "=?";
+			rq += ATT_NB_FOLD_TO_ATS_SB + "=?";
+			rq += ATT_NB_FOLD_TO_ATS_BB + "=?";
+			rq += ATT_NB_3BET_POSSIBLE + "=?,";
+			rq += ATT_NB_3BET + "=?,";
+			rq += ATT_NB_FOLD_TO_3BET_POSSIBLE + "=?,";
+			rq += ATT_NB_FOLD_TO_3BET + "=?,";
 			rq += ATT_NB_CBET_POSSIBLE + "=?,";
 			rq += ATT_NB_CBET + "=?,";
 			rq += ATT_NB_FOLD_TO_CBET_POSSIBLE + "=?,";
@@ -188,20 +244,34 @@ public class PlayerSQL extends GeneralSQLDBOperations implements PlayerDAO {
 			rq += " WHERE " + GEN_ATT_PLAYER_ID + "=?";
 			
 			psQuery = createPreparedStatement(rq);
-			psQuery.setString(1, pp.getComment());
-			psQuery.setDouble(2, pp.winrate);
-			psQuery.setDouble(3, pp.benefitGeneral);
-			psQuery.setInt(4, pp.nbHand);
-			psQuery.setInt(5, pp.nbHandVPIP);
-			psQuery.setInt(6, pp.nbHandPFR);
-			psQuery.setInt(7, pp.nbCbetPossible);
-			psQuery.setInt(8, pp.nbCbet);
-			psQuery.setInt(9, pp.nbFoldToCbetPossible);
-			psQuery.setInt(10, pp.nbFoldToCbet);
-			psQuery.setInt(11, pp.nbSecondBarrelPossible);
-			psQuery.setInt(12, pp.nbSecondBarrel);
-			psQuery.setInt(13, pp.nbFoldToSecondBarrelPossible);
-			psQuery.setInt(14, pp.nbFoldToSecondBarrel);
+			int i = 1;
+			psQuery.setString(i++, pp.getComment());
+			psQuery.setDouble(i++, pp.winrate);
+			psQuery.setDouble(i++, pp.benefitGeneral);
+			psQuery.setDouble(i++, pp.nbAFHandBetAndRaise);
+			psQuery.setDouble(i++, pp.nbAFHandCalled);
+			psQuery.setInt(i++, pp.nbHand);
+			psQuery.setInt(i++, pp.nbHandVPIP);
+			psQuery.setInt(i++, pp.nbHandPFR);
+			psQuery.setInt(i++, pp.nbATSPossible);
+			psQuery.setInt(i++, pp.nbATS);
+			psQuery.setInt(i++, pp.nbFoldToATSSBPossible);
+			psQuery.setInt(i++, pp.nbFoldToATSBBPossible);
+			psQuery.setInt(i++, pp.nbFoldToATSSB);
+			psQuery.setInt(i++, pp.nbFoldToATSBB);
+			psQuery.setInt(i++, pp.nb3betPossible);
+			psQuery.setInt(i++, pp.nb3bet);
+			psQuery.setInt(i++, pp.nbFoldTo3bet);
+			psQuery.setInt(i++, pp.nbFoldTo3betPossible);
+			psQuery.setInt(i++, pp.nbCbetPossible);
+			psQuery.setInt(i++, pp.nbCbet);
+			psQuery.setInt(i++, pp.nbFoldToCbetPossible);
+			psQuery.setInt(i++, pp.nbFoldToCbet);
+			psQuery.setInt(i++, pp.nbSecondBarrelPossible);
+			psQuery.setInt(i++, pp.nbSecondBarrel);
+			psQuery.setInt(i++, pp.nbFoldToSecondBarrelPossible);
+			psQuery.setInt(i++, pp.nbFoldToSecondBarrel);
+			psQuery.setString(i++, pp.getPlayerID());
 			
 			psQuery.execute();
 		} catch (SQLException e) {

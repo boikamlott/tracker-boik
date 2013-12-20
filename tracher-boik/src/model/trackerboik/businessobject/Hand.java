@@ -34,7 +34,7 @@ public class Hand {
 	private List<PokerAction> handActions;
 
 	/* Player data for this hand */
-	private Map<PokerPlayer, PlayerHandData> handDataForPlayer;
+	private Map<String, PlayerHandData> handDataForPlayer;
 
 	/* Session associated */
 	private PokerSession associatedSession;
@@ -45,7 +45,7 @@ public class Hand {
 		board = new PokerBoard(id);
 		handPlayers = new LinkedList<PokerPlayer>();
 		handActions = new LinkedList<PokerAction>();
-		handDataForPlayer = new HashMap<PokerPlayer, PlayerHandData>();
+		handDataForPlayer = new HashMap<String, PlayerHandData>();
 	}
 	
 	/**
@@ -92,7 +92,7 @@ public class Hand {
 		}
 
 		handPlayers.add(pp);
-		handDataForPlayer.put(pp, new PlayerHandData());
+		handDataForPlayer.put(pp.getPlayerID(), new PlayerHandData());
 	}
 
 	/**
@@ -114,7 +114,7 @@ public class Hand {
 					+ pp.getPlayerID() + "' for hand '" + this.id);
 		}
 
-		handDataForPlayer.get(pp).setPosition(position);
+		handDataForPlayer.get(pp.getPlayerID()).setPosition(position);
 	}
 
 	/**
@@ -135,7 +135,7 @@ public class Hand {
 					+ pp.getPlayerID() + "' for hand '" + this.id + "'");
 		}
 
-		handDataForPlayer.get(pp).setCards(ph);
+		handDataForPlayer.get(pp.getPlayerID()).setCards(ph);
 	}
 
 	/**
@@ -156,7 +156,7 @@ public class Hand {
 					+ pp.getPlayerID() + "' for hand '" + this.id + "'");
 		}
 
-		handDataForPlayer.get(pp).setStartStack(stack);
+		handDataForPlayer.get(pp.getPlayerID()).setStartStack(stack);
 
 	}
 
@@ -177,7 +177,7 @@ public class Hand {
 					+ pp.getPlayerID() + "' for hand '" + this.id + "'");
 		}
 
-		handDataForPlayer.get(pp).setResult(hr);
+		handDataForPlayer.get(pp.getPlayerID()).setResult(hr);
 
 	}
 	
@@ -196,7 +196,7 @@ public class Hand {
 					+ pp.getPlayerID() + "' for hand '" + this.id + "'");
 		}
 
-		handDataForPlayer.get(pp).upWasAllIn();
+		handDataForPlayer.get(pp.getPlayerID()).upWasAllIn();
 		
 	}
 
@@ -216,7 +216,7 @@ public class Hand {
 					+ pp.getPlayerID() + "' for hand '" + this.id + "'");
 		}
 
-		handDataForPlayer.get(pp).setAmountWin(amountWon);		
+		handDataForPlayer.get(pp.getPlayerID()).setAmountWin(amountWon);		
 	}
 	
 	/**
@@ -377,16 +377,18 @@ public class Hand {
 		return sdf.format(this.dateTime.getTime());
 	}
 
-	public PokerHand getHandForPlayer(PokerPlayer pp) {
-		return this.handDataForPlayer.get(pp).getCards();
+	public PokerHand getHandForPlayer(PokerPlayer playerID) {
+		return this.handDataForPlayer.get(playerID).getCards();
 	}
 
-	public Integer getIntPositionForPlayer(PokerPlayer pp) {
-		return this.handDataForPlayer.get(pp).getPosition();
+	public Integer getIntPositionForPlayer(String playerID) {
+		return this.handDataForPlayer.get(playerID).getPosition();
 	}
 
-	public PokerPosition getPositionForPlayer(PokerPlayer pp) {
-		return PokerPosition.getPositionOfPlayer(this.getIntPositionForPlayer(pp), getButtonSeatNumber(), getNbPlayers());
+	public PokerPosition getPositionForPlayer(String playerID) {
+		return PokerPosition.getPositionOfPlayer(this.getIntPositionForPlayer(playerID), 
+												getButtonSeatNumber(), 
+												getNbPlayers());
 	}
 	
 	public List<PokerPlayer> getPlayers() {
@@ -402,16 +404,16 @@ public class Hand {
 	 * @param pp
 	 * @return
 	 */
-	public PlayerHandData getPlayerHandData(PokerPlayer pp) throws TBException {
+	public PlayerHandData getPlayerHandData(String playerID) throws TBException {
 		if(handDataForPlayer == null) {
 			throw new TBException("Impossible to get player data because internal error");
-		} else if(!handPlayers.contains(pp)) {
+		} else if(!handPlayers.contains(playerID)) {
 			throw new TBException("Impossible to get player data because unknow player for hand");
-		} else if(handDataForPlayer.get(pp) == null) {
+		} else if(handDataForPlayer.get(playerID) == null) {
 			throw new TBException("Impossible to get player data because no data for player for hand");
 		}
 		
-		return handDataForPlayer.get(pp);
+		return handDataForPlayer.get(playerID);
 	}
 	
 	/**

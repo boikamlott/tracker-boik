@@ -96,7 +96,7 @@ public class HandDataBDDReader {
 		for(PokerPlayer p : h.getPlayers()) {
 			if(!TrackerBoikController.getInstance().getPlayers().contains(p)) {
 				PlayerDAO pbdd = new PlayerSQL();
-				pbdd.addPlayerDetails(p);
+				pbdd.addPlayersDetails(p);
 				TrackerBoikController.getInstance().getPlayers().add(p);
 			}
 		}

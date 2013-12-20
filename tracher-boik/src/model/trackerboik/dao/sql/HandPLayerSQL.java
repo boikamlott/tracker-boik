@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import model.trackerboik.businessobject.Hand;
 import model.trackerboik.businessobject.HandResult;
+import model.trackerboik.businessobject.PlayerSessionStats;
 import model.trackerboik.businessobject.PokerCard;
 import model.trackerboik.businessobject.PokerHand;
 import model.trackerboik.businessobject.PokerPlayer;
@@ -57,16 +58,17 @@ public class HandPLayerSQL extends GeneralSQLDBOperations implements
 	@Override
 	public void insertHandPlayer(Hand h, PokerPlayer pp) throws TBException {
 		try {
+			String playerID = pp.getPlayerID();
 		
 			psInsert.setString(1, h.getId());
 			psInsert.setString(2, pp.getPlayerID());
 			psInsert.setString(3, h.getHandForPlayer(pp) == null ?  "" : h.getHandForPlayer(pp).getHand()[0].toString());
 			psInsert.setString(4, h.getHandForPlayer(pp) == null ?  "" : h.getHandForPlayer(pp).getHand()[1].toString());
-			psInsert.setInt(5, h.getIntPositionForPlayer(pp));
-			psInsert.setString(6, (h.getPlayerHandData(pp).isAllIn() ? "y" : "n"));
-			psInsert.setString(7, h.getPlayerHandData(pp).getResult().getTxtResult());
-			psInsert.setDouble(8, h.getPlayerHandData(pp).getStackBefore());
-			psInsert.setDouble(9, h.getPlayerHandData(pp).getAmountWin());
+			psInsert.setInt(5, h.getIntPositionForPlayer(playerID));
+			psInsert.setString(6, (h.getPlayerHandData(playerID).isAllIn() ? "y" : "n"));
+			psInsert.setString(7, h.getPlayerHandData(playerID).getResult().getTxtResult());
+			psInsert.setDouble(8, h.getPlayerHandData(playerID).getStackBefore());
+			psInsert.setDouble(9, h.getPlayerHandData(playerID).getAmountWin());
 		
 			if(psInsert.execute()) {
 				throw new TBException("Unexpected result while trying to insert hand_player (" + h.getId() + "," + pp.getPlayerID() + ")");
@@ -124,7 +126,7 @@ public class HandPLayerSQL extends GeneralSQLDBOperations implements
 	}
 
 	@Override
-	public Integer getNbHandsPlayedForNewSessions(PokerPlayer pp)
+	public Integer getNbHandsPlayedForNewSessions(PlayerSessionStats pp)
 			throws TBException {
 		String errorMsg = "";
 		try {

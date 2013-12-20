@@ -8,6 +8,7 @@ import java.util.List;
 import model.trackerboik.businessobject.ActionKind;
 import model.trackerboik.businessobject.Hand;
 import model.trackerboik.businessobject.HandMoment;
+import model.trackerboik.businessobject.PlayerSessionStats;
 import model.trackerboik.businessobject.PokerAction;
 import model.trackerboik.businessobject.PokerPlayer;
 import model.trackerboik.dao.ActionDAO;
@@ -109,7 +110,7 @@ public class ActionSQL extends GeneralSQLDBOperations implements ActionDAO {
 	}
 	
 	@Override
-	public Integer getNbHandsVPIPPlayedForNewSessions(PokerPlayer pp)
+	public Integer getNbHandsVPIPPlayedForNewSessions(PlayerSessionStats pp)
 			throws TBException {
 		String errorMsg = "";
 		try {
@@ -143,7 +144,7 @@ public class ActionSQL extends GeneralSQLDBOperations implements ActionDAO {
 	}
 
 	@Override
-	public Integer getNbHandsPFRPlayedForNewSessions(PokerPlayer pp)
+	public Integer getNbHandsPFRPlayedForNewSessions(PlayerSessionStats pp)
 			throws TBException {
 		String errorMsg = "";
 		try {

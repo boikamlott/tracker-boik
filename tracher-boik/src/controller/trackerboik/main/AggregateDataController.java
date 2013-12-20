@@ -5,16 +5,19 @@ import java.util.logging.Level;
 
 import model.trackerboik.businessobject.ActionKind;
 import model.trackerboik.businessobject.Hand;
+import model.trackerboik.businessobject.PlayerSessionStats;
 import model.trackerboik.businessobject.PokerAction;
 import model.trackerboik.businessobject.PokerPlayer;
 import model.trackerboik.businessobject.PokerSession;
 import model.trackerboik.dao.ActionDAO;
 import model.trackerboik.dao.HandPlayerDAO;
 import model.trackerboik.dao.PlayerDAO;
+import model.trackerboik.dao.PlayerSessionStatsDAO;
 import model.trackerboik.dao.SessionDAO;
 import model.trackerboik.dao.sql.ActionSQL;
 import model.trackerboik.dao.sql.HandPLayerSQL;
 import model.trackerboik.dao.sql.PlayerSQL;
+import model.trackerboik.dao.sql.PlayerSessionStatsSQL;
 import model.trackerboik.dao.sql.SessionSQL;
 
 import com.trackerboik.appmngt.TrackerBoikLog;
@@ -35,18 +38,20 @@ public class AggregateDataController {
 	 * And recalculate their indicators
 	 */
 	public void refreshIndicatorsData() throws TBException {
-		parentController.getPlayers().clear();
-		PlayerDAO pbdd = new PlayerSQL();
-		List<PokerPlayer> playersToUpdate = pbdd.getPlayersWithIndicatorsToUpdate();
-		
-		for(PokerPlayer pp : playersToUpdate) {
-			try {
-				recalculatePlayerIndicators(pp);
-				pbdd.updatePlayerData(pp);
-				parentController.getPlayers().add(pp);
-			} catch (TBException e) {
-				TrackerBoikLog.getInstance().log(Level.WARNING, "Impossible to upadte player '" + 
-								pp.getPlayerID() + "' indicators: " + e.getMessage());
+		parentController.getPlayerSessionsStats().clear();
+		for(PokerSession ps : parentController.getSessions()) {
+			PlayerSessionStatsDAO pssBDD = new PlayerSessionStatsSQL();
+			List<PlayerSessionStats> playersToUpdate = pssBDD.getPlayersWithIndicatorsToUpdate(ps);
+			
+			for(PlayerSessionStats pp : playersToUpdate) {
+				try {
+					recalculatePlayerIndicators(pp);
+					pssBDD.updatePlayerStats(pp);
+					parentController.getPlayerSessionsStats().add(pp);
+				} catch (TBException e) {
+					TrackerBoikLog.getInstance().log(Level.WARNING, "Impossible to upadte player '" + 
+									pp.getPlayerID() + "' indicators: " + e.getMessage());
+				}
 			}
 		}
 		
@@ -59,7 +64,7 @@ public class AggregateDataController {
 		}
 	}
 
-	private void recalculatePlayerIndicators(PokerPlayer pp) throws TBException {
+	private void recalculatePlayerIndicators(PlayerSessionStats pp) throws TBException {
 		HandPlayerDAO hpbdd = new HandPLayerSQL();
 		ActionDAO abdd = new ActionSQL();
 		
@@ -85,7 +90,7 @@ public class AggregateDataController {
 	 * @return
 	 * @throws TBException 
 	 */
-	private void computeIndicatorForNewSessions(PokerPlayer pp) throws TBException {
+	private void computeIndicatorForNewSessions(PlayerSessionStats pp) throws TBException {
 		HandDataCalculator hdc;
 		
 		for(PokerSession ps : parentController.getSessions()) {

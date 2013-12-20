@@ -3,6 +3,7 @@ package controller.trackerboik.main;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.trackerboik.businessobject.PlayerSessionStats;
 import model.trackerboik.businessobject.PokerPlayer;
 import model.trackerboik.businessobject.PokerSession;
 
@@ -18,6 +19,7 @@ public class TrackerBoikController {
 	private ConfigurationController configurationController;
 	private List<PokerSession> sessionsInMemory;
 	private List<PokerPlayer> playersInMemory;
+	private List<PlayerSessionStats> playersSessionStats;
 	private static TrackerBoikController instance;
 	
 	private TrackerBoikController() {}
@@ -29,6 +31,7 @@ public class TrackerBoikController {
 			aggregateDataController = new AggregateDataController(this);
 			sessionsInMemory = new ArrayList<>();
 			playersInMemory = new ArrayList<PokerPlayer>();
+			playersSessionStats = new ArrayList<PlayerSessionStats>();
 		} catch (TBException e) {
 			printException("Erreur au démarrage: '" + e.getMessage() + "' Vérifier votre environnement et consultez les logs pour plus de détails");
 		} catch (Exception e) {
@@ -63,6 +66,14 @@ public class TrackerBoikController {
 	 */
 	public List<PokerPlayer> getPlayers() {
 		return playersInMemory;
+	}
+	
+	/**
+	 * Return the player session stats
+	 * @return
+	 */
+	public List<PlayerSessionStats> getPlayerSessionsStats() {
+		return playersSessionStats;
 	}
 	
 	private void printException(String errorMsg) {

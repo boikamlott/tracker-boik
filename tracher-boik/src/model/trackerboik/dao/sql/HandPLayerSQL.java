@@ -62,9 +62,9 @@ public class HandPLayerSQL extends GeneralSQLDBOperations implements
 		
 			psInsert.setString(1, h.getId());
 			psInsert.setString(2, pp.getPlayerID());
-			psInsert.setString(3, h.getHandForPlayer(pp) == null ?  "" : h.getHandForPlayer(pp).getHand()[0].toString());
-			psInsert.setString(4, h.getHandForPlayer(pp) == null ?  "" : h.getHandForPlayer(pp).getHand()[1].toString());
-			psInsert.setInt(5, h.getIntPositionForPlayer(playerID));
+			psInsert.setString(3, h.getPlayerHandData(pp.getPlayerID()).getCards() == null ?  "" : h.getPlayerHandData(pp.getPlayerID()).getCards().getHand()[0].toString());
+			psInsert.setString(4, h.getPlayerHandData(pp.getPlayerID()).getCards() == null ?  "" : h.getPlayerHandData(pp.getPlayerID()).getCards().getHand()[1].toString());
+			psInsert.setInt(5, h.getPlayerHandData(pp.getPlayerID()).getPosition());
 			psInsert.setString(6, (h.getPlayerHandData(playerID).isAllIn() ? "y" : "n"));
 			psInsert.setString(7, h.getPlayerHandData(playerID).getResult().getTxtResult());
 			psInsert.setDouble(8, h.getPlayerHandData(playerID).getStackBefore());

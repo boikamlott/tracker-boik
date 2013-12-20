@@ -377,16 +377,8 @@ public class Hand {
 		return sdf.format(this.dateTime.getTime());
 	}
 
-	public PokerHand getHandForPlayer(PokerPlayer playerID) {
-		return this.handDataForPlayer.get(playerID).getCards();
-	}
-
-	public Integer getIntPositionForPlayer(String playerID) {
-		return this.handDataForPlayer.get(playerID).getPosition();
-	}
-
 	public PokerPosition getPositionForPlayer(String playerID) {
-		return PokerPosition.getPositionOfPlayer(this.getIntPositionForPlayer(playerID), 
+		return PokerPosition.getPositionOfPlayer(this.handDataForPlayer.get(playerID).getPosition(), 
 												getButtonSeatNumber(), 
 												getNbPlayers());
 	}

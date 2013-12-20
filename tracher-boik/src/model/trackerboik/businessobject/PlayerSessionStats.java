@@ -16,6 +16,7 @@ public class PlayerSessionStats {
 	public Integer nbFoldToCbetPossible, nbFoldToCbet;
 	public Integer nbSecondBarrelPossible, nbSecondBarrel;
 	public Integer nbFoldToSecondBarrelPossible, nbFoldToSecondBarrel;
+	public Integer nbWentToShowdownHand, nbWinToShowdownHand;
 	
 	public PlayerSessionStats(String playerID, PokerSession ps) {
 		this.playerID = playerID;

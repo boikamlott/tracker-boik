@@ -24,7 +24,7 @@ public class PlayerSessionStatsSQL extends GeneralSQLDBOperations implements Pla
 	private static final String ATT_NB_AGRESSION_FACTOR_BET_RAISE = "nb_hand_af_bet_raise";
 	private static final String ATT_NB_AGRESSION_FACTOR_CALL = "nb_hand_af_call";
 
-	private static final Integer NB_INTEGER_INDICATORS = 23;
+	private static final Integer NB_INTEGER_INDICATORS = 25;
 	private static final Integer NB_OTHER_INDICATORS = 4;
 
 	private static final String ATT_NB_HANDS = "nb_hands";
@@ -57,6 +57,8 @@ public class PlayerSessionStatsSQL extends GeneralSQLDBOperations implements Pla
 	private static final String ATT_NB_FOLD_TO_SECOND_BARREL_POSSIBLE = "nb_fold_to_second_barrel_possible";
 	private static final String ATT_NB_FOLD_TO_SECOND_BARREL = "nb_fold_to_second_barrel";
 	
+	private static final String ATT_NB_WENT_TO_SHOWDOWN = "nb_went_to_showdown";
+	private static final String ATT_NB_WIN_TO_SHOWDOWN = "nb_win_to_showdown";
 	
 	@Override
 	public void createTable() throws TBException {
@@ -88,6 +90,8 @@ public class PlayerSessionStatsSQL extends GeneralSQLDBOperations implements Pla
 		rq += ATT_NB_SECOND_BARREL + " INTEGER,";
 		rq += ATT_NB_FOLD_TO_SECOND_BARREL_POSSIBLE + " INTEGER,";
 		rq += ATT_NB_FOLD_TO_SECOND_BARREL + " INTEGER,";
+		rq += ATT_NB_WENT_TO_SHOWDOWN + " INTEGER,";
+		rq += ATT_NB_WIN_TO_SHOWDOWN + " INTEGER,";
 		rq += "CONSTRAINT pk_plasyer_session_stats PRIMARY KEY (" + GEN_ATT_PLAYER_ID + "," + GEN_ATT_SESSION_ID + ")";
 		rq += ")";
 
@@ -192,6 +196,10 @@ public class PlayerSessionStatsSQL extends GeneralSQLDBOperations implements Pla
 			p.nbSecondBarrel = rs.getInt(ATT_NB_SECOND_BARREL);
 			p.nbFoldToSecondBarrelPossible = rs.getInt(ATT_NB_FOLD_TO_SECOND_BARREL_POSSIBLE);
 			p.nbFoldToSecondBarrel = rs.getInt(ATT_NB_FOLD_TO_SECOND_BARREL);
+			
+			p.nbWentToShowdownHand = rs.getInt(ATT_NB_WENT_TO_SHOWDOWN);
+			p.nbWinToShowdownHand = rs.getInt(ATT_NB_WIN_TO_SHOWDOWN);
+			
 	}
 
 	@Override
@@ -223,6 +231,8 @@ public class PlayerSessionStatsSQL extends GeneralSQLDBOperations implements Pla
 			rq += ATT_NB_SECOND_BARREL + "=?,";
 			rq += ATT_NB_FOLD_TO_SECOND_BARREL_POSSIBLE + "=?,";
 			rq += ATT_NB_FOLD_TO_SECOND_BARREL + "=? ";
+			rq += ATT_NB_WENT_TO_SHOWDOWN + "=? ";
+			rq += ATT_NB_WIN_TO_SHOWDOWN + "=? ";
 			rq += " WHERE " + GEN_ATT_PLAYER_ID + "=?";
 			
 			psQuery = createPreparedStatement(rq);
@@ -252,6 +262,8 @@ public class PlayerSessionStatsSQL extends GeneralSQLDBOperations implements Pla
 			psQuery.setInt(i++, pss.nbSecondBarrel);
 			psQuery.setInt(i++, pss.nbFoldToSecondBarrelPossible);
 			psQuery.setInt(i++, pss.nbFoldToSecondBarrel);
+			psQuery.setInt(i++, pss.nbWentToShowdownHand);
+			psQuery.setInt(i++, pss.nbWinToShowdownHand);
 			psQuery.setString(i++, pss.getPlayerID());
 			
 			psQuery.execute();

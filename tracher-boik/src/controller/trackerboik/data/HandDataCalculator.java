@@ -3,15 +3,16 @@ package controller.trackerboik.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.trackerboik.exception.TBException;
-
 import model.trackerboik.businessobject.ActionKind;
 import model.trackerboik.businessobject.Hand;
 import model.trackerboik.businessobject.HandMoment;
+import model.trackerboik.businessobject.HandResult;
 import model.trackerboik.businessobject.PlayerSessionStats;
 import model.trackerboik.businessobject.PokerAction;
 import model.trackerboik.businessobject.PokerPlayer;
 import model.trackerboik.businessobject.PokerPosition;
+
+import com.trackerboik.exception.TBException;
 
 /**
  * Class represent a hand calculator for a player
@@ -24,18 +25,17 @@ public class HandDataCalculator {
 	private static final Integer NB_CBET = 0, 
 								 NB_FOLD_TO_CBET = 1,
 								 NB_SECOND_BARREL = 2,
-								 NB_FOLD_TO_SECOND_BARREL = 3,
-								 NB_3BET = 4,
-								 NB_FOLD_TO_3BET = 5;
+								 NB_FOLD_TO_SECOND_BARREL = 3;
 	
-	public List<PokerPlayer> playersAlive;
+	public List<String> playersAlive;
 	private Double benefitHand, amountToCall;
 	private boolean preflopRaisedByHero, preflopRaisedBySomeone, heroCbetPossible, foldToCbetPossible,
 						heroCbetOnFlop, heroCallCbetOnFlop, generalSecondBarrelPossible, 
 						foldToSndBarrelPossible, continueRead,
-						preflopOpen, atsRunning;
+						preflopOpen, atsRunning, heroHasBeen3Betted;
+	private int nbBetPreflop = 1;
 	private boolean[] dataCalculated;
-	private PlayerSessionStats player;
+	private PlayerSessionStats hero;
 	private String initiativePlayerID;
 	private Hand h;
 	private HandMoment currentAnalysedMoment;
@@ -43,7 +43,7 @@ public class HandDataCalculator {
 	
 	
 	public HandDataCalculator(PlayerSessionStats pp, Hand h) {
-		this.player = pp;
+		this.hero = pp;
 		this.h = h;
 		this.benefitHand = 0.0;
 		this.amountToCall = h.getLimitBB();
@@ -53,8 +53,8 @@ public class HandDataCalculator {
 		this.heroCbetPossible = true;
 		this.generalSecondBarrelPossible = true;
 		this.dataCalculated = new boolean[NB_CALCULATED_INDICATORS];
-		this.playersAlive = new ArrayList<PokerPlayer>();
-		for(PokerPlayer p : h.getPlayers()) {this.playersAlive.add(p);}
+		this.playersAlive = new ArrayList<String>();
+		for(PokerPlayer p : h.getPlayers()) {this.playersAlive.add(p.getPlayerID());}
 	}
 	
 	/**
@@ -92,13 +92,36 @@ public class HandDataCalculator {
 			actCurNo++;
 		}
 		
-		if(playersAlive.size() == 1 && amountToCall > 0.0 && playersAlive.contains(player)) {
-			//Uncalled bet return to player
+		computeGlobalStatAndBenefit();
+
+	}
+
+	/**
+	 * On the Hand end analysis, compute benefit and global stats
+	 */
+	private void computeGlobalStatAndBenefit() throws TBException {
+		//Uncalled bet return to player
+		if(playersAlive.size() == 1 && amountToCall > 0.0 && playersAlive.contains(hero.getPlayerID())) {
 			benefitHand += amountToCall;
 		}
-		benefitHand += h.getPlayerHandData(player.getPlayerID()).getAmountWin();
+		
+		//Went/Win to showdown
+		if(playersAlive.size() > 1 && playersAlive.contains(hero.getPlayerID())) {
+			hero.nbWentToShowdownHand++;
+			if(h.getPlayerHandData(hero.getPlayerID()).getResult() == HandResult.WIN) { hero.nbWinToShowdownHand++; }
+		}
+		
+		//Compute benefit
+		if(h.getPot() == h.getLimitBB() && h.getPlayerHandData(hero.getPlayerID()).getResult() == HandResult.WIN) {
+			//Hero on BB, others fold win small blind
+			benefitHand += h.getLimitBB() / 2.0;
+		} else {
+			benefitHand += h.getPlayerHandData(hero.getPlayerID()).getAmountWin();
+		}
+		
 		//Update Benefit
-		player.benefitGeneral += benefitHand;
+		hero.benefitGeneral += benefitHand;
+		
 	}
 
 	/**
@@ -107,56 +130,17 @@ public class HandDataCalculator {
 	 * @throws TBException
 	 */
 	private void computeAction(PokerAction a) throws TBException {
-		String playerID = player.getPlayerID();
-		Boolean isPlayerAction = a.getAssociatedPlayer().equals(player);
-		if(a.getKind() == ActionKind.FOLD) { playersAlive.remove(a.getAssociatedPlayer());}
+		Boolean isPlayerAction = a.getAssociatedPlayer().equals(hero);
 		
 		if(isPlayerAction) {
 			computeGeneralIndicators(a);
 		}
 		
+		if(a.getKind() == ActionKind.FOLD) { playersAlive.remove(a.getAssociatedPlayer().getPlayerID());}
+		
 		switch(a.getMoment()) {
 		case PREFLOP:
-			if(a.getKind() == ActionKind.CALL || a.getKind() == ActionKind.RAISE) {
-				//Check ATS
-				if(!preflopOpen && isPlayerAction && (h.getPositionForPlayer(playerID) == PokerPosition.CO ||
-						h.getPositionForPlayer(playerID) == PokerPosition.BU)) {
-					player.nbATSPossible++;
-					if(a.getKind() == ActionKind.RAISE) { player.nbATS++;}
-				} else if(!preflopOpen && !isPlayerAction && 
-						(h.getPositionForPlayer(a.getAssociatedPlayer().getPlayerID()) == PokerPosition.CO ||
-						h.getPositionForPlayer(a.getAssociatedPlayer().getPlayerID()) == PokerPosition.BU) && 
-						(h.getPositionForPlayer(playerID) == PokerPosition.SB || 
-						h.getPositionForPlayer(playerID) == PokerPosition.BB)) {
-					//Register a ATS
-					atsRunning = true;
-					
-				} else if(atsRunning && !isPlayerAction && a.getKind() == ActionKind.RAISE) {
-					//ATS reaction was done by CO or SB
-					atsRunning = false;
-				} else if(atsRunning && isPlayerAction) {
-					//Register ATS reaction of current player
-					if(h.getPositionForPlayer(playerID) == PokerPosition.SB) { 
-						player.nbFoldToATSSBPossible++;
-					} else {
-						player.nbFoldToATSBBPossible++;
-					}
-					
-					if(a.getKind() == ActionKind.FOLD && h.getPositionForPlayer(playerID) == PokerPosition.SB) {
-						player.nbFoldToATSSB++;
-					} else if(a.getKind() == ActionKind.FOLD && h.getPositionForPlayer(playerID) == PokerPosition.BB) {
-						player.nbFoldToATSBB++;
-					}
-				}
-				preflopOpen = true;
-			}
-			
-			if(a.getKind() == ActionKind.RAISE) {
-				preflopRaisedByHero = isPlayerAction;
-				preflopRaisedBySomeone = !isPlayerAction;
-				initiativePlayerID = a.getAssociatedPlayer().getPlayerID();
-				
-			}
+			computePreflopActions(a, isPlayerAction);
 			break;
 		
 		case FLOP:
@@ -174,23 +158,92 @@ public class HandDataCalculator {
 	}
 
 	/**
+	 * Compute action for the preflop moment
+	 * @param a
+	 * @param isHeroAction
+	 */
+	private void computePreflopActions(PokerAction a, Boolean isHeroAction) {
+		String heroID = hero.getPlayerID();
+
+		//Check ATS Action
+		if(a.getKind() == ActionKind.CALL || a.getKind() == ActionKind.RAISE) {
+			//Check ATS
+			if(!preflopOpen && isHeroAction && (h.getPositionForPlayer(heroID) == PokerPosition.CO ||
+					h.getPositionForPlayer(heroID) == PokerPosition.BU)) {
+				hero.nbATSPossible++;
+				if(a.getKind() == ActionKind.RAISE) { hero.nbATS++;}
+			} else if(!preflopOpen && !isHeroAction && 
+					(h.getPositionForPlayer(a.getAssociatedPlayer().getPlayerID()) == PokerPosition.CO ||
+					h.getPositionForPlayer(a.getAssociatedPlayer().getPlayerID()) == PokerPosition.BU) && 
+					(h.getPositionForPlayer(heroID) == PokerPosition.SB || 
+					h.getPositionForPlayer(heroID) == PokerPosition.BB)) {
+				//Register a ATS
+				atsRunning = true;
+				
+			} else if(atsRunning && !isHeroAction && a.getKind() == ActionKind.RAISE) {
+				//ATS reaction was done by CO or SB
+				atsRunning = false;
+			} else if(atsRunning && isHeroAction) {
+				//Register ATS reaction of current player
+				if(h.getPositionForPlayer(heroID) == PokerPosition.SB) { 
+					hero.nbFoldToATSSBPossible++;
+				} else {
+					hero.nbFoldToATSBBPossible++;
+				}
+				
+				if(a.getKind() == ActionKind.FOLD && h.getPositionForPlayer(heroID) == PokerPosition.SB) {
+					hero.nbFoldToATSSB++;
+				} else if(a.getKind() == ActionKind.FOLD && h.getPositionForPlayer(heroID) == PokerPosition.BB) {
+					hero.nbFoldToATSBB++;
+				}
+			}
+			preflopOpen = true;
+		}
+
+		//PreFlop Raise and 3Bet
+		if(a.getKind() == ActionKind.RAISE) {
+			nbBetPreflop++;
+			if(nbBetPreflop == 2) {
+				if(isHeroAction) {
+					hero.nb3bet++;
+				} else if(playersAlive.contains(hero.getPlayerID())) {
+					heroHasBeen3Betted = true;
+					hero.nbFoldTo3betPossible++;
+				}
+			} else if(nbBetPreflop == 1 && playersAlive.contains(hero.getPlayerID())) {
+				hero.nb3betPossible++;
+			}
+			preflopRaisedByHero = isHeroAction;
+			preflopRaisedBySomeone = !isHeroAction;
+			initiativePlayerID = a.getAssociatedPlayer().getPlayerID();
+		}
+		
+		//3Bet fold
+		if(isHeroAction && heroHasBeen3Betted && a.getKind() == ActionKind.FOLD) {
+			hero.nbFoldTo3bet++;
+		}
+		
+	}
+
+	/**
 	 * Set all indicators for action and is player action boolean given in parameter
 	 * @param a
 	 * @param isPlayerAction
 	 */
-	private void computeTurnActions(PokerAction a, Boolean isPlayerAction) {
+	private void computeTurnActions(PokerAction a, Boolean isPlayerAction) {		
 		if(heroCbetOnFlop && generalSecondBarrelPossible && isPlayerAction && !dataCalculated[NB_SECOND_BARREL]) {
-			player.nbSecondBarrelPossible++;
-			player.nbSecondBarrel += a.getKind() == ActionKind.BET ? 1 : 0;
+			hero.nbSecondBarrelPossible++;
+			hero.nbSecondBarrel += a.getKind() == ActionKind.BET ? 1 : 0;
 			dataCalculated[NB_SECOND_BARREL] = true;
 		} else if(heroCallCbetOnFlop && generalSecondBarrelPossible && foldToSndBarrelPossible && 
 				isPlayerAction && !dataCalculated[NB_FOLD_TO_SECOND_BARREL]) {
-			player.nbFoldToSecondBarrelPossible++;
-			player.nbFoldToSecondBarrel += a.getKind() == ActionKind.FOLD ? 1 : 0;
+			hero.nbFoldToSecondBarrelPossible++;
+			hero.nbFoldToSecondBarrel += a.getKind() == ActionKind.FOLD ? 1 : 0;
 			dataCalculated[NB_FOLD_TO_SECOND_BARREL] = true;
 		} else if(heroCbetOnFlop && generalSecondBarrelPossible) {
 			//Action of another player, check if current player could be 21 barrel after that
-			generalSecondBarrelPossible = a.getKind() == ActionKind.CHECK || (a.getKind() == ActionKind.FOLD && playersAlive.size() >= 2);
+			generalSecondBarrelPossible = a.getKind() == ActionKind.CHECK || 
+					(a.getKind() == ActionKind.FOLD && playersAlive.size() >= 2);
 		} else if(heroCallCbetOnFlop && generalSecondBarrelPossible && !foldToSndBarrelPossible) {
 			//Register The 2nd Barrel of another player
 			foldToSndBarrelPossible = a.getKind() == ActionKind.BET && a.getAssociatedPlayer().getPlayerID().equals(initiativePlayerID);
@@ -205,24 +258,26 @@ public class HandDataCalculator {
 	 * @param a
 	 * @param isPlayerAction
 	 */
-	private void computeFlopActions(PokerAction a, Boolean isPlayerAction) {
+	private void computeFlopActions(PokerAction a, Boolean isPlayerAction) {		
 		if(heroCbetPossible && preflopRaisedByHero && isPlayerAction && !dataCalculated[NB_CBET]) {
 			//With this action, player could perform a Cbet or not
-			player.nbCbetPossible++; 
-			player.nbCbet += a.getKind() == ActionKind.BET ? 1 : 0;
+			hero.nbCbetPossible++; 
+			hero.nbCbet += a.getKind() == ActionKind.BET ? 1 : 0;
 			heroCbetOnFlop = a.getKind() == ActionKind.BET;
 			dataCalculated[NB_CBET] = true;
 		} else if(foldToCbetPossible && preflopRaisedBySomeone && isPlayerAction && !dataCalculated[NB_FOLD_TO_CBET]) {
-			player.nbFoldToCbetPossible++;
-			player.nbFoldToCbet += a.getKind() == ActionKind.FOLD ? 1 : 0;
+			hero.nbFoldToCbetPossible++;
+			hero.nbFoldToCbet += a.getKind() == ActionKind.FOLD ? 1 : 0;
 			heroCallCbetOnFlop = a.getKind() == ActionKind.CALL;
 			dataCalculated[NB_FOLD_TO_CBET] = true;
 		} else if(preflopRaisedByHero && heroCbetPossible) {
 			//Action of another player, check if current player could be cbet afeter that
-			heroCbetPossible = a.getKind() == ActionKind.CHECK || (a.getKind() == ActionKind.FOLD && playersAlive.size() >= 2);
+			heroCbetPossible = a.getKind() == ActionKind.CHECK || 
+					(a.getKind() == ActionKind.FOLD && playersAlive.size() >= 2);
 		} else if(preflopRaisedBySomeone && !foldToCbetPossible) {
 			//Register The CBet of initiative player
-			foldToCbetPossible = a.getKind() == ActionKind.BET && a.getAssociatedPlayer().getPlayerID().equals(initiativePlayerID);
+			foldToCbetPossible = a.getKind() == ActionKind.BET && 
+					a.getAssociatedPlayer().getPlayerID().equals(initiativePlayerID);
 		} else if(preflopRaisedBySomeone && foldToCbetPossible) {
 			//Always could call the CBet if others players don't raise
 			foldToCbetPossible = a.getKind() == ActionKind.FOLD || a.getKind() == ActionKind.CALL;
@@ -241,13 +296,13 @@ public class HandDataCalculator {
 			case POSTBIGBLIND:
 			case CALL:
 			case BET:
-				if(a.getKind() == ActionKind.BET) {player.nbAFHandBetAndRaise++;}
-				if(a.getKind() == ActionKind.CALL) {player.nbAFHandCalled++;}
+				if(a.getKind() == ActionKind.BET) {hero.nbAFHandBetAndRaise++;}
+				if(a.getKind() == ActionKind.CALL) {hero.nbAFHandCalled++;}
 				benefitHand -= a.getAmountBet();
 				break;
 				
 			case RAISE:
-				player.nbAFHandBetAndRaise++;
+				hero.nbAFHandBetAndRaise++;
 				benefitHand -= amountToCall + a.getAmountBet();
 				break;
 			case FOLD:

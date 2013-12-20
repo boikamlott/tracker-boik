@@ -123,7 +123,7 @@ public class PlayerSQL extends GeneralSQLDBOperations implements PlayerDAO {
 
 	@Override
 	protected String getInsertPreCompiledRequest() {
-		return "INSERT INTO " + TABLE_NAME + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		return "INSERT INTO " + TABLE_NAME + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	}
 	
 	@Override
@@ -177,38 +177,38 @@ public class PlayerSQL extends GeneralSQLDBOperations implements PlayerDAO {
 	 * @throws SQLException
 	 */
 	private void addPlayerDetailsFromResultSet(ResultSet rs, PokerPlayer p) throws TBException, SQLException {
-		if(rs.next()) {
 			p.setComment(rs.getString(ATT_COMMENT));
 			p.winrate = rs.getDouble(ATT_WINRATE);
 			p.benefitGeneral = rs.getDouble(ATT_BENEFIT);
+			
 			p.nbAFHandBetAndRaise = rs.getInt(ATT_NB_AGRESSION_FACTOR_BET_RAISE);
 			p.nbAFHandCalled = rs.getInt(ATT_NB_AGRESSION_FACTOR_CALL);
 			
 			p.nbHand = rs.getInt(ATT_NB_HANDS);
 			p.nbHandVPIP = rs.getInt(ATT_NB_HANDS_VPIP);
 			p.nbHandPFR = rs.getInt(ATT_NB_RAISE_PREFLOP);
+			
 			p.nbATSPossible = rs.getInt(ATT_NB_ATS_POSSIBLE);
 			p.nbATS = rs.getInt(ATT_NB_ATS);
 			p.nbFoldToATSSBPossible = rs.getInt(ATT_NB_FOLD_TO_ATS_SB_POSSIBLE);
 			p.nbFoldToATSBBPossible = rs.getInt(ATT_NB_FOLD_TO_ATS_BB_POSSIBLE);
 			p.nbFoldToATSSB = rs.getInt(ATT_NB_FOLD_TO_ATS_SB);
 			p.nbFoldToATSBB = rs.getInt(ATT_NB_FOLD_TO_ATS_BB);
+			
 			p.nb3betPossible = rs.getInt(ATT_NB_3BET_POSSIBLE);
 			p.nb3bet = rs.getInt(ATT_NB_3BET);
 			p.nbFoldTo3betPossible = rs.getInt(ATT_NB_FOLD_TO_3BET_POSSIBLE);
 			p.nbFoldTo3bet = rs.getInt(ATT_NB_FOLD_TO_3BET);
+			
 			p.nbCbetPossible = rs.getInt(ATT_NB_CBET_POSSIBLE);
 			p.nbCbet = rs.getInt(ATT_NB_CBET);
 			p.nbFoldToCbetPossible = rs.getInt(ATT_NB_FOLD_TO_CBET_POSSIBLE);
 			p.nbFoldToCbet = rs.getInt(ATT_NB_FOLD_TO_CBET);
+			
 			p.nbSecondBarrelPossible = rs.getInt(ATT_NB_SECOND_BARREL_POSSIBLE);
 			p.nbSecondBarrel = rs.getInt(ATT_NB_SECOND_BARREL);
 			p.nbFoldToSecondBarrelPossible = rs.getInt(ATT_NB_FOLD_TO_SECOND_BARREL_POSSIBLE);
 			p.nbFoldToSecondBarrel = rs.getInt(ATT_NB_FOLD_TO_SECOND_BARREL);
-		} else {
-			throw new TBException("Impossible to add player details for player " + p.getPlayerID() + ": unknow player");
-		}
-		
 	}
 
 	@Override
@@ -223,12 +223,12 @@ public class PlayerSQL extends GeneralSQLDBOperations implements PlayerDAO {
 			rq += ATT_NB_HANDS + "=?,";
 			rq += ATT_NB_HANDS_VPIP + "=?,";
 			rq += ATT_NB_RAISE_PREFLOP + "=?,";
-			rq += ATT_NB_ATS_POSSIBLE + "=?";
-			rq += ATT_NB_ATS + "=?";
-			rq += ATT_NB_FOLD_TO_ATS_SB_POSSIBLE + "=?";
-			rq += ATT_NB_FOLD_TO_ATS_BB_POSSIBLE + "=?";
-			rq += ATT_NB_FOLD_TO_ATS_SB + "=?";
-			rq += ATT_NB_FOLD_TO_ATS_BB + "=?";
+			rq += ATT_NB_ATS_POSSIBLE + "=?,";
+			rq += ATT_NB_ATS + "=?,";
+			rq += ATT_NB_FOLD_TO_ATS_SB_POSSIBLE + "=?,";
+			rq += ATT_NB_FOLD_TO_ATS_BB_POSSIBLE + "=?,";
+			rq += ATT_NB_FOLD_TO_ATS_SB + "=?,";
+			rq += ATT_NB_FOLD_TO_ATS_BB + "=?,";
 			rq += ATT_NB_3BET_POSSIBLE + "=?,";
 			rq += ATT_NB_3BET + "=?,";
 			rq += ATT_NB_FOLD_TO_3BET_POSSIBLE + "=?,";

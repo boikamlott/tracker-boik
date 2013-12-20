@@ -386,7 +386,7 @@ public class Hand {
 	}
 
 	public PokerPosition getPositionForPlayer(PokerPlayer pp) {
-		return PokerPosition.getPositionOfPlayer(this.handDataForPlayer.get(pp).getPosition(), getButtonSeatNumber(), getNbPlayers());
+		return PokerPosition.getPositionOfPlayer(this.getIntPositionForPlayer(pp), getButtonSeatNumber(), getNbPlayers());
 	}
 	
 	public List<PokerPlayer> getPlayers() {

@@ -72,7 +72,7 @@ public class PokerAction implements Comparable<PokerAction> {
 	 */
 	@Override
 	public int compareTo(PokerAction a2) {		
-		return a2.getActNoForHand() - this.getActNoForHand();
+		return this.getActNoForHand() - a2.getActNoForHand();
 	}
 	
 	

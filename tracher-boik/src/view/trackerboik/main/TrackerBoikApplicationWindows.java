@@ -57,7 +57,7 @@ public class TrackerBoikApplicationWindows {
 		JMenuItem mntmChargerLesDonnes = new JMenuItem("Rafraichir Mains");
 		mntmChargerLesDonnes.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				controller.getAtomicDataController().refreshCurrentFolder();
+				controller.refreshAggregatedData();
 			}
 		});
 		mnNewMenu.add(mntmChargerLesDonnes);

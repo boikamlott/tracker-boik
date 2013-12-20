@@ -90,9 +90,7 @@ public class HandDataCalculator {
 			actCurNo++;
 		}
 		
-		if(playersAlive.size() != 1) {
-			throw new TBException("Hand " + h.getId() + " is uncorrectly formatted ! More than one players has won !");
-		} else if(amountToCall > 0.0 && playersAlive.contains(player)) {
+		if(playersAlive.size() == 1 && amountToCall > 0.0 && playersAlive.contains(player)) {
 			//Uncalled bet return to player
 			benefitHand += amountToCall;
 		}

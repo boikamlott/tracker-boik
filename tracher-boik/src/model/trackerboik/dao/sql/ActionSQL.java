@@ -98,7 +98,7 @@ public class ActionSQL extends GeneralSQLDBOperations implements ActionDAO {
 			while(rs.next()) {
 				PokerPlayer pp = TrackerBoikController.getInstance().getPlayerOrCreateIt(rs.getString(GEN_ATT_PLAYER_ID));
 				res.add(new PokerAction(pp, h, rs.getInt(ATT_ACTION_NUMBER), rs.getDouble(ATT_AMOUNT_BET), 
-						ActionKind.readActionKind(ATT_KIND), HandMoment.readHandMoment(ATT_MOMENT)));
+						ActionKind.readActionKind(rs.getString(ATT_KIND)), HandMoment.readHandMoment(rs.getString(ATT_MOMENT))));
 				
 			}
 		} catch (SQLException e) {

@@ -35,6 +35,7 @@ CREATE TABLE hand (
 	table_name VARCHAR(256),
 	moment TIMESTAMP,
 	bouton_seat_no INTEGER NOT NULL,
+	nb_players INTEGER NOT NULL,
 	session_id VARCHAR(256) REFERENCES session(session_id)
 );
 
@@ -50,12 +51,28 @@ CREATE TABLE player (
 	comment VARCHAR(256),
 	winrate DOUBLE,
 	benefit DOUBLE,
+	nb_hand_af_bet_raise INTEGER,
+	nb_hand_af_call INTEGER,
 	nb_hands INTEGER,
 	nb_hands_vpip INTEGER,
 	nb_hands_preflop_raise INTEGER,
+	nb_hands_ats_possible INTEGER,
+	nb_hands_ats INTEGER,
+	nb_hands_fold_to_ats_sb_possible INTEGER,
+	nb_hands_fold_to_ats_bb_possible INTEGER,
+	nb_hands_fold_to_ats_sb INTEGER,
+	nb_hands_fold_to_ats_bb INTEGER,
+	nb_hands_3bet_possible INTEGER,
+	nb_3bet INTEGER,
+	nb_hands_fold_to_3bet_possible INTEGER,
+	nb_hands_fold_to_3bet INTEGER,
+	nb_cbet_possible INTEGER,
 	nb_cbet INTEGER,
+	nb_fold_to_cbet_possible INTEGER,
 	nb_fold_to_cbet INTEGER,
+	nb_second_barrel_possible INTEGER,
 	nb_second_barrel INTEGER,
+	nb_fold_to_second_barrel_possible INTEGER,
 	nb_fold_to_second_barrel INTEGER
 );	
 

@@ -95,7 +95,7 @@ public class AggregateDataController {
 		
 		for(PokerSession ps : parentController.getSessions()) {
 			for(Hand h : ps.getHands()) {
-				if(h.getPlayers().contains(pp)) {
+				if(h.getPlayers().contains(pp.getPlayerID())) {
 					try {
 						hdc = new HandDataCalculator(pp, h);
 						hdc.computeIndicatorForHandAndPlayer();

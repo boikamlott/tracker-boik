@@ -3,6 +3,7 @@ drop table hand_board;
 drop table action;
 drop table hand_player;
 drop table hand;
+drop table player_session_stats;
 drop table session;
 drop table board;
 drop table player;
@@ -48,7 +49,13 @@ CREATE TABLE hand_board (
 /* Represente les joueurs */
 CREATE TABLE player (
 	player_id VARCHAR(256) PRIMARY KEY,
-	comment VARCHAR(256),
+	comment VARCHAR(256)
+);
+
+/* Represente les stats agregees par joueurs et par session */
+CREATE TABLE player_session_stats (
+	player_id VARCHAR(256)  REFERENCES player(player_id),
+	session_id VARCHAR(256)  REFERENCES session(session_id),
 	winrate DOUBLE,
 	benefit DOUBLE,
 	nb_hand_af_bet_raise INTEGER,
@@ -73,8 +80,11 @@ CREATE TABLE player (
 	nb_second_barrel_possible INTEGER,
 	nb_second_barrel INTEGER,
 	nb_fold_to_second_barrel_possible INTEGER,
-	nb_fold_to_second_barrel INTEGER
-);	
+	nb_fold_to_second_barrel INTEGER,
+	nb_went_to_showdown INTEGER,
+	nb_win_to_showdown INTEGER,
+	CONSTRAINT pk_plasyer_session_stats PRIMARY KEY (player_id, session_id)
+);
 
 /* Représente les mains auxquelles ont participés les joueurs */
 CREATE TABLE hand_player (

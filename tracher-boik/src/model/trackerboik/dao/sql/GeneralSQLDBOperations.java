@@ -114,6 +114,7 @@ public abstract class GeneralSQLDBOperations implements GeneralDBOperationsDAO {
 		res.add(HandSQL.TABLE_NAME.toUpperCase());
 		res.add(HandBoardSQL.TABLE_NAME.toUpperCase());
 		res.add(PlayerSQL.TABLE_NAME.toUpperCase());
+		res.add(PlayerSessionStatsSQL.TABLE_NAME.toUpperCase());
 		res.add(HandPLayerSQL.TABLE_NAME.toUpperCase());
 		res.add(ActionSQL.TABLE_NAME.toUpperCase());
 

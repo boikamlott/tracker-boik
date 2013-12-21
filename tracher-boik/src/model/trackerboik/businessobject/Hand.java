@@ -377,10 +377,16 @@ public class Hand {
 		return sdf.format(this.dateTime.getTime());
 	}
 
+	public PokerHand getHandForPlayer(PokerPlayer pp) {
+		return this.handDataForPlayer.get(pp.getPlayerID()).getCards();
+	}
+
+	public Integer getIntPositionForPlayer(String playerID) {
+		return this.handDataForPlayer.get(playerID).getPosition();
+	}
+
 	public PokerPosition getPositionForPlayer(String playerID) {
-		return PokerPosition.getPositionOfPlayer(this.handDataForPlayer.get(playerID).getPosition(), 
-												getButtonSeatNumber(), 
-												getNbPlayers());
+		return PokerPosition.getPositionOfPlayer(this.getIntPositionForPlayer(playerID), getButtonSeatNumber(), getNbPlayers());
 	}
 	
 	public List<PokerPlayer> getPlayers() {
@@ -399,7 +405,7 @@ public class Hand {
 	public PlayerHandData getPlayerHandData(String playerID) throws TBException {
 		if(handDataForPlayer == null) {
 			throw new TBException("Impossible to get player data because internal error");
-		} else if(!handPlayers.contains(playerID)) {
+		} else if(!handPlayers.contains(new PokerPlayer(playerID))) {
 			throw new TBException("Impossible to get player data because unknow player for hand");
 		} else if(handDataForPlayer.get(playerID) == null) {
 			throw new TBException("Impossible to get player data because no data for player for hand");

@@ -7,6 +7,7 @@ import model.trackerboik.dao.sql.HandBoardSQL;
 import model.trackerboik.dao.sql.HandPLayerSQL;
 import model.trackerboik.dao.sql.HandSQL;
 import model.trackerboik.dao.sql.PlayerSQL;
+import model.trackerboik.dao.sql.PlayerSessionStatsSQL;
 import model.trackerboik.dao.sql.SessionSQL;
 
 import com.trackerboik.exception.TBException;
@@ -69,6 +70,8 @@ public class BDDUtil {
 			return new PlayerSQL();
 		case SessionSQL.TABLE_NAME:
 			return new SessionSQL();
+		case PlayerSessionStatsSQL.TABLE_NAME:
+			return new PlayerSessionStatsSQL();
 		default :
 			return null;
 		}

@@ -31,9 +31,9 @@ public class HandSQL extends GeneralSQLDBOperations implements HandDAO {
 		String rq = "CREATE TABLE " + TABLE_NAME + " (";
 		rq += GEN_ATT_HAND_ID + " VARCHAR(256) PRIMARY KEY,";
 		rq += ATT_POT + " double NOT NULL,";
-		rq += ATT_SITE_RAKE += " double NOT NULL,";
-		rq += ATT_BB_VALUE += " double NOT NULL,";
-		rq += ATT_TABLE_NAME += " VARCHAR(256),";
+		rq += ATT_SITE_RAKE + " double NOT NULL,";
+		rq += ATT_BB_VALUE + " double NOT NULL,";
+		rq += ATT_TABLE_NAME + " VARCHAR(256),";
 		rq += ATT_MOMENT + " TIMESTAMP,";
 		rq += ATT_BUTTON_SEAT_NO + " INTEGER NOT NULL,";
 		rq += ATT_NB_PLAYER + " INTEGER NOT NULL,";

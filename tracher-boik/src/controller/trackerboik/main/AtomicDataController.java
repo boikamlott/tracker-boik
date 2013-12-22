@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import model.trackerboik.businessobject.Hand;
+import model.trackerboik.businessobject.PlayerSessionStats;
 import model.trackerboik.businessobject.PokerAction;
 import model.trackerboik.businessobject.PokerPlayer;
 import model.trackerboik.businessobject.PokerSession;
@@ -23,6 +24,7 @@ import model.trackerboik.dao.sql.HandBoardSQL;
 import model.trackerboik.dao.sql.HandPLayerSQL;
 import model.trackerboik.dao.sql.HandSQL;
 import model.trackerboik.dao.sql.PlayerSQL;
+import model.trackerboik.dao.sql.PlayerSessionStatsSQL;
 import model.trackerboik.dao.sql.SessionSQL;
 
 import com.trackerboik.appmngt.TrackerBoikLog;
@@ -97,6 +99,7 @@ public class AtomicDataController {
 			SessionDAO sessionDB = new SessionSQL();
 			HandDAO handDB = new HandSQL();
 			PlayerDAO playerDB = new PlayerSQL();
+			PlayerSessionStatsSQL playerSessionStatsDB = new PlayerSessionStatsSQL();
 			BoardDAO boardDB = new BoardSQL();
 			HandBoardDAO hbDB = new HandBoardSQL();
 			HandPlayerDAO hpDB = new HandPLayerSQL();
@@ -105,7 +108,7 @@ public class AtomicDataController {
 			sessionDB.insertSession(ps);
 			for(Hand h : ps.getHands()) {
 				try {
-					writeHandInDataBase(h, handDB, playerDB, boardDB, hbDB, hpDB, actionDB);
+					writeHandInDataBase(h, handDB, playerDB, playerSessionStatsDB, boardDB, hbDB, hpDB, actionDB);
 				} catch (TBException e) {
 					TrackerBoikLog.getInstance().log(Level.WARNING, "Impossible to write hand(" + h.getId() + ") in Database: " + e.getMessage() + "'");
 				} catch (Exception e) {
@@ -125,7 +128,7 @@ public class AtomicDataController {
 	 * @param playerDB 
 	 * @param actionDB 
 	 */
-	private void writeHandInDataBase(Hand h, HandDAO handDB, PlayerDAO playerDB, BoardDAO boardDB, 
+	private void writeHandInDataBase(Hand h, HandDAO handDB, PlayerDAO playerDB, PlayerSessionStatsSQL playerSessionDB, BoardDAO boardDB, 
 			HandBoardDAO hbDB, HandPlayerDAO hpDB, ActionDAO actionDB) throws TBException{		
 		if(handDB.isHandExists(h.getId())) {
 			throw new TBException("Hand already exists in database");
@@ -134,7 +137,7 @@ public class AtomicDataController {
 		//Insert Hand
 		handDB.insertHand(h);
 		//Insert Players and HandPlayer
-		writesAllPlayersHand(h, playerDB, hpDB);
+		writesAllPlayersHand(h, playerDB, playerSessionDB, hpDB);
 		//Insert Board and HandBoard(if any)
 		writeHandBoardIfExists(h, boardDB, hbDB);
 		//Insert Actions
@@ -173,11 +176,12 @@ public class AtomicDataController {
 	 * @param players
 	 * @throws TBException
 	 */
-	private void writesAllPlayersHand(Hand h, PlayerDAO playerDB, HandPlayerDAO hpDB) throws TBException {		
+	private void writesAllPlayersHand(Hand h, PlayerDAO playerDB, PlayerSessionStatsSQL playerStatsDB, HandPlayerDAO hpDB) throws TBException {		
 		//Insert all players
 		for(PokerPlayer pp : h.getPlayers()) {
 			if(!playerDB.isPlayerExists(pp.getPlayerID())) {
 				playerDB.insertPlayer(pp);
+				playerStatsDB.insertPlayerStats(new PlayerSessionStats(pp.getPlayerID(), h.getAssociatedSession()));
 			}
 			hpDB.insertHandPlayer(h, pp);
 		}

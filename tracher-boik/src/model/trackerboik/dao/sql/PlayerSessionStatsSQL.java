@@ -108,8 +108,8 @@ public class PlayerSessionStatsSQL extends GeneralSQLDBOperations implements Pla
 			psInsert.setString(i++, pss.getSession().getId());
 			psInsert.setDouble(i++, 0.0);
 			psInsert.setDouble(i++, 0.0);
-			for(int j = i; j <= NB_INTEGER_INDICATORS + NB_OTHER_INDICATORS; i++) {
-				psInsert.setInt(j, 0);
+			for(; i <= NB_INTEGER_INDICATORS + NB_OTHER_INDICATORS; i++) {
+				psInsert.setInt(i, 0);
 			}
 			
 			if(psInsert.execute()) {
@@ -230,8 +230,8 @@ public class PlayerSessionStatsSQL extends GeneralSQLDBOperations implements Pla
 			rq += ATT_NB_SECOND_BARREL_POSSIBLE + "=?,";
 			rq += ATT_NB_SECOND_BARREL + "=?,";
 			rq += ATT_NB_FOLD_TO_SECOND_BARREL_POSSIBLE + "=?,";
-			rq += ATT_NB_FOLD_TO_SECOND_BARREL + "=? ";
-			rq += ATT_NB_WENT_TO_SHOWDOWN + "=? ";
+			rq += ATT_NB_FOLD_TO_SECOND_BARREL + "=?, ";
+			rq += ATT_NB_WENT_TO_SHOWDOWN + "=?, ";
 			rq += ATT_NB_WIN_TO_SHOWDOWN + "=? ";
 			rq += " WHERE " + GEN_ATT_PLAYER_ID + "=?";
 			

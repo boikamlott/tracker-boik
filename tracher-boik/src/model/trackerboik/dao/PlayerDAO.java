@@ -1,6 +1,5 @@
 package model.trackerboik.dao;
 
-import model.trackerboik.businessobject.Hand;
 import model.trackerboik.businessobject.PokerPlayer;
 
 import com.trackerboik.exception.TBException;

@@ -1,29 +1,52 @@
 package model.trackerboik.businessobject;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import com.trackerboik.exception.TBException;
+
+import model.trackerboik.dao.PlayerSessionStatsDAO;
+import model.trackerboik.dao.sql.PlayerSessionStatsSQL;
+
 public class PlayerSessionStats {
 
 	private String playerID;
 	private PokerSession session;
 	
 	public Double benefitGeneral, winrate;
-	public Integer nbHand, nbHandVPIP, nbHandPFR;
-	public Integer nbATSPossible, nbATS;
-	public Integer nbFoldToATSSBPossible, nbFoldToATSBBPossible, nbFoldToATSSB, nbFoldToATSBB;
-	public Integer nbAFHandBetAndRaise, nbAFHandCalled;
-	public Integer nbLimpTotal, nbLimpThenFold, nbLimpThenCall;
-	public Integer nb3betPossible, nb3bet;
-	public Integer nbFoldTo3betPossible, nbFoldTo3bet;
-	public Integer nbCbetPossible, nbCbet;
-	public Integer nbFoldToCbetPossible, nbFoldToCbet;
-	public Integer nbSecondBarrelPossible, nbSecondBarrel;
-	public Integer nbFoldToSecondBarrelPossible, nbFoldToSecondBarrel;
-	public Integer nbWentToShowdownHand, nbWinToShowdownHand;
+	/**
+	 * Store all integer data related to user indicator
+	 * Indicators key are BDD ones
+	 */
+	private Map<String, Integer> integerData;
 	
-	public PlayerSessionStats(String playerID, PokerSession ps) {
+	public PlayerSessionStats(String playerID, PokerSession ps) throws TBException {
 		this.playerID = playerID;
 		this.session = ps;
+		this.integerData = new HashMap<String, Integer>();
+		for(String att : PlayerSessionStatsDAO.INT_ATTRIBUTES) {
+			this.integerData.put(att, 0);
+		}
 	}
 
+	public Map<String, Integer> getIntegerData() {
+		return integerData;
+	}
+	
+	/**
+	 * Just shortcut to add one (current use) to an indicator
+	 * throws exception if error
+	 * @param indicatorName
+	 * @throws TBException
+	 */
+	public void addOneToIndicator(String indicatorName) throws TBException {
+		if(integerData.get(indicatorName) == null) {
+			throw new TBException("unknow indicator '" + indicatorName + "' !");
+		} else {
+			integerData.put(indicatorName, integerData.get(indicatorName) + 1);
+		}
+	}
+	
 	public String getPlayerID() {
 		return playerID;
 	}

@@ -3,20 +3,15 @@ package controller.trackerboik.main;
 import java.util.List;
 import java.util.logging.Level;
 
-import model.trackerboik.businessobject.ActionKind;
 import model.trackerboik.businessobject.Hand;
 import model.trackerboik.businessobject.PlayerSessionStats;
-import model.trackerboik.businessobject.PokerAction;
-import model.trackerboik.businessobject.PokerPlayer;
 import model.trackerboik.businessobject.PokerSession;
 import model.trackerboik.dao.ActionDAO;
 import model.trackerboik.dao.HandPlayerDAO;
-import model.trackerboik.dao.PlayerDAO;
 import model.trackerboik.dao.PlayerSessionStatsDAO;
 import model.trackerboik.dao.SessionDAO;
 import model.trackerboik.dao.sql.ActionSQL;
 import model.trackerboik.dao.sql.HandPLayerSQL;
-import model.trackerboik.dao.sql.PlayerSQL;
 import model.trackerboik.dao.sql.PlayerSessionStatsSQL;
 import model.trackerboik.dao.sql.SessionSQL;
 
@@ -68,9 +63,12 @@ public class AggregateDataController {
 		HandPlayerDAO hpbdd = new HandPLayerSQL();
 		ActionDAO abdd = new ActionSQL();
 		
-		pp.nbHand += hpbdd.getNbHandsPlayedForNewSessions(pp);
-		pp.nbHandVPIP += abdd.getNbHandsVPIPPlayedForNewSessions(pp);
-		pp.nbHandPFR += abdd.getNbHandsPFRPlayedForNewSessions(pp);
+		pp.getIntegerData().put(PlayerSessionStatsDAO.ATT_NB_HANDS, 
+				pp.getIntegerData().get(PlayerSessionStatsDAO.ATT_NB_HANDS) + hpbdd.getNbHandsPlayedForNewSessions(pp));
+		pp.getIntegerData().put(PlayerSessionStatsDAO.ATT_NB_HANDS_VPIP, 
+				pp.getIntegerData().get(PlayerSessionStatsDAO.ATT_NB_HANDS_VPIP) + abdd.getNbHandsVPIPPlayedForNewSessions(pp));
+		pp.getIntegerData().put(PlayerSessionStatsDAO.ATT_NB_RAISE_PREFLOP, 
+				pp.getIntegerData().get(PlayerSessionStatsDAO.ATT_NB_RAISE_PREFLOP) + abdd.getNbHandsPFRPlayedForNewSessions(pp));
 		computeIndicatorForNewSessions(pp);
 		
 	}

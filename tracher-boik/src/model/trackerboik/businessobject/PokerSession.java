@@ -7,6 +7,7 @@ import com.trackerboik.exception.TBException;
 
 public class PokerSession {
 
+	public static final PokerSession ALL = new PokerSession("ALL", "ALL", "Hold'em");
 	private String id;
 	private String associatedFileName;
 	private String sessionKind;

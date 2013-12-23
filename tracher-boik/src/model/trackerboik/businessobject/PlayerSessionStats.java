@@ -10,6 +10,7 @@ public class PlayerSessionStats {
 	public Integer nbATSPossible, nbATS;
 	public Integer nbFoldToATSSBPossible, nbFoldToATSBBPossible, nbFoldToATSSB, nbFoldToATSBB;
 	public Integer nbAFHandBetAndRaise, nbAFHandCalled;
+	public Integer nbLimpTotal, nbLimpThenFold, nbLimpThenCall;
 	public Integer nb3betPossible, nb3bet;
 	public Integer nbFoldTo3betPossible, nbFoldTo3bet;
 	public Integer nbCbetPossible, nbCbet;

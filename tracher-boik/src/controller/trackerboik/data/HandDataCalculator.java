@@ -32,7 +32,7 @@ public class HandDataCalculator {
 	private boolean preflopRaisedByHero, preflopRaisedBySomeone, heroCbetPossible, foldToCbetPossible,
 						heroCbetOnFlop, heroCallCbetOnFlop, generalSecondBarrelPossible, 
 						foldToSndBarrelPossible, continueRead,
-						preflopOpen, atsRunning, heroHasBeen3Betted;
+						preflopOpen, atsRunning, heroHasBeen3Betted, heroHasLimp;
 	private int nbBetPreflop = 1;
 	private boolean[] dataCalculated;
 	private PlayerSessionStats hero;
@@ -165,41 +165,17 @@ public class HandDataCalculator {
 	private void computePreflopActions(PokerAction a, Boolean isHeroAction) {
 		String heroID = hero.getPlayerID();
 
-		//Check ATS Action
-		if(a.getKind() == ActionKind.CALL || a.getKind() == ActionKind.RAISE) {
-			//Check ATS
-			if(!preflopOpen && isHeroAction && (h.getPositionForPlayer(heroID) == PokerPosition.CO ||
-					h.getPositionForPlayer(heroID) == PokerPosition.BU)) {
-				hero.nbATSPossible++;
-				if(a.getKind() == ActionKind.RAISE) { hero.nbATS++;}
-			} else if(!preflopOpen && !isHeroAction && 
-					(h.getPositionForPlayer(a.getAssociatedPlayer().getPlayerID()) == PokerPosition.CO ||
-					h.getPositionForPlayer(a.getAssociatedPlayer().getPlayerID()) == PokerPosition.BU) && 
-					(h.getPositionForPlayer(heroID) == PokerPosition.SB || 
-					h.getPositionForPlayer(heroID) == PokerPosition.BB)) {
-				//Register a ATS
-				atsRunning = true;
-				
-			} else if(atsRunning && !isHeroAction && a.getKind() == ActionKind.RAISE) {
-				//ATS reaction was done by CO or SB
-				atsRunning = false;
-			} else if(atsRunning && isHeroAction) {
-				//Register ATS reaction of current player
-				if(h.getPositionForPlayer(heroID) == PokerPosition.SB) { 
-					hero.nbFoldToATSSBPossible++;
-				} else {
-					hero.nbFoldToATSBBPossible++;
-				}
-				
-				if(a.getKind() == ActionKind.FOLD && h.getPositionForPlayer(heroID) == PokerPosition.SB) {
-					hero.nbFoldToATSSB++;
-				} else if(a.getKind() == ActionKind.FOLD && h.getPositionForPlayer(heroID) == PokerPosition.BB) {
-					hero.nbFoldToATSBB++;
-				}
-			}
-			preflopOpen = true;
-		}
+		checkPFRSituations(a, isHeroAction);
+		checkATSSituations(a, isHeroAction, heroID);
+		checkLimpSituations(a, isHeroAction);
+	}
 
+	/**
+	 * Compute Preflop 3Bet situations
+	 * @param a
+	 * @param isHeroAction
+	 */
+	private void checkPFRSituations(PokerAction a, Boolean isHeroAction) {
 		//PreFlop Raise and 3Bet
 		if(a.getKind() == ActionKind.RAISE) {
 			nbBetPreflop++;
@@ -222,8 +198,75 @@ public class HandDataCalculator {
 		if(isHeroAction && heroHasBeen3Betted && a.getKind() == ActionKind.FOLD) {
 			hero.nbFoldTo3bet++;
 		}
+	}
+	
+	/**
+	 * Compute preflop attempt to steal situation
+	 * @param a
+	 * @param isHeroAction
+	 * @param heroID
+	 */
+	private void checkATSSituations(PokerAction a, Boolean isHeroAction, String heroID) {
+		//Check ATS Action
+				if(a.getKind() == ActionKind.CALL || a.getKind() == ActionKind.RAISE) {
+					//Check ATS
+					if(!preflopOpen && isHeroAction && (h.getPositionForPlayer(heroID) == PokerPosition.CO ||
+							h.getPositionForPlayer(heroID) == PokerPosition.BU)) {
+						hero.nbATSPossible++;
+						if(a.getKind() == ActionKind.RAISE) { hero.nbATS++;}
+					} else if(!preflopOpen && !isHeroAction && 
+							(h.getPositionForPlayer(a.getAssociatedPlayer().getPlayerID()) == PokerPosition.CO ||
+							h.getPositionForPlayer(a.getAssociatedPlayer().getPlayerID()) == PokerPosition.BU) && 
+							(h.getPositionForPlayer(heroID) == PokerPosition.SB || 
+							h.getPositionForPlayer(heroID) == PokerPosition.BB)) {
+						//Register a ATS
+						atsRunning = true;
+						
+					} else if(atsRunning && !isHeroAction && a.getKind() == ActionKind.RAISE) {
+						//ATS reaction was done by CO or SB
+						atsRunning = false;
+					} else if(atsRunning && isHeroAction) {
+						//Register ATS reaction of current player
+						if(h.getPositionForPlayer(heroID) == PokerPosition.SB) { 
+							hero.nbFoldToATSSBPossible++;
+						} else {
+							hero.nbFoldToATSBBPossible++;
+						}
+						
+						if(a.getKind() == ActionKind.FOLD && h.getPositionForPlayer(heroID) == PokerPosition.SB) {
+							hero.nbFoldToATSSB++;
+						} else if(a.getKind() == ActionKind.FOLD && h.getPositionForPlayer(heroID) == PokerPosition.BB) {
+							hero.nbFoldToATSBB++;
+						}
+					}
+					preflopOpen = true;
+				}
 		
 	}
+	
+	/**
+	 * Compute Preflop limp situation
+	 * @param a
+	 * @param isHeroAction
+	 */
+	private void checkLimpSituations(PokerAction a, Boolean isHeroAction) {
+		//Detect Hero's limp
+		if(!preflopRaisedBySomeone && isHeroAction && a.getKind() == ActionKind.CALL) {
+			heroHasLimp = true;
+			hero.nbLimpTotal++;
+		}
+		
+		//Detect Hero reaction after someone has raised it's limp
+		if(heroHasLimp && preflopRaisedBySomeone && isHeroAction) {
+			//Register limp reaction
+			if(a.getKind() == ActionKind.CALL) {hero.nbLimpThenCall++;}
+			if(a.getKind() == ActionKind.FOLD) {hero.nbLimpThenFold++;}
+			//Ensure that we could not count twice call for one limp
+			heroHasLimp = false;
+		}
+	}
+	
+
 
 	/**
 	 * Set all indicators for action and is player action boolean given in parameter

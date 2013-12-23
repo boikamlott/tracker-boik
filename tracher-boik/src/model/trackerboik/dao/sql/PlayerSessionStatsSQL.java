@@ -24,7 +24,7 @@ public class PlayerSessionStatsSQL extends GeneralSQLDBOperations implements Pla
 	private static final String ATT_NB_AGRESSION_FACTOR_BET_RAISE = "nb_hand_af_bet_raise";
 	private static final String ATT_NB_AGRESSION_FACTOR_CALL = "nb_hand_af_call";
 
-	private static final Integer NB_INTEGER_INDICATORS = 25;
+	private static final Integer NB_INTEGER_INDICATORS = 28;
 	private static final Integer NB_OTHER_INDICATORS = 4;
 
 	private static final String ATT_NB_HANDS = "nb_hands";
@@ -39,6 +39,10 @@ public class PlayerSessionStatsSQL extends GeneralSQLDBOperations implements Pla
 	private static final String ATT_NB_FOLD_TO_ATS_SB = "nb_hands_fold_to_ats_sb";
 	private static final String ATT_NB_FOLD_TO_ATS_BB = "nb_hands_fold_to_ats_bb";
 
+	private static final String ATT_NB_LIMP = "nb_hands_limp_total";
+	private static final String ATT_NB_LIMP_THEN_FOLD = "nb_hands_limp_then_fold";
+	private static final String ATT_NB_LIMP_THEN_CALL = "nb_hands_limp_then_call";
+	
 	private static final String ATT_NB_3BET_POSSIBLE = "nb_hands_3bet_possible";
 	private static final String ATT_NB_3BET = "nb_3bet";
 	
@@ -78,6 +82,9 @@ public class PlayerSessionStatsSQL extends GeneralSQLDBOperations implements Pla
 		rq += ATT_NB_FOLD_TO_ATS_BB_POSSIBLE + " INTEGER,";
 		rq += ATT_NB_FOLD_TO_ATS_SB + " INTEGER,";
 		rq += ATT_NB_FOLD_TO_ATS_BB + " INTEGER,";
+		rq += ATT_NB_LIMP + " INTEGER,";
+		rq += ATT_NB_LIMP_THEN_CALL + " INTEGER,";
+		rq += ATT_NB_LIMP_THEN_FOLD + " INTEGER,";
 		rq += ATT_NB_3BET_POSSIBLE + " INTEGER,";
 		rq += ATT_NB_3BET + " INTEGER,";
 		rq += ATT_NB_FOLD_TO_3BET_POSSIBLE + " INTEGER,";
@@ -182,6 +189,10 @@ public class PlayerSessionStatsSQL extends GeneralSQLDBOperations implements Pla
 			p.nbFoldToATSSB = rs.getInt(ATT_NB_FOLD_TO_ATS_SB);
 			p.nbFoldToATSBB = rs.getInt(ATT_NB_FOLD_TO_ATS_BB);
 			
+			p.nbLimpTotal = rs.getInt(ATT_NB_LIMP);
+			p.nbLimpThenFold = rs.getInt(ATT_NB_LIMP_THEN_FOLD);
+			p.nbLimpThenCall = rs.getInt(ATT_NB_LIMP_THEN_CALL);
+			
 			p.nb3betPossible = rs.getInt(ATT_NB_3BET_POSSIBLE);
 			p.nb3bet = rs.getInt(ATT_NB_3BET);
 			p.nbFoldTo3betPossible = rs.getInt(ATT_NB_FOLD_TO_3BET_POSSIBLE);
@@ -219,6 +230,9 @@ public class PlayerSessionStatsSQL extends GeneralSQLDBOperations implements Pla
 			rq += ATT_NB_FOLD_TO_ATS_BB_POSSIBLE + "=?,";
 			rq += ATT_NB_FOLD_TO_ATS_SB + "=?,";
 			rq += ATT_NB_FOLD_TO_ATS_BB + "=?,";
+			rq += ATT_NB_LIMP + "=?,";
+			rq += ATT_NB_LIMP_THEN_FOLD + "=?,";
+			rq += ATT_NB_LIMP_THEN_CALL + "=?,";
 			rq += ATT_NB_3BET_POSSIBLE + "=?,";
 			rq += ATT_NB_3BET + "=?,";
 			rq += ATT_NB_FOLD_TO_3BET_POSSIBLE + "=?,";
@@ -250,6 +264,9 @@ public class PlayerSessionStatsSQL extends GeneralSQLDBOperations implements Pla
 			psQuery.setInt(i++, pss.nbFoldToATSBBPossible);
 			psQuery.setInt(i++, pss.nbFoldToATSSB);
 			psQuery.setInt(i++, pss.nbFoldToATSBB);
+			psQuery.setInt(i++, pss.nbLimpTotal);
+			psQuery.setInt(i++, pss.nbLimpThenFold);
+			psQuery.setInt(i++, pss.nbLimpThenCall);
 			psQuery.setInt(i++, pss.nb3betPossible);
 			psQuery.setInt(i++, pss.nb3bet);
 			psQuery.setInt(i++, pss.nbFoldTo3bet);

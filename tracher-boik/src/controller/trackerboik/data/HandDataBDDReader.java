@@ -3,28 +3,25 @@ package controller.trackerboik.data;
 import java.util.List;
 import java.util.logging.Level;
 
-import com.trackerboik.appmngt.TrackerBoikLog;
-import com.trackerboik.exception.TBException;
-
-import controller.trackerboik.main.TrackerBoikController;
-
 import model.trackerboik.businessobject.Hand;
 import model.trackerboik.businessobject.PokerPlayer;
-import model.trackerboik.businessobject.PokerSession;
 import model.trackerboik.dao.ActionDAO;
 import model.trackerboik.dao.BoardDAO;
 import model.trackerboik.dao.HandBoardDAO;
 import model.trackerboik.dao.HandDAO;
 import model.trackerboik.dao.HandPlayerDAO;
 import model.trackerboik.dao.PlayerDAO;
-import model.trackerboik.dao.SessionDAO;
 import model.trackerboik.dao.sql.ActionSQL;
 import model.trackerboik.dao.sql.BoardSQL;
 import model.trackerboik.dao.sql.HandBoardSQL;
 import model.trackerboik.dao.sql.HandPLayerSQL;
 import model.trackerboik.dao.sql.HandSQL;
 import model.trackerboik.dao.sql.PlayerSQL;
-import model.trackerboik.dao.sql.SessionSQL;
+
+import com.trackerboik.appmngt.TrackerBoikLog;
+import com.trackerboik.exception.TBException;
+
+import controller.trackerboik.main.TrackerBoikController;
 
 public class HandDataBDDReader {
 	
@@ -37,14 +34,12 @@ public class HandDataBDDReader {
 	 * @return
 	 * @throws TBException
 	 */
-	public List<PokerSession> getAllSessions() throws TBException {
-		SessionDAO sbdd = new SessionSQL();
-		List<PokerSession> pss = sbdd.getAllSesssionsUncalculated();
-		for(PokerSession ps : pss) {
-			addSessionsHands(ps);
-		}
+	public List<Hand> getHandsNotComputed() throws TBException {
+		HandDAO hbdd = new HandSQL();
+		List<Hand> res = hbdd.getAllHandsUncalculated();
+		addDetailsToHands(res);
 		
-		return pss;
+		return res;
 	}
 
 	/**
@@ -52,18 +47,12 @@ public class HandDataBDDReader {
 	 * @param ps
 	 * @throws TBException 
 	 */
-	private void addSessionsHands(PokerSession ps) throws TBException {
-		HandDAO hbdd = new HandSQL();
-		
-		//Get related hands data
-		List<Hand> hands = hbdd.getAllHandsForSession(ps);
-		
+	private void addDetailsToHands(List<Hand> hands) throws TBException {		
 		for(Hand h : hands) {
 			try {
 				addBoardToHandIfExists(h);
 				addPlayersDataToHand(h);
 				addActionsToHand(h);
-				ps.addHand(h);
 			} catch (TBException e) {
 				TrackerBoikLog.getInstance().log(
 						Level.WARNING, "Data of hand " + h.getId() + " could not be loaded from database because: " + e.getMessage());

@@ -1,10 +1,8 @@
 package model.trackerboik.dao;
 
-import java.util.List;
+import model.trackerboik.businessobject.PokerSession;
 
 import com.trackerboik.exception.TBException;
-
-import model.trackerboik.businessobject.PokerSession;
 
 public interface SessionDAO extends GeneralDBOperationsDAO {
 
@@ -12,7 +10,4 @@ public interface SessionDAO extends GeneralDBOperationsDAO {
 
 	public boolean sessionExists(PokerSession associatedSession) throws TBException;
 
-	public List<PokerSession> getAllSesssionsUncalculated() throws TBException;
-
-	public void markAllSessionsAsCalculated() throws TBException;
 }

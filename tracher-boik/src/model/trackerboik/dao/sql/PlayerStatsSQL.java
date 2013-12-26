@@ -5,17 +5,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.trackerboik.businessobject.PlayerSessionStats;
-import model.trackerboik.businessobject.PokerSession;
+import model.trackerboik.businessobject.PlayerStats;
 import model.trackerboik.dao.StatsDAO;
 
 import com.trackerboik.exception.TBException;
 
-public class PlayerSessionStatsSQL extends GeneralSQLDBOperations implements
+public class PlayerStatsSQL extends GeneralSQLDBOperations implements
 		StatsDAO {
 	public static final String TABLE_NAME = "player_session_stats";
 
-	public PlayerSessionStatsSQL() throws TBException {
+	public PlayerStatsSQL() throws TBException {
 		super();
 	}
 	
@@ -24,28 +23,73 @@ public class PlayerSessionStatsSQL extends GeneralSQLDBOperations implements
 		String rq = "CREATE TABLE " + TABLE_NAME + " (";
 		rq += GEN_ATT_PLAYER_ID + " VARCHAR(256)  REFERENCES "
 				+ PlayerSQL.TABLE_NAME + "(" + GEN_ATT_PLAYER_ID + "),";
-		rq += GEN_ATT_SESSION_ID + " VARCHAR(256)  REFERENCES "
-				+ SessionSQL.TABLE_NAME + "(" + GEN_ATT_SESSION_ID + "),";
 		rq += ATT_BENEFIT + " DOUBLE,";
 		for(String att : INT_ATTRIBUTES) {
 			rq += att + " INTEGER,";
 		}
 		
 		rq += "CONSTRAINT pk_plasyer_session_stats PRIMARY KEY ("
-				+ GEN_ATT_PLAYER_ID + "," + GEN_ATT_SESSION_ID + ")";
+				+ GEN_ATT_PLAYER_ID + ")";
 		rq += ")";
 
 		executeSQLUpdate(rq);
 
 	}
 
+	/**
+	 * Return a list with all players and the associated session to update
+	 */
 	@Override
-	public void insertPlayerStats(PlayerSessionStats pss) throws TBException {
+	public List<PlayerStats> getPlayersWithIndicatorsToUpdate()
+			throws TBException {
+		try {
+			List<PlayerStats> res = new ArrayList<PlayerStats>();
+			psQuery = createPreparedStatement("SELECT p.* " +
+											  " FROM " + TABLE_NAME + " p, " + HandSQL.TABLE_NAME + " h, " + HandPLayerSQL.TABLE_NAME + " hp " 
+											+ " WHERE " + GEN_ATT_HAND_DATA_CALCULATED + "=? "
+											+ " AND h." + GEN_ATT_HAND_ID + "=hp." + GEN_ATT_HAND_ID
+											+ " AND hp." + GEN_ATT_PLAYER_ID + "=p." + GEN_ATT_PLAYER_ID
+					);
+			psQuery.setString(1, "n");
+			ResultSet rs = psQuery.executeQuery();
+
+			while (rs.next()) {
+				PlayerStats pss = new PlayerStats(
+						rs.getString(GEN_ATT_PLAYER_ID));
+				addPlayerDetailsFromResultSet(rs, pss);
+				res.add(pss);
+			}
+
+			return res;
+		} catch (SQLException e) {
+			throw new TBException(
+					"Impossible to load all players data from database: "
+							+ e.getMessage());
+		}
+	}
+	
+	/**
+	 * Routine which add all available data from DB to the player object
+	 * 
+	 * @param rs
+	 * @param p
+	 * @throws TBException
+	 * @throws SQLException
+	 */
+	private void addPlayerDetailsFromResultSet(ResultSet rs,
+			PlayerStats p) throws TBException, SQLException {
+		p.benefitGeneral = rs.getDouble(StatsDAO.ATT_BENEFIT);
+
+		for(String att : StatsDAO.INT_ATTRIBUTES) {
+			p.getIntegerData().put(att, rs.getInt(att));
+		}
+	}
+	
+	@Override
+	public void insertPlayerStats(PlayerStats pss) throws TBException {
 		try {
 			int i = 1;
 			psInsert.setString(i++, pss.getPlayerID());
-			psInsert.setString(i++, pss.getSession().getId());
-			psInsert.setDouble(i++, 0.0);
 			psInsert.setDouble(i++, 0.0);
 			for (; i <= StatsDAO.INT_ATTRIBUTES.length + NB_OTHER_INDICATORS; i++) {
 				psInsert.setInt(i, 0);
@@ -81,49 +125,7 @@ public class PlayerSessionStatsSQL extends GeneralSQLDBOperations implements
 	}
 
 	@Override
-	public List<PlayerSessionStats> getPlayersWithIndicatorsToUpdate(
-			PokerSession ps) throws TBException {
-		try {
-			List<PlayerSessionStats> res = new ArrayList<PlayerSessionStats>();
-			psQuery = createPreparedStatement("SELECT * FROM " + TABLE_NAME
-					+ " WHERE " + GEN_ATT_SESSION_ID + "=?");
-			psQuery.setString(1, ps.getId());
-			ResultSet rs = psQuery.executeQuery();
-
-			while (rs.next()) {
-				PlayerSessionStats pss = new PlayerSessionStats(
-						rs.getString(GEN_ATT_PLAYER_ID), ps);
-				addPlayerDetailsFromResultSet(rs, pss);
-				res.add(pss);
-			}
-
-			return res;
-		} catch (SQLException e) {
-			throw new TBException(
-					"Impossible to load all players data from database: "
-							+ e.getMessage());
-		}
-	}
-
-	/**
-	 * Routine which add all available data from DB to the player object
-	 * 
-	 * @param rs
-	 * @param p
-	 * @throws TBException
-	 * @throws SQLException
-	 */
-	private void addPlayerDetailsFromResultSet(ResultSet rs,
-			PlayerSessionStats p) throws TBException, SQLException {
-		p.benefitGeneral = rs.getDouble(ATT_BENEFIT);
-
-		for(String att : StatsDAO.INT_ATTRIBUTES) {
-			p.getIntegerData().put(att, rs.getInt(att));
-		}
-	}
-
-	@Override
-	public void updatePlayerStats(PlayerSessionStats pss) throws TBException {
+	public void updatePlayerStats(PlayerStats pss) throws TBException {
 		try {
 			String rq = "UPDATE " + TABLE_NAME + " SET ";
 			rq += ATT_BENEFIT + "=?,";
@@ -153,7 +155,7 @@ public class PlayerSessionStatsSQL extends GeneralSQLDBOperations implements
 	}
 
 	@Override
-	public void getAggregatedDataForAllSession(PlayerSessionStats playerStats) throws TBException {
+	public void getAggregatedDataForAllSession(PlayerStats playerStats) throws TBException {
 		try {
 		String rq = "SELECT SUM(" + StatsDAO.ATT_BENEFIT + "), ";
 		for(String att : StatsDAO.INT_ATTRIBUTES) {

@@ -4,16 +4,15 @@ import java.util.List;
 import java.util.logging.Level;
 
 import model.trackerboik.businessobject.Hand;
-import model.trackerboik.businessobject.PlayerSessionStats;
-import model.trackerboik.businessobject.PokerSession;
+import model.trackerboik.businessobject.PlayerStats;
 import model.trackerboik.dao.ActionDAO;
+import model.trackerboik.dao.HandDAO;
 import model.trackerboik.dao.HandPlayerDAO;
 import model.trackerboik.dao.StatsDAO;
-import model.trackerboik.dao.SessionDAO;
 import model.trackerboik.dao.sql.ActionSQL;
 import model.trackerboik.dao.sql.HandPLayerSQL;
-import model.trackerboik.dao.sql.PlayerSessionStatsSQL;
-import model.trackerboik.dao.sql.SessionSQL;
+import model.trackerboik.dao.sql.HandSQL;
+import model.trackerboik.dao.sql.PlayerStatsSQL;
 
 import com.trackerboik.appmngt.TrackerBoikLog;
 import com.trackerboik.exception.TBException;
@@ -34,24 +33,24 @@ public class AggregateDataController {
 	 */
 	public void refreshIndicatorsData() throws TBException {
 		parentController.getPlayerSessionsStats().clear();
-		for(PokerSession ps : parentController.getSessions()) {
-			StatsDAO pssBDD = new PlayerSessionStatsSQL();
-			List<PlayerSessionStats> playersToUpdate = pssBDD.getPlayersWithIndicatorsToUpdate(ps);
-			
-			for(PlayerSessionStats pp : playersToUpdate) {
-				try {
-					recalculatePlayerIndicators(pp);
-					pssBDD.updatePlayerStats(pp);
-					parentController.getPlayerSessionsStats().add(pp);
-				} catch (TBException e) {
-					TrackerBoikLog.getInstance().log(Level.WARNING, "Impossible to upadte player '" + 
-									pp.getPlayerID() + "' indicators: " + e.getMessage());
-				}
+		StatsDAO statBDD = new PlayerStatsSQL();
+		
+		List<PlayerStats> playersToUpdate = statBDD.getPlayersWithIndicatorsToUpdate();
+		
+		for(PlayerStats pp : playersToUpdate) {
+			try {
+				recalculatePlayerIndicators(pp);
+				statBDD.updatePlayerStats(pp);
+				parentController.getPlayerSessionsStats().add(pp);
+			} catch (TBException e) {
+				TrackerBoikLog.getInstance().log(Level.WARNING, "Impossible to upadte player '" + 
+								pp.getPlayerID() + "' indicators: " + e.getMessage());
 			}
 		}
 		
+		
 		try {
-			markAllSessionsAsCalculated();
+			markAllHandsAsCalculated();
 		} catch (TBException e) {
 			TrackerBoikLog.getInstance().log(Level.WARNING, "Data will be incoherent because " +
 					"indicators for new sessions has been calculated and session could not be marked as calculated: " + 
@@ -59,7 +58,7 @@ public class AggregateDataController {
 		}
 	}
 
-	private void recalculatePlayerIndicators(PlayerSessionStats pp) throws TBException {
+	private void recalculatePlayerIndicators(PlayerStats pp) throws TBException {
 		HandPlayerDAO hpbdd = new HandPLayerSQL();
 		ActionDAO abdd = new ActionSQL();
 		
@@ -76,9 +75,9 @@ public class AggregateDataController {
 	/**
 	 * Mark all sessions as aggregated data calculated in database
 	 */
-	private void markAllSessionsAsCalculated() throws TBException {
-		SessionDAO sbdd = new SessionSQL();
-		sbdd.markAllSessionsAsCalculated();
+	private void markAllHandsAsCalculated() throws TBException {
+		HandDAO hbdd = new HandSQL();
+		hbdd.markAllHandsAsCalculated();
 	}
 	
 	/**
@@ -88,19 +87,17 @@ public class AggregateDataController {
 	 * @return
 	 * @throws TBException 
 	 */
-	private void computeIndicatorForNewSessions(PlayerSessionStats pp) throws TBException {
+	private void computeIndicatorForNewSessions(PlayerStats pp) throws TBException {
 		HandDataCalculator hdc;
 		
-		for(PokerSession ps : parentController.getSessions()) {
-			for(Hand h : ps.getHands()) {
-				if(h.getPlayers().contains(pp.getPlayerID())) {
-					try {
-						hdc = new HandDataCalculator(pp, h);
-						hdc.computeIndicatorForHandAndPlayer();
-					} catch (Exception e) {
-						TrackerBoikLog.getInstance().log(Level.SEVERE, "Impossible to analyse hand " + 
-										h.getId() + " for player " + pp.getPlayerID() + " moves because: " + e.getMessage());
-					}
+		for(Hand h : parentController.getHands()) {
+			if(h.getPlayers().contains(pp.getPlayerID())) {
+				try {
+					hdc = new HandDataCalculator(pp, h);
+					hdc.computeIndicatorForHandAndPlayer();
+				} catch (Exception e) {
+					TrackerBoikLog.getInstance().log(Level.SEVERE, "Impossible to analyse hand " + 
+									h.getId() + " for player " + pp.getPlayerID() + " moves because: " + e.getMessage());
 				}
 			}
 		}

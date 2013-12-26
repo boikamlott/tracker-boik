@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import model.trackerboik.businessobject.Hand;
-import model.trackerboik.businessobject.PlayerSessionStats;
+import model.trackerboik.businessobject.PlayerStats;
 import model.trackerboik.businessobject.PokerAction;
 import model.trackerboik.businessobject.PokerPlayer;
 import model.trackerboik.businessobject.PokerSession;
@@ -24,7 +24,7 @@ import model.trackerboik.dao.sql.HandBoardSQL;
 import model.trackerboik.dao.sql.HandPLayerSQL;
 import model.trackerboik.dao.sql.HandSQL;
 import model.trackerboik.dao.sql.PlayerSQL;
-import model.trackerboik.dao.sql.PlayerSessionStatsSQL;
+import model.trackerboik.dao.sql.PlayerStatsSQL;
 import model.trackerboik.dao.sql.SessionSQL;
 
 import com.trackerboik.appmngt.TrackerBoikLog;
@@ -50,7 +50,11 @@ public class AtomicDataController {
 		try {
 			List<PokerSession> pss = refreshAllAtomicData();
 			loadSessionsInMemoryToDataBase(pss);
-			parentController.getSessions().addAll(pss);
+			
+			for(PokerSession ps : pss) {
+				parentController.getHands().addAll(ps.getHands());
+			}
+			
 			TrackerBoikLog.getInstance().log(
 					Level.INFO,
 					"Data of " + pss.size()
@@ -70,9 +74,9 @@ public class AtomicDataController {
 	public void loadNewAtomicData() {
 		try {
 			HandDataBDDReader reader = new HandDataBDDReader();
-			parentController.getSessions().clear();
-			List<PokerSession> sessions = reader.getAllSessions();
-			parentController.getSessions().addAll(sessions);
+			parentController.getHands().clear();
+			List<Hand> handsNotComputed = reader.getHandsNotComputed();
+			parentController.getHands().addAll(handsNotComputed);
 		} catch (TBException e) {
 			//TODO raise error window
 		}
@@ -99,7 +103,7 @@ public class AtomicDataController {
 			SessionDAO sessionDB = new SessionSQL();
 			HandDAO handDB = new HandSQL();
 			PlayerDAO playerDB = new PlayerSQL();
-			PlayerSessionStatsSQL playerSessionStatsDB = new PlayerSessionStatsSQL();
+			PlayerStatsSQL playerSessionStatsDB = new PlayerStatsSQL();
 			BoardDAO boardDB = new BoardSQL();
 			HandBoardDAO hbDB = new HandBoardSQL();
 			HandPlayerDAO hpDB = new HandPLayerSQL();
@@ -128,7 +132,7 @@ public class AtomicDataController {
 	 * @param playerDB 
 	 * @param actionDB 
 	 */
-	private void writeHandInDataBase(Hand h, HandDAO handDB, PlayerDAO playerDB, PlayerSessionStatsSQL playerSessionDB, BoardDAO boardDB, 
+	private void writeHandInDataBase(Hand h, HandDAO handDB, PlayerDAO playerDB, PlayerStatsSQL playerSessionDB, BoardDAO boardDB, 
 			HandBoardDAO hbDB, HandPlayerDAO hpDB, ActionDAO actionDB) throws TBException{		
 		if(handDB.isHandExists(h.getId())) {
 			throw new TBException("Hand already exists in database");
@@ -176,12 +180,12 @@ public class AtomicDataController {
 	 * @param players
 	 * @throws TBException
 	 */
-	private void writesAllPlayersHand(Hand h, PlayerDAO playerDB, PlayerSessionStatsSQL playerStatsDB, HandPlayerDAO hpDB) throws TBException {		
+	private void writesAllPlayersHand(Hand h, PlayerDAO playerDB, PlayerStatsSQL playerStatsDB, HandPlayerDAO hpDB) throws TBException {		
 		//Insert all players
 		for(PokerPlayer pp : h.getPlayers()) {
 			if(!playerDB.isPlayerExists(pp.getPlayerID())) {
 				playerDB.insertPlayer(pp);
-				playerStatsDB.insertPlayerStats(new PlayerSessionStats(pp.getPlayerID(), h.getAssociatedSession()));
+				playerStatsDB.insertPlayerStats(new PlayerStats(pp.getPlayerID()));
 			}
 			hpDB.insertHandPlayer(h, pp);
 		}

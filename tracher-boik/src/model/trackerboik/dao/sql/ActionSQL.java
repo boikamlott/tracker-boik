@@ -8,7 +8,7 @@ import java.util.List;
 import model.trackerboik.businessobject.ActionKind;
 import model.trackerboik.businessobject.Hand;
 import model.trackerboik.businessobject.HandMoment;
-import model.trackerboik.businessobject.PlayerSessionStats;
+import model.trackerboik.businessobject.PlayerStats;
 import model.trackerboik.businessobject.PokerAction;
 import model.trackerboik.businessobject.PokerPlayer;
 import model.trackerboik.dao.ActionDAO;
@@ -110,14 +110,13 @@ public class ActionSQL extends GeneralSQLDBOperations implements ActionDAO {
 	}
 	
 	@Override
-	public Integer getNbHandsVPIPPlayedForNewSessions(PlayerSessionStats pp)
+	public Integer getNbHandsVPIPPlayedForNewSessions(PlayerStats pp)
 			throws TBException {
 		String errorMsg = "";
 		try {
 			String rq = "SELECT COUNT(DISTINCT(h." + GEN_ATT_HAND_ID + "))";
-			rq += " FROM " + SessionSQL.TABLE_NAME + " s, " + HandSQL.TABLE_NAME + " h," + ActionSQL.TABLE_NAME + " a";
-			rq += " WHERE s." + GEN_ATT_SESSION_CALCULATED + "=?";
-			rq += " AND s." + GEN_ATT_SESSION_ID + "=" + "h." + GEN_ATT_SESSION_ID;
+			rq += " FROM " + HandSQL.TABLE_NAME + " h," + ActionSQL.TABLE_NAME + " a";
+			rq += " WHERE h." + GEN_ATT_HAND_DATA_CALCULATED + "=?";
 			rq += " AND h." + GEN_ATT_HAND_ID + "=" + "a." + GEN_ATT_HAND_ID;
 			rq += " AND a." + GEN_ATT_PLAYER_ID + "=?";
 			rq += " AND a." + ATT_MOMENT + "=?";
@@ -144,14 +143,13 @@ public class ActionSQL extends GeneralSQLDBOperations implements ActionDAO {
 	}
 
 	@Override
-	public Integer getNbHandsPFRPlayedForNewSessions(PlayerSessionStats pp)
+	public Integer getNbHandsPFRPlayedForNewSessions(PlayerStats pp)
 			throws TBException {
 		String errorMsg = "";
 		try {
 			String rq = "SELECT COUNT(DISTINCT(h." + GEN_ATT_HAND_ID + "))";
-			rq += " FROM " + SessionSQL.TABLE_NAME + " s, " + HandSQL.TABLE_NAME + " h," + ActionSQL.TABLE_NAME + " a";
-			rq += " WHERE s." + GEN_ATT_SESSION_CALCULATED + "=?";
-			rq += " AND s." + GEN_ATT_SESSION_ID + "=" + "h." + GEN_ATT_SESSION_ID;
+			rq += " FROM " + HandSQL.TABLE_NAME + " h," + ActionSQL.TABLE_NAME + " a";
+			rq += " WHERE h." + GEN_ATT_HAND_DATA_CALCULATED + "=?";
 			rq += " AND h." + GEN_ATT_HAND_ID + "=" + "a." + GEN_ATT_HAND_ID;
 			rq += " AND a." + GEN_ATT_PLAYER_ID + "=?";
 			rq += " AND a." + ATT_MOMENT + "=?";

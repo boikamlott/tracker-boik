@@ -2,14 +2,13 @@ package model.trackerboik.dao;
 
 import java.util.List;
 
-import model.trackerboik.businessobject.PlayerSessionStats;
-import model.trackerboik.businessobject.PokerSession;
+import model.trackerboik.businessobject.PlayerStats;
 
 import com.trackerboik.exception.TBException;
 
 public interface StatsDAO extends GeneralDBOperationsDAO {
 
-	public static final Integer NB_OTHER_INDICATORS = 3;
+	public static final Integer NB_OTHER_INDICATORS = 2;
 
 	public static final String ATT_BENEFIT = "benefit";
 	public static final String ATT_NB_AGRESSION_FACTOR_GENERAL_BET_RAISE = "NB_AF_General_BR";
@@ -83,19 +82,20 @@ public interface StatsDAO extends GeneralDBOperationsDAO {
 		ATT_NB_FOLD_TO_SECOND_BARREL, ATT_NB_AF_RIVER_BR, ATT_NB_AF_RIVER_C,
 		ATT_NB_WIN_TO_SHOWDOWN_WHEN_SEEING_FLOP, ATT_NB_WENT_TO_SHOWDOWN, ATT_NB_WIN_TO_SHOWDOWN };
 	
-	public void insertPlayerStats(PlayerSessionStats pss) throws TBException;
+	public void insertPlayerStats(PlayerStats pss) throws TBException;
 
 	public boolean isStatsExists(String playerID, String sessionID) throws TBException;
 
-	public List<PlayerSessionStats> getPlayersWithIndicatorsToUpdate(PokerSession ps) throws TBException;
+	public void updatePlayerStats(PlayerStats pss) throws TBException;
 
-	public void updatePlayerStats(PlayerSessionStats pss) throws TBException;
-
+	
+	public List<PlayerStats> getPlayersWithIndicatorsToUpdate()
+			throws TBException;
 	/**
 	 * Return all aggregated data for all session in database
 	 * PRE: playersStats should be has a correct player ID
 	 * @param playerStats
 	 */
-	public void getAggregatedDataForAllSession(PlayerSessionStats playerStats)  throws TBException;
+	public void getAggregatedDataForAllSession(PlayerStats playerStats)  throws TBException;
 	
 }

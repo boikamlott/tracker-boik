@@ -2,8 +2,6 @@ package model.trackerboik.dao.sql;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import model.trackerboik.businessobject.PokerSession;
 import model.trackerboik.dao.SessionDAO;
@@ -29,20 +27,13 @@ public class SessionSQL extends GeneralSQLDBOperations implements SessionDAO {
 	protected String getExistenceTestPreCompiledRequest() {
 		return "SELECT * FROM " + TABLE_NAME + " WHERE " + GEN_ATT_SESSION_ID + "= ?";
 	}
-
-	@Override
-	protected String getAllElementsForLoadSessionInMemoryRequest() {
-		return "SELECT * FROM " + TABLE_NAME + " WHERE " + GEN_ATT_SESSION_CALCULATED + " = ?";
-	}
 	
 	@Override
 	public void createTable() throws TBException {
 		String rq = "CREATE TABLE " + TABLE_NAME + " (";
 		rq += GEN_ATT_SESSION_ID + " VARCHAR(256) PRIMARY KEY,";
 		rq += ATT_FILE_ASSOCIATED_NM + " VARCHAR(256) NOT NULL,";
-		rq += ATT_SESSION_KIND + " VARCHAR(256),";
-		rq += GEN_ATT_SESSION_CALCULATED + " VARCHAR(10) NOT NULL,";
-		rq += " CONSTRAINT agg_calculate_bool_enum CHECK (" + GEN_ATT_SESSION_CALCULATED + " in ('y', 'n'))";
+		rq += ATT_SESSION_KIND + " VARCHAR(256)";
 		rq += ")";
 		
 		executeSQLUpdate(rq);
@@ -80,35 +71,12 @@ public class SessionSQL extends GeneralSQLDBOperations implements SessionDAO {
 		}
 	}
 
-	@Override
-	public List<PokerSession> getAllSesssionsUncalculated() throws TBException {
-		try {
-			psQuery = createPreparedStatement(getAllElementsForLoadSessionInMemoryRequest());
-			psQuery.setString(1, "n");
-			ResultSet rs = psQuery.executeQuery();
-			List<PokerSession> res = new ArrayList<PokerSession>();
-			
-			while(rs.next()) {
-				res.add(new PokerSession(rs.getString(GEN_ATT_SESSION_ID), 
-						ATT_FILE_ASSOCIATED_NM, ATT_SESSION_KIND));
-			}
-			
-			return res;
-		} catch (SQLException e) {
-			throw new TBException("Impossible to read sessions in BDD: " + e.getMessage());
-		}
-	}
+
 
 	@Override
-	public void markAllSessionsAsCalculated() throws TBException {
-		try {
-			psQuery = createPreparedStatement("UPDATE " + TABLE_NAME + " SET " + GEN_ATT_SESSION_CALCULATED + "=?");
-			psQuery.setString(1, "y");
-			psQuery.execute();
-		} catch (SQLException e) {
-			throw new TBException("Error during database update on session table: " + e.getMessage());
-		}
-		
+	protected String getAllElementsForLoadSessionInMemoryRequest() {
+		//Should not be use
+		return "";
 	}
 
 }

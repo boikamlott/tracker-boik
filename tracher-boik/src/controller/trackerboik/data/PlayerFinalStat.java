@@ -3,26 +3,25 @@ package controller.trackerboik.data;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.trackerboik.exception.TBException;
-
-import model.trackerboik.businessobject.PlayerSessionStats;
+import model.trackerboik.businessobject.PlayerStats;
 import model.trackerboik.businessobject.PokerIndicator;
 import model.trackerboik.businessobject.PokerIndicatorValue;
-import model.trackerboik.businessobject.PokerSession;
 import model.trackerboik.dao.StatsDAO;
-import model.trackerboik.dao.sql.PlayerSessionStatsSQL;
+import model.trackerboik.dao.sql.PlayerStatsSQL;
+
+import com.trackerboik.exception.TBException;
 
 public class PlayerFinalStat {
 
 	/**
 	 * Player stats for all sessions
 	 */
-	private PlayerSessionStats playerStats;
+	private PlayerStats playerStats;
 	private Map<PokerIndicator, PokerIndicatorValue> indicators;
 	
 	public PlayerFinalStat(String playerID) throws TBException {
-		playerStats = new PlayerSessionStats(playerID, PokerSession.ALL);
-		StatsDAO statsBDD = new PlayerSessionStatsSQL();
+		playerStats = new PlayerStats(playerID);
+		StatsDAO statsBDD = new PlayerStatsSQL();
 		statsBDD.getAggregatedDataForAllSession(playerStats);
 		computeIndicatorsForPlayer();
 	}

@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 import model.trackerboik.businessobject.Hand;
 import model.trackerboik.businessobject.HandResult;
-import model.trackerboik.businessobject.PlayerSessionStats;
+import model.trackerboik.businessobject.PlayerStats;
 import model.trackerboik.businessobject.PokerCard;
 import model.trackerboik.businessobject.PokerHand;
 import model.trackerboik.businessobject.PokerPlayer;
@@ -126,14 +126,13 @@ public class HandPLayerSQL extends GeneralSQLDBOperations implements
 	}
 
 	@Override
-	public Integer getNbHandsPlayedForNewSessions(PlayerSessionStats pp)
+	public Integer getNbHandsPlayedForNewSessions(PlayerStats pp)
 			throws TBException {
 		String errorMsg = "";
 		try {
 			String rq = "SELECT COUNT(DISTINCT(h." + GEN_ATT_HAND_ID + "))";
-			rq += "FROM " + SessionSQL.TABLE_NAME + " s, " + HandSQL.TABLE_NAME + " h," + TABLE_NAME + " hp ";
-			rq += "WHERE s." + GEN_ATT_SESSION_CALCULATED + "=?";
-			rq += " AND s." + GEN_ATT_SESSION_ID + "=" + "h." + GEN_ATT_SESSION_ID;
+			rq += "FROM " + HandSQL.TABLE_NAME + " h," + TABLE_NAME + " hp ";
+			rq += "WHERE h." + GEN_ATT_HAND_DATA_CALCULATED + "=?";
 			rq += " AND h." + GEN_ATT_HAND_ID + "=" + "hp." + GEN_ATT_HAND_ID;
 			rq += " AND hp." + GEN_ATT_PLAYER_ID + "=?";
 			

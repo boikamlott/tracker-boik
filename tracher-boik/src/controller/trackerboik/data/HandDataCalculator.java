@@ -9,7 +9,7 @@ import model.trackerboik.businessobject.ActionKind;
 import model.trackerboik.businessobject.Hand;
 import model.trackerboik.businessobject.HandMoment;
 import model.trackerboik.businessobject.HandResult;
-import model.trackerboik.businessobject.PlayerSessionStats;
+import model.trackerboik.businessobject.PlayerStats;
 import model.trackerboik.businessobject.PokerAction;
 import model.trackerboik.businessobject.PokerPlayer;
 import model.trackerboik.businessobject.PokerPosition;
@@ -39,14 +39,14 @@ public class HandDataCalculator {
 	private Set<HandMoment> hasSeenMoment;
 	private int nbBetPreflop = 1;
 	private boolean[] dataCalculated;
-	private PlayerSessionStats hero;
+	private PlayerStats hero;
 	private String initiativePlayerID;
 	private Hand h;
 	private HandMoment currentAnalysedMoment;
 	private HandMoment lastAnalysedMoment;
 	
 	
-	public HandDataCalculator(PlayerSessionStats pp, Hand h) {
+	public HandDataCalculator(PlayerStats pp, Hand h) {
 		this.hero = pp;
 		this.h = h;
 		this.benefitHand = 0.0;

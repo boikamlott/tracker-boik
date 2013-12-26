@@ -3,23 +3,22 @@ package controller.trackerboik.main;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.trackerboik.businessobject.PlayerSessionStats;
+import model.trackerboik.businessobject.Hand;
+import model.trackerboik.businessobject.PlayerStats;
 import model.trackerboik.businessobject.PokerPlayer;
-import model.trackerboik.businessobject.PokerSession;
-
-import com.trackerboik.exception.TBException;
-
 import view.trackerboik.main.TBExceptionFrame;
 import view.trackerboik.main.TrackerBoikApplicationWindows;
+
+import com.trackerboik.exception.TBException;
 
 public class TrackerBoikController {
 
 	private AtomicDataController atomicDataController;
 	private AggregateDataController aggregateDataController;
 	private ConfigurationController configurationController;
-	private List<PokerSession> sessionsInMemory;
+	private List<Hand> handsInMemory;
 	private List<PokerPlayer> playersInMemory;
-	private List<PlayerSessionStats> playersSessionStats;
+	private List<PlayerStats> playersSessionStats;
 	private static TrackerBoikController instance;
 	
 	private TrackerBoikController() {}
@@ -29,9 +28,9 @@ public class TrackerBoikController {
 			configurationController = new ConfigurationController();
 			atomicDataController = new AtomicDataController(this);
 			aggregateDataController = new AggregateDataController(this);
-			sessionsInMemory = new ArrayList<>();
+			handsInMemory = new ArrayList<Hand>();
 			playersInMemory = new ArrayList<PokerPlayer>();
-			playersSessionStats = new ArrayList<PlayerSessionStats>();
+			playersSessionStats = new ArrayList<PlayerStats>();
 		} catch (TBException e) {
 			printException("Erreur au démarrage: '" + e.getMessage() + "' Vérifier votre environnement et consultez les logs pour plus de détails");
 		} catch (Exception e) {
@@ -56,8 +55,8 @@ public class TrackerBoikController {
 	 * Return all sessions load in memory
 	 * @return
 	 */
-	public List<PokerSession> getSessions() {
-		return sessionsInMemory;
+	public List<Hand> getHands() {
+		return handsInMemory;
 	}
 	
 	/**
@@ -72,7 +71,7 @@ public class TrackerBoikController {
 	 * Return the player session stats
 	 * @return
 	 */
-	public List<PlayerSessionStats> getPlayerSessionsStats() {
+	public List<PlayerStats> getPlayerSessionsStats() {
 		return playersSessionStats;
 	}
 	
@@ -111,11 +110,11 @@ public class TrackerBoikController {
 		return configurationController;
 	}
 
-	public void addSession(PokerSession s) throws TBException {
-		if(sessionsInMemory.contains(new PokerSession(s.getId()))) {
-			throw new TBException("Session with ID: " + s.getId() + " already load in memeory !");
+	public void addHand(Hand h) throws TBException {
+		if(handsInMemory.contains(new Hand(h.getId()))) {
+			throw new TBException("Session with ID: " + h.getId() + " already load in memeory !");
 		}
-		sessionsInMemory.add(s);
+		handsInMemory.add(h);
 	}
 
 	/**

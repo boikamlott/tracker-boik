@@ -8,7 +8,7 @@ import model.trackerboik.businessobject.PlayerSessionStats;
 import model.trackerboik.businessobject.PokerSession;
 import model.trackerboik.dao.ActionDAO;
 import model.trackerboik.dao.HandPlayerDAO;
-import model.trackerboik.dao.PlayerSessionStatsDAO;
+import model.trackerboik.dao.StatsDAO;
 import model.trackerboik.dao.SessionDAO;
 import model.trackerboik.dao.sql.ActionSQL;
 import model.trackerboik.dao.sql.HandPLayerSQL;
@@ -35,7 +35,7 @@ public class AggregateDataController {
 	public void refreshIndicatorsData() throws TBException {
 		parentController.getPlayerSessionsStats().clear();
 		for(PokerSession ps : parentController.getSessions()) {
-			PlayerSessionStatsDAO pssBDD = new PlayerSessionStatsSQL();
+			StatsDAO pssBDD = new PlayerSessionStatsSQL();
 			List<PlayerSessionStats> playersToUpdate = pssBDD.getPlayersWithIndicatorsToUpdate(ps);
 			
 			for(PlayerSessionStats pp : playersToUpdate) {
@@ -63,12 +63,12 @@ public class AggregateDataController {
 		HandPlayerDAO hpbdd = new HandPLayerSQL();
 		ActionDAO abdd = new ActionSQL();
 		
-		pp.getIntegerData().put(PlayerSessionStatsDAO.ATT_NB_HANDS, 
-				pp.getIntegerData().get(PlayerSessionStatsDAO.ATT_NB_HANDS) + hpbdd.getNbHandsPlayedForNewSessions(pp));
-		pp.getIntegerData().put(PlayerSessionStatsDAO.ATT_NB_HANDS_VPIP, 
-				pp.getIntegerData().get(PlayerSessionStatsDAO.ATT_NB_HANDS_VPIP) + abdd.getNbHandsVPIPPlayedForNewSessions(pp));
-		pp.getIntegerData().put(PlayerSessionStatsDAO.ATT_NB_RAISE_PREFLOP, 
-				pp.getIntegerData().get(PlayerSessionStatsDAO.ATT_NB_RAISE_PREFLOP) + abdd.getNbHandsPFRPlayedForNewSessions(pp));
+		pp.getIntegerData().put(StatsDAO.ATT_NB_HANDS, 
+				pp.getIntegerData().get(StatsDAO.ATT_NB_HANDS) + hpbdd.getNbHandsPlayedForNewSessions(pp));
+		pp.getIntegerData().put(StatsDAO.ATT_NB_HANDS_VPIP, 
+				pp.getIntegerData().get(StatsDAO.ATT_NB_HANDS_VPIP) + abdd.getNbHandsVPIPPlayedForNewSessions(pp));
+		pp.getIntegerData().put(StatsDAO.ATT_NB_RAISE_PREFLOP, 
+				pp.getIntegerData().get(StatsDAO.ATT_NB_RAISE_PREFLOP) + abdd.getNbHandsPFRPlayedForNewSessions(pp));
 		computeIndicatorForNewSessions(pp);
 		
 	}

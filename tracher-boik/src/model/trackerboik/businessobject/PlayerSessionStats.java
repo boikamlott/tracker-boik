@@ -3,17 +3,16 @@ package model.trackerboik.businessobject;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.trackerboik.exception.TBException;
+import model.trackerboik.dao.StatsDAO;
 
-import model.trackerboik.dao.PlayerSessionStatsDAO;
-import model.trackerboik.dao.sql.PlayerSessionStatsSQL;
+import com.trackerboik.exception.TBException;
 
 public class PlayerSessionStats {
 
 	private String playerID;
 	private PokerSession session;
 	
-	public Double benefitGeneral, winrate;
+	public Double benefitGeneral;
 	/**
 	 * Store all integer data related to user indicator
 	 * Indicators key are BDD ones
@@ -24,13 +23,17 @@ public class PlayerSessionStats {
 		this.playerID = playerID;
 		this.session = ps;
 		this.integerData = new HashMap<String, Integer>();
-		for(String att : PlayerSessionStatsDAO.INT_ATTRIBUTES) {
+		for(String att : StatsDAO.INT_ATTRIBUTES) {
 			this.integerData.put(att, 0);
 		}
 	}
 
 	public Map<String, Integer> getIntegerData() {
 		return integerData;
+	}
+	
+	public Integer getStats(String statName) {
+		return integerData.get(statName);
 	}
 	
 	/**

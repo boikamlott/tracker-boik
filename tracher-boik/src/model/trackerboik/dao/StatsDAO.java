@@ -7,17 +7,18 @@ import model.trackerboik.businessobject.PokerSession;
 
 import com.trackerboik.exception.TBException;
 
-public interface PlayerSessionStatsDAO extends GeneralDBOperationsDAO {
+public interface StatsDAO extends GeneralDBOperationsDAO {
 
-	public static final Integer NB_INTEGER_INDICATORS = 28;
-	public static final Integer NB_OTHER_INDICATORS = 4;
+	public static final Integer NB_OTHER_INDICATORS = 3;
 
-	public static final String ATT_WINRATE = "winrate";
 	public static final String ATT_BENEFIT = "benefit";
 	public static final String ATT_NB_AGRESSION_FACTOR_GENERAL_BET_RAISE = "NB_AF_General_BR";
 	public static final String ATT_NB_AGRESSION_FACTOR_GENERAL_CALL = "NB_AF_General_Call";
 
 	public static final String ATT_NB_HANDS = "NB_Hands";
+	public static final String ATT_NB_HANDS_FLOP = "NB_Hands_Flop";
+	public static final String ATT_NB_HANDS_TURN = "NB_Hands_Turn";
+	public static final String ATT_NB_HANDS_RIVER = "NB_Hands_River";
 	public static final String ATT_NB_HANDS_VPIP = "NB_Hands_VPIP";
 	public static final String ATT_NB_RAISE_PREFLOP = "NB_Hands_PFR";
 
@@ -60,7 +61,6 @@ public interface PlayerSessionStatsDAO extends GeneralDBOperationsDAO {
 	public static final String ATT_NB_AF_RIVER_BR = "NB_AF_River_BR";
 	public static final String ATT_NB_AF_RIVER_C = "NB_AF_River_BR";
 	
-	public static final String ATT_NB_WIN_TO_SHOWDOWN_WHEN_SEEING_FLOP_POSSIBLE = "NB_Hands_WMTSDWSF";
 	public static final String ATT_NB_WIN_TO_SHOWDOWN_WHEN_SEEING_FLOP = "NB_WMTSDWSF";
 	public static final String ATT_NB_WENT_TO_SHOWDOWN = "NB_WTSD";
 	public static final String ATT_NB_WIN_TO_SHOWDOWN = "NB_WMTSD";
@@ -68,7 +68,8 @@ public interface PlayerSessionStatsDAO extends GeneralDBOperationsDAO {
 	
 	public static final String[] INT_ATTRIBUTES = new String[] {
 		ATT_NB_AGRESSION_FACTOR_GENERAL_BET_RAISE,
-		ATT_NB_AGRESSION_FACTOR_GENERAL_CALL, ATT_NB_HANDS, ATT_NB_HANDS_VPIP,
+		ATT_NB_AGRESSION_FACTOR_GENERAL_CALL, ATT_NB_HANDS, ATT_NB_HANDS_FLOP,
+		ATT_NB_HANDS_TURN, ATT_NB_HANDS_RIVER, ATT_NB_HANDS_VPIP,
 		ATT_NB_RAISE_PREFLOP, ATT_NB_ATS_POSSIBLE, ATT_NB_ATS,
 		ATT_NB_FOLD_TO_ATS_SB_POSSIBLE, ATT_NB_FOLD_TO_ATS_BB_POSSIBLE,
 		ATT_NB_FOLD_TO_ATS_SB, ATT_NB_FOLD_TO_ATS_BB, ATT_NB_LIMP,

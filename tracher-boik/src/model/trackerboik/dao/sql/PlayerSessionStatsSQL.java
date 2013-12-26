@@ -7,12 +7,12 @@ import java.util.List;
 
 import model.trackerboik.businessobject.PlayerSessionStats;
 import model.trackerboik.businessobject.PokerSession;
-import model.trackerboik.dao.PlayerSessionStatsDAO;
+import model.trackerboik.dao.StatsDAO;
 
 import com.trackerboik.exception.TBException;
 
 public class PlayerSessionStatsSQL extends GeneralSQLDBOperations implements
-		PlayerSessionStatsDAO {
+		StatsDAO {
 	public static final String TABLE_NAME = "player_session_stats";
 
 	public PlayerSessionStatsSQL() throws TBException {
@@ -26,7 +26,6 @@ public class PlayerSessionStatsSQL extends GeneralSQLDBOperations implements
 				+ PlayerSQL.TABLE_NAME + "(" + GEN_ATT_PLAYER_ID + "),";
 		rq += GEN_ATT_SESSION_ID + " VARCHAR(256)  REFERENCES "
 				+ SessionSQL.TABLE_NAME + "(" + GEN_ATT_SESSION_ID + "),";
-		rq += ATT_WINRATE + " DOUBLE,";
 		rq += ATT_BENEFIT + " DOUBLE,";
 		for(String att : INT_ATTRIBUTES) {
 			rq += att + " INTEGER,";
@@ -48,7 +47,7 @@ public class PlayerSessionStatsSQL extends GeneralSQLDBOperations implements
 			psInsert.setString(i++, pss.getSession().getId());
 			psInsert.setDouble(i++, 0.0);
 			psInsert.setDouble(i++, 0.0);
-			for (; i <= NB_INTEGER_INDICATORS + NB_OTHER_INDICATORS; i++) {
+			for (; i <= StatsDAO.INT_ATTRIBUTES.length + NB_OTHER_INDICATORS; i++) {
 				psInsert.setInt(i, 0);
 			}
 
@@ -116,10 +115,9 @@ public class PlayerSessionStatsSQL extends GeneralSQLDBOperations implements
 	 */
 	private void addPlayerDetailsFromResultSet(ResultSet rs,
 			PlayerSessionStats p) throws TBException, SQLException {
-		p.winrate = rs.getDouble(ATT_WINRATE);
 		p.benefitGeneral = rs.getDouble(ATT_BENEFIT);
 
-		for(String att : PlayerSessionStatsDAO.INT_ATTRIBUTES) {
+		for(String att : StatsDAO.INT_ATTRIBUTES) {
 			p.getIntegerData().put(att, rs.getInt(att));
 		}
 	}
@@ -128,10 +126,9 @@ public class PlayerSessionStatsSQL extends GeneralSQLDBOperations implements
 	public void updatePlayerStats(PlayerSessionStats pss) throws TBException {
 		try {
 			String rq = "UPDATE " + TABLE_NAME + " SET ";
-			rq += ATT_WINRATE + "=?,";
 			rq += ATT_BENEFIT + "=?,";
 			
-			for(String att : PlayerSessionStatsDAO.INT_ATTRIBUTES) {
+			for(String att : StatsDAO.INT_ATTRIBUTES) {
 				rq += att + "=?,";
 			}
 			
@@ -139,10 +136,9 @@ public class PlayerSessionStatsSQL extends GeneralSQLDBOperations implements
 
 			psQuery = createPreparedStatement(rq);
 			int i = 1;
-			psQuery.setDouble(i++, pss.winrate);
 			psQuery.setDouble(i++, pss.benefitGeneral);
 			
-			for(String att : PlayerSessionStatsDAO.INT_ATTRIBUTES) {
+			for(String att : StatsDAO.INT_ATTRIBUTES) {
 				psQuery.setDouble(i++, pss.getIntegerData().get(att));
 			}			
 			
@@ -159,8 +155,8 @@ public class PlayerSessionStatsSQL extends GeneralSQLDBOperations implements
 	@Override
 	public void getAggregatedDataForAllSession(PlayerSessionStats playerStats) throws TBException {
 		try {
-		String rq = "SELECT SUM(" + PlayerSessionStatsDAO.ATT_BENEFIT + "), ";
-		for(String att : PlayerSessionStatsDAO.INT_ATTRIBUTES) {
+		String rq = "SELECT SUM(" + StatsDAO.ATT_BENEFIT + "), ";
+		for(String att : StatsDAO.INT_ATTRIBUTES) {
 			rq += " SUM(" + att + "),";
 		}
 		rq += " WHERE " + GEN_ATT_PLAYER_ID + " = ?";
@@ -172,7 +168,7 @@ public class PlayerSessionStatsSQL extends GeneralSQLDBOperations implements
 		if(rs.next()) {
 			int i = 1;
 			playerStats.benefitGeneral = rs.getDouble(i++);
-			for(String att : PlayerSessionStatsDAO.INT_ATTRIBUTES) {
+			for(String att : StatsDAO.INT_ATTRIBUTES) {
 				playerStats.getIntegerData().put(att, rs.getInt(i++));
 			}
 		} else {
@@ -187,7 +183,7 @@ public class PlayerSessionStatsSQL extends GeneralSQLDBOperations implements
 	@Override
 	protected String getInsertPreCompiledRequest() {
 		String rq = "INSERT INTO " + TABLE_NAME + " VALUES (";
-		for (int i = 1; i < NB_INTEGER_INDICATORS + NB_OTHER_INDICATORS; i++) {
+		for (int i = 1; i < StatsDAO.INT_ATTRIBUTES.length + NB_OTHER_INDICATORS; i++) {
 			rq += "?,";
 		}
 		rq += "?)";

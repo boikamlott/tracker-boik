@@ -7,10 +7,8 @@ import java.util.List;
 import java.util.logging.Level;
 
 import model.trackerboik.businessobject.Hand;
-import model.trackerboik.businessobject.PlayerStats;
 import model.trackerboik.businessobject.PokerSession;
 import model.trackerboik.dao.HandDAO;
-import model.trackerboik.dao.StatsDAO;
 
 import com.trackerboik.appmngt.TrackerBoikLog;
 import com.trackerboik.exception.TBException;

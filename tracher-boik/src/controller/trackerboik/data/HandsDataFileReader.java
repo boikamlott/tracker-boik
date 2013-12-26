@@ -131,11 +131,8 @@ public class HandsDataFileReader {
 			consumeUselessLines();
 			// Read hand metadata
 			if (!currentLine.contains(AppUtil.POKERSTARS_ZOOM)) {
-				// Trashes hand
-				String errorMsg = "Cette main ne sera pas chargee en base car non supportee: (ligne "
-						+ lineNo + "): '" + currentLine + "'";
+				//TODO count and log unreadable hand
 				gotToNextLine();
-				// throw new TBException(errorMsg);
 				return;
 			}
 

@@ -32,7 +32,7 @@ public class HandDataCalculator {
 	private Double benefitHand, amountToCall;
 	private boolean preflopRaisedByHero, preflopRaisedBySomeone, heroCbetPossible, foldToCbetPossible,
 						heroCbetOnFlop, heroCallCbetOnFlop, generalSecondBarrelPossible, 
-						foldToSndBarrelPossible, continueRead,
+						foldToSndBarrelPossible, continueRead, heroHasSeenFlop,
 						preflopOpen, atsRunning, heroHasBeen3Betted, heroHasLimp;
 	private int nbBetPreflop = 1;
 	private boolean[] dataCalculated;
@@ -109,7 +109,10 @@ public class HandDataCalculator {
 		//Went/Win to showdown
 		if(playersAlive.size() > 1 && playersAlive.contains(hero.getPlayerID())) {
 			hero.addOneToIndicator(PlayerSessionStatsDAO.ATT_NB_WENT_TO_SHOWDOWN);
-			if(h.getPlayerHandData(hero.getPlayerID()).getResult() == HandResult.WIN) { hero.addOneToIndicator(PlayerSessionStatsDAO.ATT_NB_WIN_TO_SHOWDOWN); }
+			if(h.getPlayerHandData(hero.getPlayerID()).getResult() == HandResult.WIN) {
+				hero.addOneToIndicator(PlayerSessionStatsDAO.ATT_NB_WIN_TO_SHOWDOWN_WHEN_SEEING_FLOP);
+				hero.addOneToIndicator(PlayerSessionStatsDAO.ATT_NB_WIN_TO_SHOWDOWN); 
+			}
 		}
 		
 		//Compute benefit
@@ -342,18 +345,19 @@ public class HandDataCalculator {
 	 * @throws TBException 
 	 */
 	private void computeGeneralIndicators(PokerAction a) throws TBException {
+		//AF General and Benefit
 		switch(a.getKind()) {
 			case POSTSBLIND:
 			case POSTBIGBLIND:
 			case CALL:
 			case BET:
-				if(a.getKind() == ActionKind.BET) {hero.addOneToIndicator(PlayerSessionStatsDAO.ATT_NB_AGRESSION_FACTOR_BET_RAISE);}
-				if(a.getKind() == ActionKind.CALL) {hero.addOneToIndicator(PlayerSessionStatsDAO.ATT_NB_AGRESSION_FACTOR_CALL);}
+				if(a.getKind() == ActionKind.BET) {hero.addOneToIndicator(PlayerSessionStatsDAO.ATT_NB_AGRESSION_FACTOR_GENERAL_BET_RAISE);}
+				if(a.getKind() == ActionKind.CALL) {hero.addOneToIndicator(PlayerSessionStatsDAO.ATT_NB_AGRESSION_FACTOR_GENERAL_CALL);}
 				benefitHand -= a.getAmountBet();
 				break;
 				
 			case RAISE:
-				hero.addOneToIndicator(PlayerSessionStatsDAO.ATT_NB_AGRESSION_FACTOR_BET_RAISE);
+				hero.addOneToIndicator(PlayerSessionStatsDAO.ATT_NB_AGRESSION_FACTOR_GENERAL_BET_RAISE);
 				benefitHand -= amountToCall + a.getAmountBet();
 				break;
 			case FOLD:
@@ -362,6 +366,46 @@ public class HandDataCalculator {
 			case CHECK:
 				break;
 		}
+		
+		//Check if Hero has seen the flop
+		if(a.getMoment() == HandMoment.FLOP && !heroHasSeenFlop) {
+			hero.addOneToIndicator(PlayerSessionStatsDAO.ATT_NB_WIN_TO_SHOWDOWN_WHEN_SEEING_FLOP_POSSIBLE);
+			heroHasSeenFlop = true;
+		}
+		
+		//AF for moment calc
+		computeAFForMoment(a, HandMoment.FLOP, PlayerSessionStatsDAO.ATT_NB_AF_FLOP_BR, 
+				PlayerSessionStatsDAO.ATT_NB_AF_FLOP_C);
+		computeAFForMoment(a, HandMoment.TURN, PlayerSessionStatsDAO.ATT_NB_AF_TURN_BR, 
+				PlayerSessionStatsDAO.ATT_NB_AF_TURN_C);
+		computeAFForMoment(a, HandMoment.RIVER, PlayerSessionStatsDAO.ATT_NB_AF_RIVER_BR, 
+				PlayerSessionStatsDAO.ATT_NB_AF_RIVER_C);
+
 				
+	}
+
+	/**
+	 * Compute agression factor for action given in parameter
+	 * Attributes names for BetRaise and Call are given in parameters
+	 * @param a
+	 * @param attNbAfFlopBr
+	 * @param attNbAfFlopC
+	 * @throws TBException 
+	 */
+	private void computeAFForMoment(PokerAction a, HandMoment moment, String nbBetRaiseAttName,
+			String nbCallAttName) throws TBException {
+		if(a.getMoment() == moment) {
+			switch(a.getKind()) {
+			case BET:
+			case RAISE:
+				hero.addOneToIndicator(nbBetRaiseAttName);
+				break;
+			case CALL:
+				hero.addOneToIndicator(nbCallAttName);
+				break;
+			default:
+				break;
+			}
+		}
 	}
 }

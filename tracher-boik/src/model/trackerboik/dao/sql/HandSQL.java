@@ -40,7 +40,7 @@ public class HandSQL extends GeneralSQLDBOperations implements HandDAO {
 		rq += GEN_ATT_HAND_DATA_CALCULATED + " VARCHAR(10) NOT NULL,";
 		rq += GEN_ATT_SESSION_ID + " VARCHAR(256) REFERENCES "
 				+ SessionSQL.TABLE_NAME + "(" + GEN_ATT_SESSION_ID + "),";
-		rq +=  "CONSTRAINT hand_data_computed_bool_enum CHECK (" + GEN_ATT_HAND_DATA_CALCULATED + " in ('y', 'n'))";
+		rq +=  "CONSTRAINT hand_data_computed_bool_enum CHECK (" + GEN_ATT_HAND_DATA_CALCULATED + " in ('y', 'n')))";
 
 		executeSQLUpdate(rq);
 	}

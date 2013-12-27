@@ -109,7 +109,7 @@ public class TrackerBoikController {
 	}
 	
 	public FolderController getFolderController() {
-		return 
+		return folderController;
 	}
 	
 	public AtomicDataController getAtomicDataController() {

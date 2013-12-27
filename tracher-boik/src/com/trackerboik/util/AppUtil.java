@@ -1,5 +1,6 @@
 package com.trackerboik.util;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -59,6 +60,20 @@ public class AppUtil {
 		} catch (ParseException e) {
 			return null;
 		}
+	}
+
+	/**
+	 * Create a correct formmated file path with all elems of array given in parameter
+	 * @param strings
+	 * @return
+	 */
+	public static String createFilePath(String[] fpathItems) {
+		String fpath = "";
+		for(String s : fpathItems) {
+			fpath += fpath.endsWith(File.separator) ? s : File.separator + s;
+		}
+		
+		return fpath;
 	}
 }
 

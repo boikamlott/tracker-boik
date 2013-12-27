@@ -204,9 +204,8 @@ public class AtomicDataController {
 			
 			String[] files = f.list();
 			for (String file : files) {
-				String fpath = f.getAbsolutePath().endsWith(File.separator) ? f
-						.getAbsolutePath() + file
-						: f.getAbsolutePath() + File.separator + file;
+				String fpath = AppUtil.createFilePath(new String[]{f.getAbsolutePath(), file});
+						
 				try {
 					PokerSession toAdd = parseDataOfFile(fpath);
 					if(toAdd != null) {

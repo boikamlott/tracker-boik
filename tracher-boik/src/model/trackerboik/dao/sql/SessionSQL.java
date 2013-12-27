@@ -16,7 +16,7 @@ public class SessionSQL extends GeneralSQLDBOperations implements SessionDAO {
 
 	public static final String TABLE_NAME = "session";
 	
-	private static final String ATT_FILE_ASSOCIATED_NM = "file_associated_name", 
+	private static final String ATT_FILE_ASSOCIATED_NM = "file_associated_name",
 						  ATT_SESSION_KIND = "session_kind";	
 	@Override
 	protected String getInsertPreCompiledRequest() {

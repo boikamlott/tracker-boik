@@ -10,12 +10,15 @@ import view.trackerboik.main.TBExceptionFrame;
 import view.trackerboik.main.TrackerBoikApplicationWindows;
 
 import com.trackerboik.exception.TBException;
+import com.trackerboik.util.AppUtil;
 
 public class TrackerBoikController {
 
 	private AtomicDataController atomicDataController;
 	private AggregateDataController aggregateDataController;
 	private ConfigurationController configurationController;
+	private FolderController folderController;
+	
 	private List<Hand> handsInMemory;
 	private List<PokerPlayer> playersInMemory;
 	private List<PlayerStats> playersSessionStats;
@@ -28,6 +31,9 @@ public class TrackerBoikController {
 			configurationController = new ConfigurationController();
 			atomicDataController = new AtomicDataController(this);
 			aggregateDataController = new AggregateDataController(this);
+			folderController = new FolderController(this, configurationController.getProperty(AppUtil.HAND_FOLDER_PROPERTY), 
+					configurationController.getProperty(AppUtil.TB_FOLDER_PROPERTY));
+			
 			handsInMemory = new ArrayList<Hand>();
 			playersInMemory = new ArrayList<PokerPlayer>();
 			playersSessionStats = new ArrayList<PlayerStats>();
@@ -100,6 +106,10 @@ public class TrackerBoikController {
 
 	public void exitApplicaiton() {
 		//TODO
+	}
+	
+	public FolderController getFolderController() {
+		return 
 	}
 	
 	public AtomicDataController getAtomicDataController() {

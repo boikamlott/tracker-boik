@@ -17,6 +17,9 @@ public class AppUtil {
 	public static final Integer MAX_PLAYERS = 9;
 	public static final Integer NB_PLAYER_6_MAX = 6;
 	public static final Integer NB_PLAYER_FULL_RING = 9;
+	public static final String HAND_FOLDER_PROPERTY = "folder.handhistorypokersite";
+	public static final String TB_FOLDER_PROPERTY = "folder.trackerboikhistoryfiles";
+	
 	
 	/**
 	 * Return associated calendar

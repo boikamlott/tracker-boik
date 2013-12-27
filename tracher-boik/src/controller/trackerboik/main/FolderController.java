@@ -28,6 +28,7 @@ public class FolderController {
 		this.rootHandFolder = rootHandFolder;
 		this.rootTBFolder = rootTBFolder;
 		checkRootFolder();
+		refreshTBFolder();
 	}
 
 	/**
@@ -39,7 +40,7 @@ public class FolderController {
 		if(!f.exists()) {
 			f.mkdir();
 			f = new File(AppUtil.createFilePath(new String[]{f.getAbsolutePath(), COMPUTED_FILES_FOLDER_NM}));
-			if(!f.exists()) {f.mkdir();}
+			f.mkdir();
 		}	
 	}
 	

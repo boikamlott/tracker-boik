@@ -198,14 +198,10 @@ public class AtomicDataController {
 	private List<PokerSession> refreshAllAtomicData() throws TBException {
 		try {
 			List<PokerSession> res = new ArrayList<PokerSession>();
-			File f = new File(parentController.getConfigurationController()
-					.getProperty(AppUtil.ATOMIC_DATA_FOLDER));
 			int nbSessionLoaded = 0;
 			
-			String[] files = f.list();
-			for (String file : files) {
-				String fpath = AppUtil.createFilePath(new String[]{f.getAbsolutePath(), file});
-						
+			List<String> files = parentController.getFolderController().getAllNotComputedFilesPath();
+			for (String fpath : files) {						
 				try {
 					PokerSession toAdd = parseDataOfFile(fpath);
 					if(toAdd != null) {

@@ -69,8 +69,22 @@ public class AppUtil {
 	 */
 	public static String createFilePath(String[] fpathItems) {
 		String fpath = "";
-		for(String s : fpathItems) {
-			fpath += fpath.endsWith(File.separator) ? s : File.separator + s;
+		int i = 0;
+		while (i < fpathItems.length - 1) {
+			if(fpathItems[i].startsWith(File.separator)) {
+				fpathItems[i] = fpathItems[i].substring(1, fpathItems[i].length());
+			}
+			
+			if(!fpathItems[i].endsWith(File.separator)) {
+				fpathItems[i] += File.separator;
+			}
+			
+			fpath += fpathItems[i];
+			i++;
+		}
+		
+		if(i < fpathItems.length) {
+			fpath += fpathItems[i];
 		}
 		
 		return fpath;

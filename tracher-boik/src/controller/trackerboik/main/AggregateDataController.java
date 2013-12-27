@@ -13,11 +13,11 @@ import model.trackerboik.dao.sql.ActionSQL;
 import model.trackerboik.dao.sql.HandPLayerSQL;
 import model.trackerboik.dao.sql.HandSQL;
 import model.trackerboik.dao.sql.PlayerStatsSQL;
+import model.trackerboik.data.HandDataCalculator;
 
 import com.trackerboik.appmngt.TrackerBoikLog;
 import com.trackerboik.exception.TBException;
 
-import controller.trackerboik.data.HandDataCalculator;
 
 public class AggregateDataController {
 	private TrackerBoikController parentController;

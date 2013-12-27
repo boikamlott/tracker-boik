@@ -26,14 +26,14 @@ import model.trackerboik.dao.sql.HandSQL;
 import model.trackerboik.dao.sql.PlayerSQL;
 import model.trackerboik.dao.sql.PlayerStatsSQL;
 import model.trackerboik.dao.sql.SessionSQL;
+import model.trackerboik.data.HandDataBDDReader;
+import model.trackerboik.data.HandsDataFileReader;
 
 import com.trackerboik.appmngt.TrackerBoikLog;
 import com.trackerboik.exception.TBException;
 import com.trackerboik.util.AppUtil;
 import com.trackerboik.util.BDDUtil;
 
-import controller.trackerboik.data.HandDataBDDReader;
-import controller.trackerboik.data.HandsDataFileReader;
 
 public class AtomicDataController {
 

@@ -107,6 +107,9 @@ public abstract class GeneralSQLDBOperations implements GeneralDBOperationsDAO {
 	@Override
 	public abstract void createTable() throws TBException;
 
+	/**
+	 * Return all Table name list
+	 */
 	public List<String> getNeededTableNamesInCorrectOrderForCreate() {
 		List<String> res = new ArrayList<>();
 		res.add(SessionSQL.TABLE_NAME.toUpperCase());

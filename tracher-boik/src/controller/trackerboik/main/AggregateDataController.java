@@ -62,12 +62,12 @@ public class AggregateDataController {
 		HandPlayerDAO hpbdd = new HandPLayerSQL();
 		ActionDAO abdd = new ActionSQL();
 		
-		pp.getIntegerData().put(StatsDAO.ATT_NB_HANDS, 
-				pp.getIntegerData().get(StatsDAO.ATT_NB_HANDS) + hpbdd.getNbHandsPlayedForNewSessions(pp));
-		pp.getIntegerData().put(StatsDAO.ATT_NB_HANDS_VPIP, 
-				pp.getIntegerData().get(StatsDAO.ATT_NB_HANDS_VPIP) + abdd.getNbHandsVPIPPlayedForNewSessions(pp));
-		pp.getIntegerData().put(StatsDAO.ATT_NB_RAISE_PREFLOP, 
-				pp.getIntegerData().get(StatsDAO.ATT_NB_RAISE_PREFLOP) + abdd.getNbHandsPFRPlayedForNewSessions(pp));
+		pp.getIntegerData().put(StatsDAO.ATT_HANDS, 
+				pp.getIntegerData().get(StatsDAO.ATT_HANDS) + hpbdd.getNbHandsPlayedForNewSessions(pp));
+		pp.getIntegerData().put(StatsDAO.ATT_HANDS_VPIP, 
+				pp.getIntegerData().get(StatsDAO.ATT_HANDS_VPIP) + abdd.getNbHandsVPIPPlayedForNewSessions(pp));
+		pp.getIntegerData().put(StatsDAO.ATT_RAISE_PREFLOP, 
+				pp.getIntegerData().get(StatsDAO.ATT_RAISE_PREFLOP) + abdd.getNbHandsPFRPlayedForNewSessions(pp));
 		computeIndicatorForNewSessions(pp);
 		
 	}

@@ -25,10 +25,10 @@ import com.trackerboik.exception.TBException;
 public class HandDataCalculator {
 	
 	private static final Integer NB_CALCULATED_INDICATORS = 6;
-	private static final Integer NB_CBET = 0, 
-								 NB_FOLD_TO_CBET = 1,
-								 NB_SECOND_BARREL = 2,
-								 NB_FOLD_TO_SECOND_BARREL = 3;
+	private static final Integer CBET = 0, 
+								 FOLD_TO_CBET = 1,
+								 SECOND_BARREL = 2,
+								 FOLD_TO_SECOND_BARREL = 3;
 	
 	public List<String> playersAlive;
 	private Double benefitHand, amountToCall;
@@ -112,10 +112,10 @@ public class HandDataCalculator {
 		
 		//Went/Win to showdown
 		if(playersAlive.size() > 1 && playersAlive.contains(hero.getPlayerID())) {
-			hero.addOneToIndicator(StatsDAO.ATT_NB_WENT_TO_SHOWDOWN);
+			hero.addOneToIndicator(StatsDAO.ATT_WENT_TO_SHOWDOWN);
 			if(h.getPlayerHandData(hero.getPlayerID()).getResult() == HandResult.WIN) {
-				hero.addOneToIndicator(StatsDAO.ATT_NB_WIN_TO_SHOWDOWN_WHEN_SEEING_FLOP);
-				hero.addOneToIndicator(StatsDAO.ATT_NB_WIN_TO_SHOWDOWN); 
+				hero.addOneToIndicator(StatsDAO.ATT_WIN_TO_SHOWDOWN_WHEN_SEEING_FLOP);
+				hero.addOneToIndicator(StatsDAO.ATT_WIN_TO_SHOWDOWN); 
 			}
 		}
 		
@@ -191,13 +191,13 @@ public class HandDataCalculator {
 			nbBetPreflop++;
 			if(nbBetPreflop == 2) {
 				if(isHeroAction) {
-					hero.addOneToIndicator(StatsDAO.ATT_NB_3BET);
+					hero.addOneToIndicator(StatsDAO.ATT_3BET);
 				} else if(playersAlive.contains(hero.getPlayerID())) {
 					heroHasBeen3Betted = true;
-					hero.addOneToIndicator(StatsDAO.ATT_NB_FOLD_TO_3BET_POSSIBLE);				
+					hero.addOneToIndicator(StatsDAO.ATT_FOLD_TO_3BET_POSSIBLE);				
 				}
 			} else if(nbBetPreflop == 1 && playersAlive.contains(hero.getPlayerID())) {
-				hero.addOneToIndicator(StatsDAO.ATT_NB_3BET_POSSIBLE);
+				hero.addOneToIndicator(StatsDAO.ATT_3BET_POSSIBLE);
 			}
 			preflopRaisedByHero = isHeroAction;
 			preflopRaisedBySomeone = !isHeroAction;
@@ -206,7 +206,7 @@ public class HandDataCalculator {
 		
 		//3Bet fold
 		if(isHeroAction && heroHasBeen3Betted && a.getKind() == ActionKind.FOLD) {
-			hero.addOneToIndicator(StatsDAO.ATT_NB_FOLD_TO_3BET);
+			hero.addOneToIndicator(StatsDAO.ATT_FOLD_TO_3BET);
 		}
 	}
 	
@@ -223,8 +223,8 @@ public class HandDataCalculator {
 					//Check ATS
 					if(!preflopOpen && isHeroAction && (h.getPositionForPlayer(heroID) == PokerPosition.CO ||
 							h.getPositionForPlayer(heroID) == PokerPosition.BU)) {
-						hero.addOneToIndicator(StatsDAO.ATT_NB_ATS_POSSIBLE);
-						if(a.getKind() == ActionKind.RAISE) { hero.addOneToIndicator(StatsDAO.ATT_NB_ATS);}
+						hero.addOneToIndicator(StatsDAO.ATT_ATS_POSSIBLE);
+						if(a.getKind() == ActionKind.RAISE) { hero.addOneToIndicator(StatsDAO.ATT_ATS);}
 					} else if(!preflopOpen && !isHeroAction && 
 							(h.getPositionForPlayer(a.getAssociatedPlayer().getPlayerID()) == PokerPosition.CO ||
 							h.getPositionForPlayer(a.getAssociatedPlayer().getPlayerID()) == PokerPosition.BU) && 
@@ -239,15 +239,15 @@ public class HandDataCalculator {
 					} else if(atsRunning && isHeroAction) {
 						//Register ATS reaction of current player
 						if(h.getPositionForPlayer(heroID) == PokerPosition.SB) { 
-							hero.addOneToIndicator(StatsDAO.ATT_NB_FOLD_TO_ATS_SB_POSSIBLE);
+							hero.addOneToIndicator(StatsDAO.ATT_FOLD_TO_ATS_SB_POSSIBLE);
 						} else {
-							hero.addOneToIndicator(StatsDAO.ATT_NB_FOLD_TO_ATS_BB_POSSIBLE);
+							hero.addOneToIndicator(StatsDAO.ATT_FOLD_TO_ATS_BB_POSSIBLE);
 						}
 						
 						if(a.getKind() == ActionKind.FOLD && h.getPositionForPlayer(heroID) == PokerPosition.SB) {
-							hero.addOneToIndicator(StatsDAO.ATT_NB_FOLD_TO_ATS_SB);
+							hero.addOneToIndicator(StatsDAO.ATT_FOLD_TO_ATS_SB);
 						} else if(a.getKind() == ActionKind.FOLD && h.getPositionForPlayer(heroID) == PokerPosition.BB) {
-							hero.addOneToIndicator(StatsDAO.ATT_NB_FOLD_TO_ATS_BB);
+							hero.addOneToIndicator(StatsDAO.ATT_FOLD_TO_ATS_BB);
 						}
 					}
 					preflopOpen = true;
@@ -265,14 +265,14 @@ public class HandDataCalculator {
 		//Detect Hero's limp
 		if(!preflopRaisedBySomeone && isHeroAction && a.getKind() == ActionKind.CALL) {
 			heroHasLimp = true;
-			hero.addOneToIndicator(StatsDAO.ATT_NB_LIMP);
+			hero.addOneToIndicator(StatsDAO.ATT_LIMP);
 		}
 		
 		//Detect Hero reaction after someone has raised it's limp
 		if(heroHasLimp && preflopRaisedBySomeone && isHeroAction) {
 			//Register limp reaction
-			if(a.getKind() == ActionKind.CALL) {hero.addOneToIndicator(StatsDAO.ATT_NB_LIMP_THEN_CALL);}
-			if(a.getKind() == ActionKind.FOLD) {hero.addOneToIndicator(StatsDAO.ATT_NB_LIMP_THEN_FOLD);}
+			if(a.getKind() == ActionKind.CALL) {hero.addOneToIndicator(StatsDAO.ATT_LIMP_THEN_CALL);}
+			if(a.getKind() == ActionKind.FOLD) {hero.addOneToIndicator(StatsDAO.ATT_LIMP_THEN_FOLD);}
 			//Ensure that we could not count twice call for one limp
 			heroHasLimp = false;
 		}
@@ -287,15 +287,15 @@ public class HandDataCalculator {
 	 * @throws TBException 
 	 */
 	private void computeTurnActions(PokerAction a, Boolean isPlayerAction) throws TBException {		
-		if(heroCbetOnFlop && generalSecondBarrelPossible && isPlayerAction && !dataCalculated[NB_SECOND_BARREL]) {
-			hero.addOneToIndicator(StatsDAO.ATT_NB_SECOND_BARREL_POSSIBLE);
-			if(a.getKind() == ActionKind.BET) {hero.addOneToIndicator(StatsDAO.ATT_NB_SECOND_BARREL);}
-			dataCalculated[NB_SECOND_BARREL] = true;
+		if(heroCbetOnFlop && generalSecondBarrelPossible && isPlayerAction && !dataCalculated[SECOND_BARREL]) {
+			hero.addOneToIndicator(StatsDAO.ATT_SECOND_BARREL_POSSIBLE);
+			if(a.getKind() == ActionKind.BET) {hero.addOneToIndicator(StatsDAO.ATT_SECOND_BARREL);}
+			dataCalculated[SECOND_BARREL] = true;
 		} else if(heroCallCbetOnFlop && generalSecondBarrelPossible && foldToSndBarrelPossible && 
-				isPlayerAction && !dataCalculated[NB_FOLD_TO_SECOND_BARREL]) {
-			hero.addOneToIndicator(StatsDAO.ATT_NB_FOLD_TO_SECOND_BARREL_POSSIBLE);
-			if(a.getKind() == ActionKind.FOLD) {hero.addOneToIndicator(StatsDAO.ATT_NB_FOLD_TO_SECOND_BARREL);}
-			dataCalculated[NB_FOLD_TO_SECOND_BARREL] = true;
+				isPlayerAction && !dataCalculated[FOLD_TO_SECOND_BARREL]) {
+			hero.addOneToIndicator(StatsDAO.ATT_FOLD_TO_SECOND_BARREL_POSSIBLE);
+			if(a.getKind() == ActionKind.FOLD) {hero.addOneToIndicator(StatsDAO.ATT_FOLD_TO_SECOND_BARREL);}
+			dataCalculated[FOLD_TO_SECOND_BARREL] = true;
 		} else if(heroCbetOnFlop && generalSecondBarrelPossible) {
 			//Action of another player, check if current player could be 21 barrel after that
 			generalSecondBarrelPossible = a.getKind() == ActionKind.CHECK || 
@@ -316,17 +316,17 @@ public class HandDataCalculator {
 	 * @throws TBException 
 	 */
 	private void computeFlopActions(PokerAction a, Boolean isPlayerAction) throws TBException {		
-		if(heroCbetPossible && preflopRaisedByHero && isPlayerAction && !dataCalculated[NB_CBET]) {
+		if(heroCbetPossible && preflopRaisedByHero && isPlayerAction && !dataCalculated[CBET]) {
 			//With this action, player could perform a Cbet or not
-			hero.addOneToIndicator(StatsDAO.ATT_NB_CBET_POSSIBLE); 
-			if(a.getKind() == ActionKind.BET) {hero.addOneToIndicator(StatsDAO.ATT_NB_CBET);}
+			hero.addOneToIndicator(StatsDAO.ATT_CBET_POSSIBLE); 
+			if(a.getKind() == ActionKind.BET) {hero.addOneToIndicator(StatsDAO.ATT_CBET);}
 			heroCbetOnFlop = a.getKind() == ActionKind.BET;
-			dataCalculated[NB_CBET] = true;
-		} else if(foldToCbetPossible && preflopRaisedBySomeone && isPlayerAction && !dataCalculated[NB_FOLD_TO_CBET]) {
-			hero.addOneToIndicator(StatsDAO.ATT_NB_FOLD_TO_CBET_POSSIBLE);
-			if(a.getKind() == ActionKind.FOLD) {hero.addOneToIndicator(StatsDAO.ATT_NB_FOLD_TO_CBET);}
+			dataCalculated[CBET] = true;
+		} else if(foldToCbetPossible && preflopRaisedBySomeone && isPlayerAction && !dataCalculated[FOLD_TO_CBET]) {
+			hero.addOneToIndicator(StatsDAO.ATT_FOLD_TO_CBET_POSSIBLE);
+			if(a.getKind() == ActionKind.FOLD) {hero.addOneToIndicator(StatsDAO.ATT_FOLD_TO_CBET);}
 			heroCallCbetOnFlop = a.getKind() == ActionKind.CALL;
-			dataCalculated[NB_FOLD_TO_CBET] = true;
+			dataCalculated[FOLD_TO_CBET] = true;
 		} else if(preflopRaisedByHero && heroCbetPossible) {
 			//Action of another player, check if current player could be cbet afeter that
 			heroCbetPossible = a.getKind() == ActionKind.CHECK || 
@@ -355,13 +355,13 @@ public class HandDataCalculator {
 			case POSTBIGBLIND:
 			case CALL:
 			case BET:
-				if(a.getKind() == ActionKind.BET) {hero.addOneToIndicator(StatsDAO.ATT_NB_AGRESSION_FACTOR_GENERAL_BET_RAISE);}
-				if(a.getKind() == ActionKind.CALL) {hero.addOneToIndicator(StatsDAO.ATT_NB_AGRESSION_FACTOR_GENERAL_CALL);}
+				if(a.getKind() == ActionKind.BET) {hero.addOneToIndicator(StatsDAO.ATT_AGRESSION_FACTOR_GENERAL_BET_RAISE);}
+				if(a.getKind() == ActionKind.CALL) {hero.addOneToIndicator(StatsDAO.ATT_AGRESSION_FACTOR_GENERAL_CALL);}
 				benefitHand -= a.getAmountBet();
 				break;
 				
 			case RAISE:
-				hero.addOneToIndicator(StatsDAO.ATT_NB_AGRESSION_FACTOR_GENERAL_BET_RAISE);
+				hero.addOneToIndicator(StatsDAO.ATT_AGRESSION_FACTOR_GENERAL_BET_RAISE);
 				benefitHand -= amountToCall + a.getAmountBet();
 				break;
 			case FOLD:
@@ -372,12 +372,12 @@ public class HandDataCalculator {
 		}
 		
 		//AF for moment calc
-		computeHandsAFForMoment(a, HandMoment.FLOP, StatsDAO.ATT_NB_AF_FLOP_BR, 
-				StatsDAO.ATT_NB_AF_FLOP_C);
-		computeHandsAFForMoment(a, HandMoment.TURN, StatsDAO.ATT_NB_AF_TURN_BR, 
-				StatsDAO.ATT_NB_AF_TURN_C);
-		computeHandsAFForMoment(a, HandMoment.RIVER, StatsDAO.ATT_NB_AF_RIVER_BR, 
-				StatsDAO.ATT_NB_AF_RIVER_C);
+		computeHandsAFForMoment(a, HandMoment.FLOP, StatsDAO.ATT_AF_FLOP_BR, 
+				StatsDAO.ATT_AF_FLOP_C);
+		computeHandsAFForMoment(a, HandMoment.TURN, StatsDAO.ATT_AF_TURN_BR, 
+				StatsDAO.ATT_AF_TURN_C);
+		computeHandsAFForMoment(a, HandMoment.RIVER, StatsDAO.ATT_AF_RIVER_BR, 
+				StatsDAO.ATT_AF_RIVER_C);
 
 				
 	}
@@ -394,9 +394,9 @@ public class HandDataCalculator {
 			String nbCallAttName) throws TBException {
 		if(a.getMoment() == moment) {
 			//Update NB Hands
-			String attNbHandsName = moment == HandMoment.FLOP ? StatsDAO.ATT_NB_HANDS_FLOP : 
-									moment == HandMoment.TURN ? StatsDAO.ATT_NB_HANDS_TURN :
-									moment == HandMoment.TURN ? StatsDAO.ATT_NB_HANDS_RIVER : "";
+			String attNbHandsName = moment == HandMoment.FLOP ? StatsDAO.ATT_HANDS_FLOP : 
+									moment == HandMoment.TURN ? StatsDAO.ATT_HANDS_TURN :
+									moment == HandMoment.TURN ? StatsDAO.ATT_HANDS_RIVER : "";
 			if(!hasSeenMoment.contains(moment)) {
 				hero.addOneToIndicator(attNbHandsName);
 				hasSeenMoment.add(moment);

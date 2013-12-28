@@ -54,6 +54,17 @@ public class TrackerBoikApplicationWindows {
 		JMenu mnNewMenu = new JMenu("Fichier");
 		menuBar.add(mnNewMenu);
 		
+		JMenu menuAdmin = new JMenu("Administration");
+		menuBar.add(menuAdmin);
+		
+		JMenuItem mntmResetDonneesJoueurs = new JMenuItem("Reset Donnees Joueurs");
+		mntmResetDonneesJoueurs.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				controller.resetAllPlayersStatsData();
+			}
+		});
+		menuAdmin.add(mntmResetDonneesJoueurs);
+		
 		JMenuItem mntmChargerLesDonnes = new JMenuItem("Rafraichir Mains");
 		mntmChargerLesDonnes.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

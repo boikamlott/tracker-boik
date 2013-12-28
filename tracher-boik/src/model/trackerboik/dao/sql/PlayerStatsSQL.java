@@ -44,12 +44,13 @@ public class PlayerStatsSQL extends GeneralSQLDBOperations implements
 			throws TBException {
 		try {
 			List<PlayerStats> res = new ArrayList<PlayerStats>();
-			psQuery = createPreparedStatement("SELECT p.* " +
-											  " FROM " + TABLE_NAME + " p, " + HandSQL.TABLE_NAME + " h, " + HandPLayerSQL.TABLE_NAME + " hp " 
-											+ " WHERE " + GEN_ATT_HAND_DATA_CALCULATED + "=? "
-											+ " AND h." + GEN_ATT_HAND_ID + "=hp." + GEN_ATT_HAND_ID
-											+ " AND hp." + GEN_ATT_PLAYER_ID + "=p." + GEN_ATT_PLAYER_ID
-					);
+			String rq = "SELECT p.* " +
+					  " FROM " + TABLE_NAME + " p, " + HandSQL.TABLE_NAME + " h, " + HandPLayerSQL.TABLE_NAME + " hp " 
+					+ " WHERE " + GEN_ATT_HAND_DATA_CALCULATED + "=? "
+					+ " AND h." + GEN_ATT_HAND_ID + "=hp." + GEN_ATT_HAND_ID
+					+ " AND hp." + GEN_ATT_PLAYER_ID + "=p." + GEN_ATT_PLAYER_ID;
+
+			psQuery = createPreparedStatement(rq);
 			psQuery.setString(1, "n");
 			ResultSet rs = psQuery.executeQuery();
 
@@ -134,6 +135,7 @@ public class PlayerStatsSQL extends GeneralSQLDBOperations implements
 				rq += att + "=?,";
 			}
 			
+			rq = rq.substring(0, rq.length() - 1);
 			rq += " WHERE " + GEN_ATT_PLAYER_ID + "=?";
 
 			psQuery = createPreparedStatement(rq);
@@ -202,6 +204,34 @@ public class PlayerStatsSQL extends GeneralSQLDBOperations implements
 	@Override
 	protected String getAllElementsForLoadSessionInMemoryRequest() {
 		return getExistenceTestPreCompiledRequest();
+	}
+
+	@Override
+	public void resetAllData() throws TBException {
+		try {
+			String rq = "UPDATE " + TABLE_NAME + " SET ";
+			rq += ATT_BENEFIT + "=?,";
+			
+			for(String att : StatsDAO.INT_ATTRIBUTES) {
+				rq += att + "=?,";
+			}
+			
+			rq = rq.substring(0, rq.length() - 1);
+			rq += " WHERE 1";
+
+			psQuery = createPreparedStatement(rq);
+			int i = 1;
+			psQuery.setDouble(i++, 0.0);
+			
+			for(; i < StatsDAO.INT_ATTRIBUTES.length + NB_OTHER_INDICATORS; i++) {
+				psQuery.setDouble(i, 0);
+			}			
+			
+			psQuery.execute();
+		} catch (SQLException e) {
+			throw new TBException(e.getMessage());
+		}
+		
 	}
 
 }

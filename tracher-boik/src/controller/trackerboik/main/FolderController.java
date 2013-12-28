@@ -39,7 +39,7 @@ public class FolderController {
 		File f = new File(rootTBFolder);
 		if(!f.exists()) {
 			f.mkdir();
-			f = new File(AppUtil.createFilePath(new String[]{f.getAbsolutePath(), COMPUTED_FILES_FOLDER_NM}));
+			f = new File(AppUtil.createFilePath(new String[]{rootTBFolder, COMPUTED_FILES_FOLDER_NM}));
 			f.mkdir();
 		}	
 	}
@@ -137,9 +137,9 @@ public class FolderController {
 		try {
 			if(f.exists() && !f.getAbsolutePath().contains(COMPUTED_FILES_FOLDER_NM) && 
 							  f.getAbsolutePath().contains(folderRootTB.getAbsolutePath())) {
-				String newPath = AppUtil.createFilePath(new String[]{folderRootTB.getAbsolutePath(), 
+				String newPath = AppUtil.createFilePath(new String[]{rootTBFolder, 
 										COMPUTED_FILES_FOLDER_NM, 
-										f.getAbsolutePath().split(folderRootTB.getAbsolutePath())[1]});
+										f.getName()});
 				File newFile = new File(newPath);
 				newFile.createNewFile();
 				Files.copy(Paths.get(f.getAbsolutePath()), Paths.get(newFile.getAbsolutePath()), REPLACE_EXISTING);

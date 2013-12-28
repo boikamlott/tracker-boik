@@ -45,8 +45,9 @@ public class PlayerSQL extends GeneralSQLDBOperations implements PlayerDAO {
 	@Override
 	public boolean isPlayerExists(String playerID) throws TBException {
 		try {
-			String rq = "SELECT * FROM " + TABLE_NAME + " WHERE " + GEN_ATT_PLAYER_ID + "='" + playerID + "'";
-			ResultSet rs = executeSQLQuery(rq);
+			psQuery = createPreparedStatement(getExistenceTestPreCompiledRequest());
+			psQuery.setString(1, playerID);
+			ResultSet rs = psQuery.executeQuery();
 			
 			return rs.next();
 		} catch (Exception e) {

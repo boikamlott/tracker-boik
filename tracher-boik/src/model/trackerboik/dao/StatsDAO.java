@@ -51,8 +51,8 @@ public interface StatsDAO extends GeneralDBOperationsDAO {
 	public static final String ATT_AF_TURN_BR = "af_turn_br";
 	public static final String ATT_AF_TURN_C = "af_turn_c";
 
-	public static final String ATT_SECOND_BARREL_POSSIBLE = "_Hands_TCBet";
-	public static final String ATT_SECOND_BARREL = "_TCBet";
+	public static final String ATT_SECOND_BARREL_POSSIBLE = "hands_tcbet";
+	public static final String ATT_SECOND_BARREL = "tcbet";
 
 	public static final String ATT_FOLD_TO_SECOND_BARREL_POSSIBLE = "hands_ftcbet";
 	public static final String ATT_FOLD_TO_SECOND_BARREL = "ftcet";
@@ -97,5 +97,11 @@ public interface StatsDAO extends GeneralDBOperationsDAO {
 	 * @param playerStats
 	 */
 	public void getAggregatedDataForAllSession(PlayerStats playerStats)  throws TBException;
+
+	/**
+	 * Set all indicators to zero value for all players
+	 * @throws TBException
+	 */
+	public void resetAllData() throws TBException;
 	
 }

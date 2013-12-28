@@ -43,7 +43,13 @@ public class TrackerBoikController {
 			printException("Erreur inconnue. Redemarrez l'application.");
 		}
 	}
-	
+//********************************************************************************************************************************
+//----------------------------------------------- Method Call from View ----------------------------------------------------------
+//********************************************************************************************************************************	
+	/**
+	 * Refresh current folder and store new hands in database
+	 * Compute and store all new hand informations
+	 */
 	public void refreshAggregatedData() {
 		try {
 			//Refresh Hand Data
@@ -53,8 +59,22 @@ public class TrackerBoikController {
 		} catch (TBException e) {
 			//TODO
 		} catch (Exception e) {
-			
+			//TODO
 		}
+	}
+	
+	/**
+	 * Reset all players stats data
+	 */
+	public void resetAllPlayersStatsData() {
+		try {
+			aggregateDataController.resetAllPlayersStatsData();
+		} catch (TBException e) {
+			//TODO
+		} catch (Exception e) {
+			//TODO
+		}
+		
 	}
 	
 	/**

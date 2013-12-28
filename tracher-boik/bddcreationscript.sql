@@ -1,4 +1,13 @@
 /****************** Script permettant de créer la base de donénes nécessaire à l'utilisation de TrackerBoik ***********************************/
+DELETE  FROM  hand_board WHERE 1;
+DELETE  FROM  action WHERE 1;
+DELETE  FROM  hand_player WHERE 1;
+DELETE  FROM  hand WHERE 1;
+DELETE  FROM  player_session_stats WHERE 1;
+DELETE  FROM  session WHERE 1;
+DELETE  FROM  board WHERE 1;
+DELETE  FROM  player WHERE 1;
+
 drop table hand_board;
 drop table action;
 drop table hand_player;
@@ -56,31 +65,44 @@ CREATE TABLE player (
 CREATE TABLE player_session_stats (
 	player_id VARCHAR(256)  REFERENCES player(player_id),
 	benefit DOUBLE,
-	nb_hand_af_bet_raise INTEGER,
-	nb_hand_af_call INTEGER,
-	nb_hands INTEGER,
-	nb_hands_vpip INTEGER,
-	nb_hands_preflop_raise INTEGER,
-	nb_hands_ats_possible INTEGER,
-	nb_hands_ats INTEGER,
-	nb_hands_fold_to_ats_sb_possible INTEGER,
-	nb_hands_fold_to_ats_bb_possible INTEGER,
-	nb_hands_fold_to_ats_sb INTEGER,
-	nb_hands_fold_to_ats_bb INTEGER,
-	nb_hands_3bet_possible INTEGER,
-	nb_3bet INTEGER,
-	nb_hands_fold_to_3bet_possible INTEGER,
-	nb_hands_fold_to_3bet INTEGER,
-	nb_cbet_possible INTEGER,
-	nb_cbet INTEGER,
-	nb_fold_to_cbet_possible INTEGER,
-	nb_fold_to_cbet INTEGER,
-	nb_second_barrel_possible INTEGER,
-	nb_second_barrel INTEGER,
-	nb_fold_to_second_barrel_possible INTEGER,
-	nb_fold_to_second_barrel INTEGER,
-	nb_went_to_showdown INTEGER,
-	nb_win_to_showdown INTEGER,
+	af_general_br INTEGER,
+	af_general_call INTEGER,
+	hands INTEGER,
+	hands_flop INTEGER,
+	hands_turn INTEGER,
+	hands_river INTEGER,
+	hands_vpip INTEGER,
+	hands_pfr INTEGER,
+	hands_ats INTEGER,
+	ats INTEGER,
+	hands_fats_sb INTEGER,
+	hands_fats_bb INTEGER,
+	fats_sb INTEGER,
+	fats_bb INTEGER,
+	hands_limp INTEGER,
+	hands_ltf INTEGER,
+	hands_ltc INTEGER,
+	hands_3bet INTEGER,
+	three_bet INTEGER,
+	hands_f3bet INTEGER,
+	f3bet INTEGER,
+	af_flop_br INTEGER,
+	af_flop_c INTEGER,
+	hands_cbet INTEGER,
+	cbet INTEGER,
+	hands_fcbet INTEGER,
+	fcbet INTEGER,
+	af_turn_br INTEGER,
+	af_turn_c INTEGER,
+	hands_tcbet INTEGER,
+	tcbet INTEGER,
+	hands_ftcbet INTEGER,
+	ftcet INTEGER,
+	af_river_br INTEGER,
+	af_river_c INTEGER,
+	wmtsdf INTEGER,
+	wtsd INTEGER,
+	wmtsd INTEGER,
 	CONSTRAINT pk_plasyer_session_stats PRIMARY KEY (player_id)
 );
 

@@ -212,6 +212,7 @@ public class AtomicDataController {
 										+ "' was successfully read");
 						nbSessionLoaded++;
 					}	
+					parentController.getFolderController().markFileAsComputed(fpath);
 				} catch (TBException e) {
 					TrackerBoikLog.getInstance().log(Level.SEVERE,
 							"Error while reading file '" + fpath + "'");

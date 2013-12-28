@@ -20,7 +20,7 @@ public class SessionSQL extends GeneralSQLDBOperations implements SessionDAO {
 						  ATT_SESSION_KIND = "session_kind";	
 	@Override
 	protected String getInsertPreCompiledRequest() {
-		return "INSERT INTO " + TABLE_NAME + " VALUES (?, ?, ?, ?)";
+		return "INSERT INTO " + TABLE_NAME + " VALUES (?, ?, ?)";
 	}
 	
 	@Override
@@ -45,7 +45,6 @@ public class SessionSQL extends GeneralSQLDBOperations implements SessionDAO {
 			psInsert.setString(1, ps.getId());
 			psInsert.setString(2, ps.getAssociatedFileName());
 			psInsert.setString(3, ps.getSessionKind());
-			psInsert.setString(4, "n");
 		
 			if(psInsert.execute()) {
 				throw new TBException("Unexpected result while trying to insert session " + ps.getId());

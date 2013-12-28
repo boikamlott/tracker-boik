@@ -5,6 +5,7 @@ import java.util.logging.Level;
 
 import model.trackerboik.businessobject.Hand;
 import model.trackerboik.businessobject.PlayerStats;
+import model.trackerboik.businessobject.PokerPlayer;
 import model.trackerboik.dao.ActionDAO;
 import model.trackerboik.dao.HandDAO;
 import model.trackerboik.dao.HandPlayerDAO;
@@ -48,14 +49,14 @@ public class AggregateDataController {
 			}
 		}
 		
-		
-		try {
-			markAllHandsAsCalculated();
-		} catch (TBException e) {
-			TrackerBoikLog.getInstance().log(Level.WARNING, "Data will be incoherent because " +
-					"indicators for new sessions has been calculated and session could not be marked as calculated: " + 
-					e.getMessage());
-		}
+		//TODO Uncomment when running correctly
+//		try {
+//			markAllHandsAsCalculated();
+//		} catch (TBException e) {
+//			TrackerBoikLog.getInstance().log(Level.WARNING, "Data will be incoherent because " +
+//					"indicators for new sessions has been calculated and session could not be marked as calculated: " + 
+//					e.getMessage());
+//		}
 	}
 
 	private void recalculatePlayerIndicators(PlayerStats pp) throws TBException {
@@ -91,7 +92,7 @@ public class AggregateDataController {
 		HandDataCalculator hdc;
 		
 		for(Hand h : parentController.getHands()) {
-			if(h.getPlayers().contains(pp.getPlayerID())) {
+			if(h.getPlayers().contains(new PokerPlayer(pp.getPlayerID()))) {
 				try {
 					hdc = new HandDataCalculator(pp, h);
 					hdc.computeIndicatorForHandAndPlayer();
@@ -101,6 +102,19 @@ public class AggregateDataController {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Reset all players stats data in database
+	 */
+	public void resetAllPlayersStatsData() throws TBException {
+		try {
+			StatsDAO sBDD = new PlayerStatsSQL();
+			sBDD.resetAllData();
+		} catch (TBException e) {
+			throw new TBException("Impossible de remettre à zéro les données en base: " + e.getMessage());
+		}
+		
 	}
 	
 }

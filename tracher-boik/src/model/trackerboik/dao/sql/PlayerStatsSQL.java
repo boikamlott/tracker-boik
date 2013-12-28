@@ -44,7 +44,7 @@ public class PlayerStatsSQL extends GeneralSQLDBOperations implements
 			throws TBException {
 		try {
 			List<PlayerStats> res = new ArrayList<PlayerStats>();
-			String rq = "SELECT p.* " +
+			String rq = "SELECT distinct(p." + GEN_ATT_PLAYER_ID + "), p.* " +
 					  " FROM " + TABLE_NAME + " p, " + HandSQL.TABLE_NAME + " h, " + HandPLayerSQL.TABLE_NAME + " hp " 
 					+ " WHERE " + GEN_ATT_HAND_DATA_CALCULATED + "=? "
 					+ " AND h." + GEN_ATT_HAND_ID + "=hp." + GEN_ATT_HAND_ID

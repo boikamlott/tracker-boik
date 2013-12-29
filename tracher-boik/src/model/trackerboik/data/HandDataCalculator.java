@@ -138,7 +138,7 @@ public class HandDataCalculator {
 	 * @throws TBException
 	 */
 	private void computeAction(PokerAction a) throws TBException {
-		Boolean isPlayerAction = a.getAssociatedPlayer().equals(hero);
+		Boolean isPlayerAction = a.getAssociatedPlayer().getPlayerID().equals(hero.getPlayerID());
 		
 		if(isPlayerAction) {
 			computeGeneralIndicators(a);

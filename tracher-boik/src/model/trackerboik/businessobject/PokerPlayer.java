@@ -30,5 +30,8 @@ public class PokerPlayer {
 		return (o instanceof PokerPlayer) && ((PokerPlayer) o).getPlayerID().equals(this.playerID);
 	}
 	
+	public String toString() {
+		return playerID;
+	}
 	
 }

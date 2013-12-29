@@ -75,7 +75,9 @@ public class PokerAction implements Comparable<PokerAction> {
 		return this.getActNoForHand() - a2.getActNoForHand();
 	}
 	
-	
+	public String toString() {
+		return kind.toString() + ": " + (amountBet != null ? amountBet + "€": "");
+	}
 	
 	
 	

@@ -2,8 +2,8 @@ package model.trackerboik.dao.sql;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import model.trackerboik.businessobject.PlayerStats;
 import model.trackerboik.dao.StatsDAO;
@@ -40,10 +40,10 @@ public class PlayerStatsSQL extends GeneralSQLDBOperations implements
 	 * Return a list with all players and the associated session to update
 	 */
 	@Override
-	public List<PlayerStats> getPlayersWithIndicatorsToUpdate()
+	public Map<String, PlayerStats> getPlayersWithIndicatorsToUpdate()
 			throws TBException {
 		try {
-			List<PlayerStats> res = new ArrayList<PlayerStats>();
+			Map<String, PlayerStats> res = new HashMap<String, PlayerStats>();
 			String rq = "SELECT distinct(p." + GEN_ATT_PLAYER_ID + "), p.* " +
 					  " FROM " + TABLE_NAME + " p, " + HandSQL.TABLE_NAME + " h, " + HandPLayerSQL.TABLE_NAME + " hp " 
 					+ " WHERE " + GEN_ATT_HAND_DATA_CALCULATED + "=? "
@@ -58,7 +58,7 @@ public class PlayerStatsSQL extends GeneralSQLDBOperations implements
 				PlayerStats pss = new PlayerStats(
 						rs.getString(GEN_ATT_PLAYER_ID));
 				addPlayerDetailsFromResultSet(rs, pss);
-				res.add(pss);
+				res.put(pss.getPlayerID(), pss);
 			}
 
 			return res;

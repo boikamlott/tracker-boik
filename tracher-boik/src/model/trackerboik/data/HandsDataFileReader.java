@@ -148,6 +148,7 @@ public class HandsDataFileReader {
 			}
 
 			Hand h = new Hand(handID, associatedSession);
+			HandMoment moment = HandMoment.PREFLOP;
 			h.setDateTime(date);
 			h.setLimitBB(bbValue);
 			gotToNextLine(); // Set line on Table line
@@ -167,7 +168,8 @@ public class HandsDataFileReader {
 			addAndConsumeHeroPlayerHand(h);
 
 			// Read real proflop actions
-			h.addActions(readActions(h, HandMoment.PREFLOP));
+			
+			h.addActions(readActions(h, moment));
 			consumeUselessLines();
 			if (currentLine != null
 					&& !(currentLine.contains(UNCALLED_BET) || currentLine
@@ -175,7 +177,7 @@ public class HandsDataFileReader {
 				while (currentLine != null
 						&& !(currentLine.contains(SHOWDOWN) || currentLine
 								.contains(SUMMARY_COLLECTED))) {
-					HandMoment moment = readAndConsumeHandMomentBoard(h);
+					moment = readAndConsumeHandMomentBoard(h);
 					h.addActions(readActions(h, moment));
 					if (currentLine != null
 							&& currentLine.contains(UNCALLED_BET)) {
@@ -183,6 +185,11 @@ public class HandsDataFileReader {
 					}
 					consumeUselessLines();
 				}
+			}
+			
+			//Add Uncalled Bet informations in action
+			if(currentLine.contains(UNCALLED_BET)) {
+				readAndConsummeUncalledBet(h, moment);
 			}
 			readHandSummary(h);
 			associatedSession.addHand(h);
@@ -240,6 +247,31 @@ public class HandsDataFileReader {
 		}
 
 		return res;
+	}
+	
+	/**
+	 * Read Uncalled bet and store informations
+	 * PRE: Current line is the uncalledbet one
+	 * @throws IOException 
+	 */
+	private void readAndConsummeUncalledBet(Hand h, HandMoment moment) throws TBException, IOException {
+		if(currentLine.contains(UNCALLED_BET)) {
+			Double amount = Double.parseDouble(currentLine.split("€")[1].split(")")[0].trim());
+			String[] data = currentLine.split(" ");
+			String playerID = data[data.length - 1].trim();
+			
+			if (!h.getPlayers().contains(new PokerPlayer(playerID))) {
+				throw new TBException("(line:" + lineNo + ")"
+						+ "Invalid player name in action '" + currentLine + "'");
+			}
+			
+			PokerPlayer actionPlayer = h.getPlayers().get(h.getPlayers().indexOf(new PokerPlayer(playerID)));
+			PokerAction uncalledBet = new PokerAction(actionPlayer, h, actionNoInHand++, 
+															amount, ActionKind.UNCALLED_BET, moment);
+			h.addAction(uncalledBet);
+			gotToNextLine();
+		}
+		
 	}
 
 	/**

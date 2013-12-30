@@ -7,7 +7,8 @@ public enum ActionKind {
 	FOLD("fold", "folds"),
 	POSTBIGBLIND("postBB", "posts big blind"),
 	POSTSBLIND("postSB", "posts small blind"),
-	RAISE("raise", "raises");
+	RAISE("raise", "raises"), 
+	UNCALLED_BET("uncalled_bet", "Uncalled Bet");
 	
 	public String valueText;
 	public String valueFile;

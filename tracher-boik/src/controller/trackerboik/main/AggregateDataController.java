@@ -1,6 +1,7 @@
 package controller.trackerboik.main;
 
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 import model.trackerboik.businessobject.Hand;
@@ -14,6 +15,7 @@ import model.trackerboik.dao.sql.ActionSQL;
 import model.trackerboik.dao.sql.HandPLayerSQL;
 import model.trackerboik.dao.sql.HandSQL;
 import model.trackerboik.dao.sql.PlayerStatsSQL;
+import model.trackerboik.data.HandAnalyser;
 import model.trackerboik.data.HandDataCalculator;
 
 import com.trackerboik.appmngt.TrackerBoikLog;
@@ -36,18 +38,32 @@ public class AggregateDataController {
 		parentController.getPlayerSessionsStats().clear();
 		StatsDAO statBDD = new PlayerStatsSQL();
 		
-		List<PlayerStats> playersToUpdate = statBDD.getPlayersWithIndicatorsToUpdate();
+		Map<String, PlayerStats> playersToUpdate = statBDD.getPlayersWithIndicatorsToUpdate();
 		
-		for(PlayerStats pp : playersToUpdate) {
+		//Compute all players stats data with hand analyser
+		for(Hand h : parentController.getHands()) {
+			HandAnalyser ha = new HandAnalyser(playersToUpdate, h);
 			try {
-				recalculatePlayerIndicators(pp);
-				statBDD.updatePlayerStats(pp);
-				parentController.getPlayerSessionsStats().add(pp);
+				ha.analyse();
 			} catch (TBException e) {
-				TrackerBoikLog.getInstance().log(Level.WARNING, "Impossible to upadte player '" + 
-								pp.getPlayerID() + "' indicators: " + e.getMessage());
+				TrackerBoikLog.getInstance().log(Level.WARNING, "Impossible to analyse data of hand '" + 
+						h.getId() + "' : " + e.getMessage());
 			}
 		}
+		
+		//Update General Indicators From DataBase And save data
+		for(String pp : playersToUpdate.keySet()) {
+			try {
+				PlayerStats currentPlayer = playersToUpdate.get(pp);
+				recalculatePlayerIndicatorsFromDB(currentPlayer);
+				statBDD.updatePlayerStats(currentPlayer);
+				parentController.getPlayerSessionsStats().add(currentPlayer);
+			} catch (TBException e) {
+				TrackerBoikLog.getInstance().log(Level.WARNING, "Impossible to upadte player '" + 
+								pp + "' indicators from DataBase: " + e.getMessage());
+			}
+		}
+
 		
 		//TODO Uncomment when running correctly
 //		try {
@@ -59,7 +75,7 @@ public class AggregateDataController {
 //		}
 	}
 
-	private void recalculatePlayerIndicators(PlayerStats pp) throws TBException {
+	private void recalculatePlayerIndicatorsFromDB(PlayerStats pp) throws TBException {
 		HandPlayerDAO hpbdd = new HandPLayerSQL();
 		ActionDAO abdd = new ActionSQL();
 		
@@ -69,7 +85,6 @@ public class AggregateDataController {
 				pp.getIntegerData().get(StatsDAO.ATT_HANDS_VPIP) + abdd.getNbHandsVPIPPlayedForNewSessions(pp));
 		pp.getIntegerData().put(StatsDAO.ATT_RAISE_PREFLOP, 
 				pp.getIntegerData().get(StatsDAO.ATT_RAISE_PREFLOP) + abdd.getNbHandsPFRPlayedForNewSessions(pp));
-		computeIndicatorForNewSessions(pp);
 		
 	}
 
@@ -80,29 +95,7 @@ public class AggregateDataController {
 		HandDAO hbdd = new HandSQL();
 		hbdd.markAllHandsAsCalculated();
 	}
-	
-	/**
-	 * Analyse all hands of unread sessions in memory to determine all active indicators
-	 * for user given in parameters and the new sessions
-	 * @param pp
-	 * @return
-	 * @throws TBException 
-	 */
-	private void computeIndicatorForNewSessions(PlayerStats pp) throws TBException {
-		HandDataCalculator hdc;
-		
-		for(Hand h : parentController.getHands()) {
-			if(h.getPlayers().contains(new PokerPlayer(pp.getPlayerID()))) {
-				try {
-					hdc = new HandDataCalculator(pp, h);
-					hdc.computeIndicatorForHandAndPlayer();
-				} catch (Exception e) {
-					TrackerBoikLog.getInstance().log(Level.SEVERE, "Impossible to analyse hand " + 
-									h.getId() + " for player " + pp.getPlayerID() + " moves because: " + e.getMessage());
-				}
-			}
-		}
-	}
+
 
 	/**
 	 * Reset all players stats data in database

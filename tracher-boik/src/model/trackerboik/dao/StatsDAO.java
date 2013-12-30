@@ -1,6 +1,6 @@
 package model.trackerboik.dao;
 
-import java.util.List;
+import java.util.Map;
 
 import model.trackerboik.businessobject.PlayerStats;
 
@@ -89,7 +89,7 @@ public interface StatsDAO extends GeneralDBOperationsDAO {
 	public void updatePlayerStats(PlayerStats pss) throws TBException;
 
 	
-	public List<PlayerStats> getPlayersWithIndicatorsToUpdate()
+	public Map<String, PlayerStats> getPlayersWithIndicatorsToUpdate()
 			throws TBException;
 	/**
 	 * Return all aggregated data for all session in database

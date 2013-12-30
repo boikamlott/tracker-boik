@@ -43,7 +43,7 @@ public class PokerAction implements Comparable<PokerAction> {
 		this.actionNumberInHand = posInHand;
 	}
 
-	public Double getAmountBet() {
+	public Double getAmount() {
 		return amountBet;
 	}
 

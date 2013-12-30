@@ -74,7 +74,7 @@ public class ActionSQL extends GeneralSQLDBOperations implements ActionDAO {
 			psInsert.setString(1, a.getHand().getId());
 			psInsert.setString(2, a.getAssociatedPlayer().getPlayerID());
 			psInsert.setInt(3, a.getActNoForHand());
-			psInsert.setDouble(4, a.getAmountBet() == null ? 0.0 : a.getAmountBet());
+			psInsert.setDouble(4, a.getAmount() == null ? 0.0 : a.getAmount());
 			psInsert.setString(5, a.getKind().toString());
 			psInsert.setString(6, a.getMoment().toString());
 		

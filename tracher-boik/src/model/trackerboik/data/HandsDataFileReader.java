@@ -256,7 +256,7 @@ public class HandsDataFileReader {
 	 */
 	private void readAndConsummeUncalledBet(Hand h, HandMoment moment) throws TBException, IOException {
 		if(currentLine.contains(UNCALLED_BET)) {
-			Double amount = Double.parseDouble(currentLine.split("€")[1].split(")")[0].trim());
+			Double amount = Double.parseDouble(currentLine.split(AppUtil.CURRENCY)[1].split("\\)")[0].trim());
 			String[] data = currentLine.split(" ");
 			String playerID = data[data.length - 1].trim();
 			

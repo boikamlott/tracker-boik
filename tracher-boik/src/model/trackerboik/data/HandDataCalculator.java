@@ -85,14 +85,14 @@ public class HandDataCalculator {
 			
 			//Update amount to call if needed
 			if(a.getKind() == ActionKind.BET) {
-				amountToCall = a.getAmountBet();
+				amountToCall = a.getAmount();
 			}
 			
 			computeAction(a);
 			
 			//Update amount to call if needed
 			if(a.getKind() == ActionKind.RAISE) {
-				amountToCall += a.getAmountBet(); 
+				amountToCall += a.getAmount(); 
 			}
 			actCurNo++;
 		}
@@ -357,12 +357,12 @@ public class HandDataCalculator {
 			case BET:
 				if(a.getKind() == ActionKind.BET) {hero.addOneToIndicator(StatsDAO.ATT_AGRESSION_FACTOR_GENERAL_BET_RAISE);}
 				if(a.getKind() == ActionKind.CALL) {hero.addOneToIndicator(StatsDAO.ATT_AGRESSION_FACTOR_GENERAL_CALL);}
-				benefitHand -= a.getAmountBet();
+				benefitHand -= a.getAmount();
 				break;
 				
 			case RAISE:
 				hero.addOneToIndicator(StatsDAO.ATT_AGRESSION_FACTOR_GENERAL_BET_RAISE);
-				benefitHand -= amountToCall + a.getAmountBet();
+				benefitHand -= amountToCall + a.getAmount();
 				break;
 			case FOLD:
 				continueRead = false;

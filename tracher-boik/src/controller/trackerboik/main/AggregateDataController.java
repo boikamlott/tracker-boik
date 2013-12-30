@@ -1,12 +1,10 @@
 package controller.trackerboik.main;
 
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
 import model.trackerboik.businessobject.Hand;
 import model.trackerboik.businessobject.PlayerStats;
-import model.trackerboik.businessobject.PokerPlayer;
 import model.trackerboik.dao.ActionDAO;
 import model.trackerboik.dao.HandDAO;
 import model.trackerboik.dao.HandPlayerDAO;
@@ -16,7 +14,6 @@ import model.trackerboik.dao.sql.HandPLayerSQL;
 import model.trackerboik.dao.sql.HandSQL;
 import model.trackerboik.dao.sql.PlayerStatsSQL;
 import model.trackerboik.data.HandAnalyser;
-import model.trackerboik.data.HandDataCalculator;
 
 import com.trackerboik.appmngt.TrackerBoikLog;
 import com.trackerboik.exception.TBException;
@@ -48,6 +45,9 @@ public class AggregateDataController {
 			} catch (TBException e) {
 				TrackerBoikLog.getInstance().log(Level.WARNING, "Impossible to analyse data of hand '" + 
 						h.getId() + "' : " + e.getMessage());
+			} catch (Exception e) {
+				TrackerBoikLog.getInstance().log(Level.WARNING, "Impossible to analyse data of hand '" + 
+						h.getId() + "' for unexpected reason: " + e.getMessage());
 			}
 		}
 		

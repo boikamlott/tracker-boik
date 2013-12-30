@@ -273,10 +273,10 @@ public class Hand {
 		// Check business validity
 		if (!pa.getHand().getId().equals(this.id)) {
 			throw new TBException("Invalid hands reference in action");
-		} else if (!(pa.getAmountBet() == null
-				&& pa.getKind().equals(ActionKind.FOLD) || pa.getAmountBet() != null
-				&& !pa.getKind().equals(ActionKind.FOLD)) && !(pa.getAmountBet() == null
-						&& pa.getKind().equals(ActionKind.CHECK) || pa.getAmountBet() != null
+		} else if (!(pa.getAmount() == null
+				&& pa.getKind().equals(ActionKind.FOLD) || pa.getAmount() != null
+				&& !pa.getKind().equals(ActionKind.FOLD)) && !(pa.getAmount() == null
+						&& pa.getKind().equals(ActionKind.CHECK) || pa.getAmount() != null
 						&& !pa.getKind().equals(ActionKind.CHECK))) {
 			throw new TBException(
 					"Invalid relation beetween kind and amount for action");
@@ -429,6 +429,21 @@ public class Hand {
 	 */
 	public void setBoard(PokerBoard pb) {
 		this.board = pb;
+	}
+
+	/**
+	 * Return the Player ID which is in position given in parameter
+	 * @param bb
+	 * @return
+	 */
+	public String getPlayerInPosition(PokerPosition position) {
+		for(PokerPlayer pp : getPlayers()) {
+			if(getPositionForPlayer(pp.getPlayerID()).equals(position)) {
+				return pp.getPlayerID();
+			}
+		}
+		
+		return null;
 	}
 
 

@@ -10,6 +10,7 @@ import com.trackerboik.exception.TBException;
 import model.trackerboik.businessobject.ActionKind;
 import model.trackerboik.businessobject.Hand;
 import model.trackerboik.businessobject.HandMoment;
+import model.trackerboik.businessobject.HandResult;
 import model.trackerboik.businessobject.PlayerStats;
 import model.trackerboik.businessobject.PokerAction;
 import model.trackerboik.businessobject.PokerPlayer;
@@ -27,7 +28,7 @@ public class HandAnalyser {
 	public String initiativePlayer;
 	
 	private int nbRaisePF;
-	private boolean atsRunning;
+	private boolean atsRunning, flopCBetDone, turnCBetDone;
 	/** Has Seen Moment Set **/
 	public Map<HandMoment, List<String>> hasSeenMoment;
 	public Double amountToCall;
@@ -38,6 +39,8 @@ public class HandAnalyser {
 		this.h = h;
 		this.nbRaisePF = 0;
 		this.atsRunning = false;
+		this.flopCBetDone = false;
+		this.turnCBetDone = false;
 		this.amountToCall = h.getLimitBB();
 		this.hasSeenMoment = new HashMap<HandMoment, List<String>>();
 		this.hasSeenMoment.put(HandMoment.FLOP, new ArrayList<String>());
@@ -79,12 +82,32 @@ public class HandAnalyser {
 			}
 		}
 		
-		//Compute summary indicators
+		computeSummaryIndicators();
+	}
+	
+	/**
+	 * Set all general indicators
+	 * @throws TBException 
+	 */
+	private void computeSummaryIndicators() throws TBException {
+		//Compute Benefit indicators
 		for(PokerPlayer pp: h.getPlayers()) {
 			playerStats.get(pp.getPlayerID()).benefitGeneral += h.getPlayerHandData(pp.getPlayerID()).getAmountWin();
 		}
+		
+		//Hand Went To Showdown
+		if(playersInGame.size() > 1) {
+			for(String playerID : playersInGame) {
+				playerStats.get(playerID).addOneToIndicator(StatsDAO.ATT_WENT_TO_SHOWDOWN);
+				if(h.getPlayerHandData(playerID).getResult() == HandResult.WIN) {
+					playerStats.get(playerID).addOneToIndicator(StatsDAO.ATT_WIN_TO_SHOWDOWN_WHEN_SEEING_FLOP);
+					playerStats.get(playerID).addOneToIndicator(StatsDAO.ATT_WIN_TO_SHOWDOWN);
+				}
+			}
+		}
+		
 	}
-	
+
 	/**
 	 * Compute action for the preflop moment
 	 * @param a
@@ -199,8 +222,9 @@ public class HandAnalyser {
 	 * @throws TBException 
 	 */
 	private void computeFlopActions(PokerAction a) throws TBException {
-		
+		checkContinuationBetForMoment(HandMoment.FLOP, a);
 	}
+
 
 	/**
 	 * Set all indicators for action and is player action boolean given in parameter
@@ -209,9 +233,45 @@ public class HandAnalyser {
 	 * @throws TBException 
 	 */
 	private void computeTurnActions(PokerAction a) throws TBException {
-		
+		checkContinuationBetForMoment(HandMoment.TURN, a);
 	}
 
+	/**
+	 * Code mutualization for Flop CBet and Turn CBet
+	 * @param flop
+	 * @throws TBException 
+	 */
+	private void checkContinuationBetForMoment(HandMoment moment, PokerAction a) throws TBException {
+		String attPossibleNm = moment == HandMoment.FLOP ? StatsDAO.ATT_CBET_POSSIBLE : StatsDAO.ATT_SECOND_BARREL_POSSIBLE;
+		String attNm = moment == HandMoment.FLOP ? StatsDAO.ATT_CBET : StatsDAO.ATT_SECOND_BARREL;
+		
+		String attFoldPossibleNm = moment == HandMoment.FLOP ? StatsDAO.ATT_FOLD_TO_CBET_POSSIBLE : StatsDAO.ATT_FOLD_TO_SECOND_BARREL_POSSIBLE;
+		String attFoldNm = moment == HandMoment.FLOP ? StatsDAO.ATT_FOLD_TO_CBET : StatsDAO.ATT_FOLD_TO_SECOND_BARREL;
+		
+		Boolean cBetIsDone = moment == HandMoment.FLOP ? flopCBetDone : turnCBetDone;
+		
+		String playerID = a.getAssociatedPlayer().getPlayerID();
+		
+		if(initiativePlayer != null && !cBetIsDone && initiativePlayer.equals(playerID)) {
+			//CBet possible
+			playerStats.get(playerID).addOneToIndicator(attPossibleNm);
+			if(a.getKind() == ActionKind.BET) {	playerStats.get(playerID).addOneToIndicator(attNm);}
+			cBetIsDone = true;
+		}
+		
+		//Reaction to CBet
+		if(initiativePlayer != null && cBetIsDone && !initiativePlayer.equals(playerID)) {
+			playerStats.get(playerID).addOneToIndicator(attFoldPossibleNm);
+			if(a.getKind() == ActionKind.FOLD) {playerStats.get(playerID).addOneToIndicator(attFoldNm);}
+		}
+		
+		//Cancel initative -- As a raise is maid, we stop cancelling all indicators
+		if(a.getKind() == ActionKind.RAISE) {
+			initiativePlayer = null;
+		}
+		
+	}
+	
 	/**
 	 * Compute Benefit of action given in parameter
 	 */

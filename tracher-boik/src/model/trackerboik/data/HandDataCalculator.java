@@ -18,8 +18,10 @@ import model.trackerboik.dao.StatsDAO;
 import com.trackerboik.exception.TBException;
 
 /**
+ * DEPRECATED SHOULD NOT BE USE
  * Class represent a hand calculator for a player
  * @author gboismal
+ * @deprecated
  *
  */
 public class HandDataCalculator {
